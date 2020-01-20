@@ -12,7 +12,7 @@ from agents.bert import BertAgent
 
 
 # thing = RnnAgent('foo', 'sst', 25, None, 'dev', 8)
-thing = BertAgent('foo', 'sst', 5, None, 'dev', 8)
+thing = BertAgent('foo', 'sst', 25, None, 'dev', 128)
 thing.run()
 exit()
 
