@@ -126,10 +126,12 @@ class BertAgent:
 		loss = AverageMeter()
 		acc = AverageMeter()
 		for x, y in tqdm(self.train_loader):
-			# x = x.float()
+
+			attention_mask = (x > 0).float().to(self.device)
 			x = x.to(self.device)
 			y = y.to(self.device)
-			current_loss, output = self.model(x, labels=y)
+			current_loss, output = self.model(
+				x, attention_mask=attention_mask, labels=y)
 			# current_loss = self.loss(output, y)
 			current_loss.backward()
 			self.optimizer.step()
