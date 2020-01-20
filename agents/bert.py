@@ -134,9 +134,12 @@ class BertAgent:
 				x, attention_mask=attention_mask, labels=y)
 			# current_loss = self.loss(output, y)
 			current_loss.backward()
+			loss.update(current_loss.item())
+			MAX_GRAD_NORM = 1.0
+			nn.utils.clip_grad_norm_(self.model.parameters(),
+									 MAX_GRAD_NORM)
 			self.optimizer.step()
 			self.optimizer.zero_grad()
-			loss.update(current_loss.item())
 			accuracy = get_accuracy(output, y)
 			acc.update(accuracy, y.shape[0])
 		# if self.mode == 'crossval':
