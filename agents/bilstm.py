@@ -43,6 +43,7 @@ class BiLSTMAgent:
 		self.optimizer = Adam(self.model.parameters())
 		self.model.train()
 
+
 	def run(self):
 		if self.config.mode == 'crosstest':
 			for fold in range(self.config.num_folds):

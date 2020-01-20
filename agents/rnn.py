@@ -2,12 +2,14 @@ import numpy as np
 import logging
 import time
 
+import spacy
 import torch
 import torch.nn as nn
 from torch.optim import Adam
 from tqdm import tqdm
-from transformers import BertForSequenceClassification, BertTokenizer, AdamW
 
+from graphs.models.bilstm import BiLSTM
+from graphs.models.rnn import Rnn
 from graphs.losses.loss import CrossEntropyLoss
 from managers.sst import SSTDatasetManager
 from managers.subj import SubjDatasetManager
@@ -15,7 +17,7 @@ from managers.trec import TrecDatasetManager
 from utils.metrics import AverageMeter, get_accuracy, EarlyStopper
 from utils.logger import print_and_log
 
-class BertAgent:
+class RnnAgent:
 	def __init__(self, config, data_name, input_length, 
 				 aug_mode, mode, batch_size, pct_usage=1, geo=0.5):
 		self.config = config
@@ -25,24 +27,29 @@ class BertAgent:
 		self.batch_size = batch_size
 		self.pct_usage = pct_usage
 		self.geo = geo
-		# self.logger = logging.getLogger('BertAgent')
+		# self.logger = logging.getLogger('RnnAgent')
 		self.cur_epoch = 0
 		self.loss = CrossEntropyLoss()
 
 		self.MAX_EPOCHS = 500
 
+		nlp = spacy.load(
+			'en_core_web_md', disable=['parser', 'tagger', 'ner'])
+		nlp.vocab.set_vector(
+			0, vector=np.zeros(nlp.vocab.vectors.shape[1]))
+		self.nlp = nlp
 		if data_name == 'sst':
 			self.mngr = SSTDatasetManager(
-				self.config, 'bert', self.input_length, self.aug_mode,
-				self.pct_usage, self.geo, self.batch_size)
+				self.config, 'rnn', self.input_length, self.aug_mode,
+				self.pct_usage, self.geo, self.batch_size, self.nlp)
 		elif data_name == 'subj':
 			self.mngr = SubjDatasetManager(
-				self.config, 'bert', self.input_length, self.aug_mode,
-				self.pct_usage, self.geo, self.batch_size)
+				self.config, 'rnn', self.input_length, self.aug_mode,
+				self.pct_usage, self.geo, self.batch_size, self.nlp)
 		elif data_name == 'trec':
 			self.mngr = TrecDatasetManager(
-				self.config, 'bert', self.input_length, self.aug_mode,
-				self.pct_usage, self.geo, self.batch_size)
+				self.config, 'rnn', self.input_length, self.aug_mode,
+				self.pct_usage, self.geo, self.batch_size, self.nlp)
 		else:
 			raise ValueError('Data name not recognized.')
 		self.device = (torch.device('cuda:0' if torch.cuda.is_available() 
@@ -55,22 +62,15 @@ class BertAgent:
 		# 	print_and_log(self.logger, s)
 
 	def initialize_model(self):
-		self.model = BertForSequenceClassification.from_pretrained(
-			'bert-base-uncased')
+		if isinstance(self.mngr, TrecDatasetManager):
+			# must be better way to trac dataset being used
+			num_classes = 6
+		else:
+			num_classes = 2
+		embed_arr = torch.from_numpy(self.nlp.vocab.vectors.data)
+		self.model = Rnn(self.config, embed_arr, num_classes)
 		self.model = self.model.to(self.device)
-		# ------------------------------------------------
-		no_decay = ['bias', 'LayerNorm.weight']
-		optimizer_grouped_parameters = [
-			{'params': [p for n, p in self.model.named_parameters() if
-						not any(nd in n for nd in no_decay)], 
-			 'weight_decay': 0.0},
-			{'params': [p for n, p in self.model.named_parameters() if 
-						any(nd in n for nd in no_decay)], 
-			 'weight_decay': 0.0}
-		]
-		self.optimizer = AdamW(optimizer_grouped_parameters)
-		# --------------------------------------------
-		# self.optimizer = AdamW(self.model.named_parameters())
+		self.optimizer = Adam(self.model.parameters())
 		self.model.train()
 
 	def run(self):
@@ -119,9 +119,6 @@ class BertAgent:
 				# 	break
 
 	def train_one_epoch(self):
-		# -----------------------------------
-		# TEST THAT MDOEL IS ACTUALLY LEARNING
-		# -----------------------------------
 		self.model.train()
 		loss = AverageMeter()
 		acc = AverageMeter()
@@ -129,11 +126,11 @@ class BertAgent:
 			# x = x.float()
 			x = x.to(self.device)
 			y = y.to(self.device)
-			current_loss, output = self.model(x, labels=y)
-			# current_loss = self.loss(output, y)
+			output = self.model(x)
+			current_loss = self.loss(output, y)
+			self.optimizer.zero_grad()
 			current_loss.backward()
 			self.optimizer.step()
-			self.optimizer.zero_grad()
 			loss.update(current_loss.item())
 			accuracy = get_accuracy(output, y)
 			acc.update(accuracy, y.shape[0])
@@ -147,9 +144,6 @@ class BertAgent:
 		print(s)
 
 	def validate(self):
-		# ---------------------------------
-		# CHANGE LOGIC HERE
-		# ----------------------------------
 		self.model.eval()
 		
 		loss = AverageMeter()
@@ -158,7 +152,8 @@ class BertAgent:
 			# x = x.float()
 			x = x.to(self.device)
 			y = y.to(self.device)
-			current_loss, output = self.model(x, labels=y)
+			output = self.model(x)
+			current_loss = self.loss(output, y)
 			loss.update(current_loss.item())
 			accuracy = get_accuracy(output, y)
 			acc.update(accuracy, y.shape[0])

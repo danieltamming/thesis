@@ -7,28 +7,35 @@ import torch
 import torch.nn as nn
 
 from managers.trec import TrecDatasetManager, get_trec
+from agents.rnn import RnnAgent
+from agents.bert import BertAgent
 
 
-'''
+# thing = RnnAgent('foo', 'sst', 25, None, 'dev', 8)
+thing = BertAgent('foo', 'sst', 5, None, 'dev', 8)
+thing.run()
+exit()
+
+
+
+
 nlp = spacy.load('en_core_web_md', disable=['parser', 'tagger', 'ner'])
 nlp.vocab.set_vector(0, vector=np.zeros(nlp.vocab.vectors.shape[1]))
 key2row = nlp.vocab.vectors.key2row
-
 emb = nn.Embedding.from_pretrained(torch.from_numpy(nlp.vocab.vectors.data))
 
 non_auged = [example for _, example in get_trec()['train']]
 
 sentence = 'What asdafsdfsd adfasdfsdaa stole the cork from my lunch?'
-for sentence in tqdm(non_auged):
-	doc = nlp(sentence)
-	rows = torch.tensor(
-		[key2row[token.orth] if token.has_vector else key2row[0] for token in doc], 
-		dtype=torch.long)
-	vec = emb(rows)
+doc = nlp(sentence)
+rows = torch.tensor(
+	[key2row[token.orth] if token.has_vector else key2row[0] for token in doc], 
+	dtype=torch.long)
+vec = emb(rows)
 
-	v1 = vec.numpy()
-	v2 = np.stack([token.vector for token in doc])
-	assert np.array_equal(v1, v2)
+v1 = vec.numpy()
+v2 = np.stack([token.vector for token in doc])
+assert np.array_equal(v1, v2)
 
 exit()
 rows = torch.from_numpy(np.vectorize(key2row.get)(orths))
@@ -62,14 +69,14 @@ doc = nlp(sentence)
 print([word.has_vector for word in doc])
 
 exit()
-'''
 
 # -------------------------------------------------------------------
-
+'''
 thing = TrecDatasetManager('foo', 'rnn', None, 1, 0.5)
 dataset = thing.get_train_set()
 
 non_auged = [example for _, example in get_trec()['train']]
+print(max([len(example.split()) for example in non_auged]))
 
 auged = []
 for example, label in tqdm(dataset):
@@ -86,12 +93,16 @@ for s1, s2 in zip(auged, non_auged):
 print(num_same/len(auged))
 
 exit()
+'''
 
 from managers.subj import SubjDatasetManager, get_subj
 
+non_auged = [example for _, example in get_subj()]
+print(max([len(example.split()) for example in non_auged]))
+exit()
+
 thing = SubjDatasetManager('foo', 'bert', None, 1, 0.5)
 dataset = thing.get_train_set()
-non_auged = [example for _, example in get_subj()]
 
 auged = []
 for example, label in tqdm(dataset):

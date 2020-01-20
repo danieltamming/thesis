@@ -6,7 +6,7 @@ import torch.nn as nn
 from torch.utils.data import Dataset, DataLoader
 from transformers import BertTokenizer
 
-from utils.data import (get_split_indices, get_embeddings, 
+from utils.data_old import (get_split_indices, get_embeddings, 
 						get_sequences, sr_augment, 
 						ca_augment, partition_within_classes)
 
