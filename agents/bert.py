@@ -126,7 +126,6 @@ class BertAgent:
 		loss = AverageMeter()
 		acc = AverageMeter()
 		for x, y in tqdm(self.train_loader):
-
 			attention_mask = (x > 0).float().to(self.device)
 			x = x.to(self.device)
 			y = y.to(self.device)
@@ -156,14 +155,14 @@ class BertAgent:
 		# CHANGE LOGIC HERE
 		# ----------------------------------
 		self.model.eval()
-		
 		loss = AverageMeter()
 		acc = AverageMeter()
 		for x, y in tqdm(self.val_loader):
-			# x = x.float()
+			attention_mask = (x > 0).float().to(self.device)
 			x = x.to(self.device)
 			y = y.to(self.device)
-			current_loss, output = self.model(x, labels=y)
+			current_loss, output = self.model(
+				x, attention_mask=attention_mask, labels=y)
 			loss.update(current_loss.item())
 			accuracy = get_accuracy(output, y)
 			acc.update(accuracy, y.shape[0])
