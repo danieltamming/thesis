@@ -17,10 +17,11 @@ from utils.metrics import AverageMeter, get_accuracy, EarlyStopper
 from utils.logger import print_and_log
 
 class BertAgent:
-	def __init__(self, config, data_name, input_length, 
+	def __init__(self, config, data_name, input_length, max_epochs, 
 				 aug_mode, mode, batch_size, pct_usage=1, geo=0.5):
 		self.config = config
 		self.input_length = input_length
+		self.max_epochs = max_epochs
 		self.aug_mode = aug_mode
 		self.mode = mode
 		self.batch_size = batch_size
@@ -28,8 +29,6 @@ class BertAgent:
 		self.geo = geo
 		# self.logger = logging.getLogger('BertAgent')
 		self.cur_epoch = 0
-
-		self.MAX_EPOCHS = 4
 
 		if data_name == 'sst':
 			self.num_labels = 2
@@ -93,7 +92,7 @@ class BertAgent:
 			self.initialize_model()
 
 			# -----------------------------------------------------
-			total_steps = len(self.train_loader) * self.MAX_EPOCHS
+			total_steps = len(self.train_loader) * self.max_epochs
 			self.scheduler = get_linear_schedule_with_warmup(
 				self.optimizer, num_warmup_steps=0, num_training_steps=total_steps)
 			# ----------------------------------------------------
@@ -115,7 +114,7 @@ class BertAgent:
 
 			start_time = time.time()
 
-			for self.cur_epoch in range(self.MAX_EPOCHS):
+			for self.cur_epoch in range(self.max_epochs):
 				self.train_one_epoch()
 				acc,_ = self.validate()
 
