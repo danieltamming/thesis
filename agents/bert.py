@@ -151,9 +151,6 @@ class BertAgent:
 		print(s)
 
 	def validate(self):
-		# ---------------------------------
-		# CHANGE LOGIC HERE
-		# ----------------------------------
 		self.model.eval()
 		loss = AverageMeter()
 		acc = AverageMeter()
