@@ -7,15 +7,16 @@ import torch
 import torch.nn as nn
 
 from managers.trec import TrecDatasetManager, get_trec
+from managers.sst import get_sst
+from managers.subj import get_subj
 from agents.rnn import RnnAgent
 from agents.bert import BertAgent
 
 
 # thing = RnnAgent('foo', 'sst', 25, None, 'dev', 8)
-thing = BertAgent('foo', 'sst', 512, 10, None, 'dev', 32)
+thing = BertAgent('foo', 'sst', 128, 10, None, 'dev', 32)
 thing.run()
 exit()
-
 
 
 
