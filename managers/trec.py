@@ -44,7 +44,8 @@ class TrecDatasetManager:
 			aug_mode = None
 			geo = None
 		if self.model_type == 'bert':
-			return BertDataset(self.data_dict[split_key], aug_mode, geo)
+			return BertDataset(self.data_dict[split_key], self.input_length, 
+							   aug_mode, geo)
 		elif self.model_type == 'rnn':
 			return RnnDataset(self.data_dict[split_key], self.input_length, 
 							  self.nlp, aug_mode, geo)

@@ -28,19 +28,21 @@ class BertAgent:
 		self.geo = geo
 		# self.logger = logging.getLogger('BertAgent')
 		self.cur_epoch = 0
-		self.loss = CrossEntropyLoss()
 
 		self.MAX_EPOCHS = 4
 
 		if data_name == 'sst':
+			self.num_labels = 2
 			self.mngr = SSTDatasetManager(
 				self.config, 'bert', self.input_length, self.aug_mode,
 				self.pct_usage, self.geo, self.batch_size)
 		elif data_name == 'subj':
+			self.num_labels = 2
 			self.mngr = SubjDatasetManager(
 				self.config, 'bert', self.input_length, self.aug_mode,
 				self.pct_usage, self.geo, self.batch_size)
 		elif data_name == 'trec':
+			self.num_labels = 6
 			self.mngr = TrecDatasetManager(
 				self.config, 'bert', self.input_length, self.aug_mode,
 				self.pct_usage, self.geo, self.batch_size)
@@ -58,8 +60,7 @@ class BertAgent:
 
 	def initialize_model(self):
 		self.model = BertForSequenceClassification.from_pretrained(
-			'bert-base-uncased')
-		# ADD num_labels=5 parameter
+			'bert-base-uncased', num_labels=self.num_labels)
 
 		self.model = self.model.to(self.device)
 		# ------------------------------------------------

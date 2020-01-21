@@ -24,17 +24,6 @@ class BertDataset(Dataset):
 		return self._to_tokens(example), label
 
 	def _to_tokens(self, example):
-		# ---------------------- WARNING --------------------------
-		# WE MAY NEED TO USE SPECIAL TOKENS HERE TO GET NORMAL 
-		# PERFORMANCE OF MODEL. BY DEFAULT NONE ARE USED
-
-		# TODO: SET ADD_SPECIAL_TOKENS TO TRUE AND FIGURE 
-		# 		OUT HOW THIS IMPACTS THE LENGTH SETTING
-		# print(self.tokenizer.encode(
-		# 	example, add_special_tokens=True, max_length=self.input_length))
-		# print(self.tokenizer.all_special_tokens)
-		# print(self.tokenizer.all_special_ids)
-		# exit()
 		tknzd = self.tokenizer.encode(
 			example, add_special_tokens=True, max_length=self.input_length)
 		if len(tknzd) < self.input_length:
