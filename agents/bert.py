@@ -45,6 +45,7 @@ class BertAgent:
 				self.pct_usage, self.geo, self.batch_size)
 		else:
 			raise ValueError('Data name not recognized.')
+
 		self.device = (torch.device('cuda:0' if torch.cuda.is_available() 
 					   else 'cpu'))
 		# print('Using '+str(int(100*self.pct_usage))+'% of the dataset.')
@@ -57,20 +58,22 @@ class BertAgent:
 	def initialize_model(self):
 		self.model = BertForSequenceClassification.from_pretrained(
 			'bert-base-uncased')
+		# ADD num_labels=5 parameter
+
 		self.model = self.model.to(self.device)
 		# ------------------------------------------------
-		no_decay = ['bias', 'LayerNorm.weight']
-		optimizer_grouped_parameters = [
-			{'params': [p for n, p in self.model.named_parameters() if
-						not any(nd in n for nd in no_decay)], 
-			 'weight_decay': 0.0},
-			{'params': [p for n, p in self.model.named_parameters() if 
-						any(nd in n for nd in no_decay)], 
-			 'weight_decay': 0.0}
-		]
-		self.optimizer = AdamW(optimizer_grouped_parameters)
+		# no_decay = ['bias', 'LayerNorm.weight']
+		# optimizer_grouped_parameters = [
+		# 	{'params': [p for n, p in self.model.named_parameters() if
+		# 				not any(nd in n for nd in no_decay)], 
+		# 	 'weight_decay': 0.0},
+		# 	{'params': [p for n, p in self.model.named_parameters() if 
+		# 				any(nd in n for nd in no_decay)], 
+		# 	 'weight_decay': 0.0}
+		# ]
+		# self.optimizer = AdamW(optimizer_grouped_parameters)
 		# --------------------------------------------
-		# self.optimizer = AdamW(self.model.named_parameters())
+		self.optimizer = AdamW(self.model.parameters())
 		self.model.train()
 
 	def run(self):
