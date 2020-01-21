@@ -6,7 +6,8 @@ import torch
 import torch.nn as nn
 from torch.optim import Adam
 from tqdm import tqdm
-from transformers import BertForSequenceClassification, BertTokenizer, AdamW
+from transformers import (BertForSequenceClassification, BertTokenizer,
+						  AdamW, get_linear_schedule_with_warmup)
 
 from graphs.losses.loss import CrossEntropyLoss
 from managers.sst import SSTDatasetManager
@@ -29,7 +30,7 @@ class BertAgent:
 		self.cur_epoch = 0
 		self.loss = CrossEntropyLoss()
 
-		self.MAX_EPOCHS = 500
+		self.MAX_EPOCHS = 50
 
 		if data_name == 'sst':
 			self.mngr = SSTDatasetManager(
@@ -73,7 +74,7 @@ class BertAgent:
 		# ]
 		# self.optimizer = AdamW(optimizer_grouped_parameters)
 		# --------------------------------------------
-		self.optimizer = AdamW(self.model.parameters())
+		self.optimizer = AdamW(self.model.parameters(), lr=2e-5, eps=1e-8)
 		self.model.train()
 
 	def run(self):
@@ -89,6 +90,12 @@ class BertAgent:
 		elif self.mode == 'dev':
 			self.train_loader, self.val_loader = self.mngr.get_dev_ldrs()
 			self.initialize_model()
+
+			# -----------------------------------------------------
+			total_steps = len(self.train_loader) * self.MAX_EPOCHS
+			self.scheduler = get_linear_schedule_with_warmup(
+				self.optimizer, num_warmup_steps=0, num_training_steps=total_steps)
+			# ----------------------------------------------------
 			self.train()
 			# self.validate()
 		else:
@@ -132,15 +139,17 @@ class BertAgent:
 			attention_mask = (x > 0).float().to(self.device)
 			x = x.to(self.device)
 			y = y.to(self.device)
-			self.optimizer.zero_grad()
+			# self.optimizer.zero_grad()
+			self.model.zero_grad()
 			current_loss, output = self.model(
 				x, attention_mask=attention_mask, labels=y)
-			current_loss.backward()
 			loss.update(current_loss.item())
+			current_loss.backward()
 			MAX_GRAD_NORM = 1.0
 			nn.utils.clip_grad_norm_(self.model.parameters(),
 									 MAX_GRAD_NORM)
 			self.optimizer.step()
+			self.scheduler.step()
 			# self.optimizer.zero_grad()
 			accuracy = get_accuracy(output, y)
 			acc.update(accuracy, y.shape[0])
