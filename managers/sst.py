@@ -16,13 +16,8 @@ class SSTDatasetManager:
 		self.pct_usage = pct_usage
 		self.geo = geo
 		self.batch_size = batch_size
-
-		# self.data_dict = get_sst(self.input_length)
-
-		train_set = 500*[(1, 'hello'), (0, 'goodbye')]
-		dev_set = 100*[(1, 'hello'), (0, 'goodbye')]
-		self.data_dict = {'train': train_set, 'dev': dev_set}
-
+		self.data_dict = get_sst(self.input_length)
+		
 		if model_type == 'rnn':
 			assert nlp is not None
 			self.nlp = nlp

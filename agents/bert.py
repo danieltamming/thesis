@@ -30,7 +30,7 @@ class BertAgent:
 		self.cur_epoch = 0
 		self.loss = CrossEntropyLoss()
 
-		self.MAX_EPOCHS = 50
+		self.MAX_EPOCHS = 500
 
 		if data_name == 'sst':
 			self.mngr = SSTDatasetManager(
