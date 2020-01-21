@@ -18,10 +18,11 @@ from utils.metrics import AverageMeter, get_accuracy, EarlyStopper
 from utils.logger import print_and_log
 
 class RnnAgent:
-	def __init__(self, config, data_name, input_length, 
+	def __init__(self, config, data_name, input_length, max_epochs, 
 				 aug_mode, mode, batch_size, pct_usage=1, geo=0.5):
 		self.config = config
 		self.input_length = input_length
+		self.max_epochs = max_epochs
 		self.aug_mode = aug_mode
 		self.mode = mode
 		self.batch_size = batch_size
@@ -31,22 +32,23 @@ class RnnAgent:
 		self.cur_epoch = 0
 		self.loss = CrossEntropyLoss()
 
-		self.MAX_EPOCHS = 500
-
 		nlp = spacy.load(
 			'en_core_web_md', disable=['parser', 'tagger', 'ner'])
 		nlp.vocab.set_vector(
 			0, vector=np.zeros(nlp.vocab.vectors.shape[1]))
 		self.nlp = nlp
 		if data_name == 'sst':
+			self.num_labels = 2
 			self.mngr = SSTDatasetManager(
 				self.config, 'rnn', self.input_length, self.aug_mode,
 				self.pct_usage, self.geo, self.batch_size, self.nlp)
 		elif data_name == 'subj':
+			self.num_labels = 2
 			self.mngr = SubjDatasetManager(
 				self.config, 'rnn', self.input_length, self.aug_mode,
 				self.pct_usage, self.geo, self.batch_size, self.nlp)
 		elif data_name == 'trec':
+			self.num_labels = 6
 			self.mngr = TrecDatasetManager(
 				self.config, 'rnn', self.input_length, self.aug_mode,
 				self.pct_usage, self.geo, self.batch_size, self.nlp)
@@ -62,13 +64,8 @@ class RnnAgent:
 		# 	print_and_log(self.logger, s)
 
 	def initialize_model(self):
-		if isinstance(self.mngr, TrecDatasetManager):
-			# must be better way to trac dataset being used
-			num_classes = 6
-		else:
-			num_classes = 2
 		embed_arr = torch.from_numpy(self.nlp.vocab.vectors.data)
-		self.model = Rnn(self.config, embed_arr, num_classes)
+		self.model = Rnn(self.config, embed_arr, self.num_labels)
 		self.model = self.model.to(self.device)
 		self.optimizer = Adam(self.model.parameters())
 		self.model.train()
@@ -104,7 +101,7 @@ class RnnAgent:
 
 			start_time = time.time()
 
-			for self.cur_epoch in range(self.MAX_EPOCHS):
+			for self.cur_epoch in range(self.max_epochs):
 				self.train_one_epoch()
 				acc,_ = self.validate()
 

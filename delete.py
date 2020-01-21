@@ -12,13 +12,18 @@ from managers.subj import get_subj
 from agents.rnn import RnnAgent
 from agents.bert import BertAgent
 
-
-# thing = RnnAgent('foo', 'sst', 25, None, 'dev', 8)
-thing = BertAgent('foo', 'sst', 25, 4, None, 'dev', 32)
-thing.run()
+for data_name in ['sst', 'trec', 'subj']:
+	for aug_mode in ['synonym', None]:
+		print('\nRNN')
+		thing = RnnAgent('foo', data_name, 25, 1, aug_mode, 'dev', 128)
+		thing.run()
+		print('\nBERT')
+		thing = BertAgent('foo', data_name, 25, 1, aug_mode, 'dev', 32)
+		thing.run()
 exit()
 
-
+thing = RnnAgent('foo', 'sst', 25, 100, None, 'dev', 128)
+thing = BertAgent('foo', 'sst', 25, 4, None, 'dev', 32)
 
 nlp = spacy.load('en_core_web_md', disable=['parser', 'tagger', 'ner'])
 nlp.vocab.set_vector(0, vector=np.zeros(nlp.vocab.vectors.shape[1]))
