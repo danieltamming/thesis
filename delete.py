@@ -29,8 +29,9 @@ from augs.synonym import syn_aug
 # 		thing.run()
 # exit()
 
-thing = RnnAgent('foo', 'sst', 25, 100, 'synonym', 'dev', 128)
+thing = RnnAgent('foo', 'sst', 25, 100, None, 'dev', 128, 0, 0.5)
 # thing = BertAgent('foo', 'sst', 25, 4, 'synonym', 'dev', 32)
+<<<<<<< HEAD
 thing.run()
 
 
@@ -145,3 +146,6 @@ num_same = 0
 for s1, s2 in zip(auged, non_auged):
 	num_same += s1 == s2
 print(num_same/len(auged))
+=======
+thing.run()
+>>>>>>> 89ad571d654379b3fa6ee8e09d19ca0c5dbc0cda
