@@ -5,6 +5,7 @@ import numpy as np
 from torch.utils.data import Dataset, DataLoader
 
 from dataset import BertDataset, RnnDataset
+from augs.trans import Translator
 
 class SSTDatasetManager:
 	def __init__(self, config, model_type, input_length, 
@@ -21,6 +22,10 @@ class SSTDatasetManager:
 		if model_type == 'rnn':
 			assert nlp is not None
 			self.nlp = nlp
+		if aug_mode == 'trans':
+			self.translator = Translator()
+		else:
+			self.translator = None
 
 	def get_dev_ldrs(self):
 		train_dataset = self.get_dataset('train')
@@ -41,7 +46,7 @@ class SSTDatasetManager:
 			geo = None
 		if self.model_type == 'bert':
 			return BertDataset(self.data_dict[split_key], self.input_length, 
-							   aug_mode, geo)
+							   aug_mode, geo, self.translator)
 		elif self.model_type == 'rnn':
 			return RnnDataset(self.data_dict[split_key], self.input_length, 
 							  self.nlp, aug_mode, geo)

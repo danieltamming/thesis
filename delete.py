@@ -11,24 +11,34 @@ from managers.sst import get_sst
 from managers.subj import get_subj
 from agents.rnn import RnnAgent
 from agents.bert import BertAgent
+from augs.synonym import syn_aug
 
-for data_name in ['sst', 'trec', 'subj']:
-	for aug_mode in ['synonym', None]:
-		print('\nRNN')
-		thing = RnnAgent('foo', data_name, 25, 1, aug_mode, 'dev', 128)
-		thing.run()
-		print('\nBERT')
-		thing = BertAgent('foo', data_name, 25, 1, aug_mode, 'dev', 32)
-		thing.run()
-exit()
+# with open('../DownloadedData/sst/train.txt') as f:
+# 	for line in tqdm(f.read().splitlines()):
+# 		example = line.split(maxsplit=1)[1].lstrip()
+# 		syn_aug(example, 0.5)
+# exit()
 
-thing = RnnAgent('foo', 'sst', 25, 100, None, 'dev', 128)
-thing = BertAgent('foo', 'sst', 25, 4, None, 'dev', 32)
+# for data_name in ['sst', 'trec', 'subj']:
+# 	for aug_mode in ['synonym', None]:
+# 		print('\nRNN', data_name, aug_mode)
+# 		thing = RnnAgent('foo', data_name, 25, 1, aug_mode, 'dev', 128)
+# 		thing.run()
+# 		print('\nBERT', data_name, aug_mode)
+# 		thing = BertAgent('foo', data_name, 25, 1, aug_mode, 'dev', 32)
+# 		thing.run()
+# exit()
 
-nlp = spacy.load('en_core_web_md', disable=['parser', 'tagger', 'ner'])
-nlp.vocab.set_vector(0, vector=np.zeros(nlp.vocab.vectors.shape[1]))
-key2row = nlp.vocab.vectors.key2row
-emb = nn.Embedding.from_pretrained(torch.from_numpy(nlp.vocab.vectors.data))
+# thing = RnnAgent('foo', 'sst', 25, 100, 'trans', 'dev', 128)
+thing = BertAgent('foo', 'sst', 25, 4, 'trans', 'dev', 32)
+thing.run()
+
+
+
+# nlp = spacy.load('en_core_web_md', disable=['parser', 'tagger', 'ner'])
+# nlp.vocab.set_vector(0, vector=np.zeros(nlp.vocab.vectors.shape[1]))
+# key2row = nlp.vocab.vectors.key2row
+# emb = nn.Embedding.from_pretrained(torch.from_numpy(nlp.vocab.vectors.data))
 
 non_auged = [example for _, example in get_trec()['train']]
 

@@ -5,12 +5,15 @@ from transformers import BertTokenizer
 from augs.synonym import syn_aug
 
 class BertDataset(Dataset):
-	def __init__(self, data, input_length, aug_mode=None, geo=None):
+	def __init__(self, data, input_length, aug_mode=None, geo=None, translator=None):
 		self.tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
 		self.data = data
 		self.input_length = input_length
 		self.aug_mode = aug_mode
 		self.geo = geo
+		self.translator = translator
+
+		assert self.aug_mode != 'trans' or self.translator is not None, 'Need to pass in translator model.'
 
 	def __len__(self):
 		return len(self.data)
@@ -19,6 +22,8 @@ class BertDataset(Dataset):
 		label, example = self.data[idx]
 		if self.aug_mode == 'synonym':
 			example = syn_aug(example, self.geo)
+		elif self.aug_mode == 'trans':
+			example = self.translator.aug(example, 'de')
 		elif self.aug_mode is not None:
 			raise ValueError('Unrecognized augmentation technique.')
 		return self._to_tokens(example), label

@@ -48,7 +48,7 @@ class BertAgent:
 		else:
 			raise ValueError('Data name not recognized.')
 
-		self.device = (torch.device('cuda:0' if torch.cuda.is_available() 
+		self.device = (torch.device('cuda:1' if torch.cuda.is_available() 
 					   else 'cpu'))
 		# print('Using '+str(int(100*self.pct_usage))+'% of the dataset.')
 		# self.logger.info('Using '+str(self.pct_usage)+' of the dataset.')
