@@ -28,7 +28,7 @@ class SSTDatasetManager:
 	def get_dev_ldrs(self):
 		train_dataset = self.get_dataset('train')
 		train_loader = DataLoader(
-			train_dataset, self.batch_size, pin_memory=True, shuffle=False)
+			train_dataset, self.batch_size, pin_memory=True, shuffle=True)
 		val_dataset = self.get_dataset('dev')
 		val_loader = DataLoader(
 			val_dataset, self.batch_size, pin_memory=True)

@@ -44,7 +44,7 @@ class RnnDataset(Dataset):
 		self.geo = geo
 		self.small_label = small_label
 		self.small_prop = small_prop
-		
+
 		if small_label is None and small_prop is None:
 			self.data = data
 		else:
