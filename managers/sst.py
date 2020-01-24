@@ -5,7 +5,6 @@ import numpy as np
 from torch.utils.data import Dataset, DataLoader
 
 from dataset import BertDataset, RnnDataset
-from augs.trans import Translator
 
 class SSTDatasetManager:
 	def __init__(self, config, model_type, input_length, 
@@ -18,14 +17,13 @@ class SSTDatasetManager:
 		self.geo = geo
 		self.batch_size = batch_size
 		self.data_dict = get_sst(self.input_length)
+
+		self.SMALL_LABEL = 0
+		self.SMALL_PROP = 0.5
 		
 		if model_type == 'rnn':
 			assert nlp is not None
 			self.nlp = nlp
-		if aug_mode == 'trans':
-			self.translator = Translator()
-		else:
-			self.translator = None
 
 	def get_dev_ldrs(self):
 		train_dataset = self.get_dataset('train')
@@ -40,16 +38,20 @@ class SSTDatasetManager:
 		if split_key == 'train':
 			aug_mode = self.aug_mode
 			geo = self.geo
+			SMALL_LABEL = self.SMALL_LABEL
+			SMALL_PROP = self.SMALL_PROP
 		else:
 			# val and test splits have no augmentation
 			aug_mode = None
 			geo = None
+			SMALL_LABEL = None
+			SMALL_PROP = None
 		if self.model_type == 'bert':
 			return BertDataset(self.data_dict[split_key], self.input_length, 
-							   aug_mode, geo, self.translator)
+							   aug_mode, geo)
 		elif self.model_type == 'rnn':
 			return RnnDataset(self.data_dict[split_key], self.input_length, 
-							  self.nlp, aug_mode, geo)
+							  self.nlp, aug_mode, geo, SMALL_LABEL, SMALL_PROP)
 		else:
 			raise ValueError('Unrecognized model type.')
 
