@@ -29,8 +29,8 @@ from augs.synonym import syn_aug
 # 		thing.run()
 # exit()
 
-# thing = RnnAgent('foo', 'sst', 25, 100, 'trans', 'dev', 128)
-thing = BertAgent('foo', 'sst', 25, 4, 'trans', 'dev', 32)
+thing = RnnAgent('foo', 'sst', 25, 100, 'synonym', 'dev', 128)
+# thing = BertAgent('foo', 'sst', 25, 4, 'synonym', 'dev', 32)
 thing.run()
 
 
