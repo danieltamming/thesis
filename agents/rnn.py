@@ -19,16 +19,20 @@ from utils.logger import print_and_log
 
 class RnnAgent:
 	def __init__(self, config, data_name, input_length, max_epochs, 
-				 aug_mode, mode, batch_size, pct_usage=1, geo=0.5):
+				 aug_mode, mode, batch_size, small_label, small_prop,
+				 pct_usage=1, geo=0.5):
 		self.config = config
 		self.input_length = input_length
 		self.max_epochs = max_epochs
 		self.aug_mode = aug_mode
 		self.mode = mode
 		self.batch_size = batch_size
+		self.small_label = small_label
+		self.small_prop = small_prop
 		self.pct_usage = pct_usage
 		self.geo = geo
-		# self.logger = logging.getLogger('RnnAgent')
+
+		self.logger = logging.getLogger('RnnAgent')
 		self.cur_epoch = 0
 		self.loss = CrossEntropyLoss()
 
@@ -41,7 +45,8 @@ class RnnAgent:
 			self.num_labels = 2
 			self.mngr = SSTDatasetManager(
 				self.config, 'rnn', self.input_length, self.aug_mode,
-				self.pct_usage, self.geo, self.batch_size, self.nlp)
+				self.pct_usage, self.geo, self.batch_size, self.nlp,
+				self.small_label, self.small_prop)
 		elif data_name == 'subj':
 			self.num_labels = 2
 			self.mngr = SubjDatasetManager(
@@ -62,7 +67,8 @@ class RnnAgent:
 		# if self.config.aug_mode == 'sr' or self.config.aug_mode == 'ca':
 		# 	s = 'The geometric parameter is '+str(geo)+'.'
 		# 	print_and_log(self.logger, s)
-
+		s = 'Aug mode is {}, geo is {}, small_label is {} small_prop is {}'.format(self.aug_mode, self.geo, self.small_label, self.small_prop)
+		print_and_log(self.logger, s)
 	def initialize_model(self):
 		embed_arr = torch.from_numpy(self.nlp.vocab.vectors.data)
 		self.model = Rnn(self.config, embed_arr, self.num_labels)
@@ -136,9 +142,9 @@ class RnnAgent:
 		'{}'.format(self.cur_epoch, 
 					round(loss.val, 5), 
 					round(acc.val, 5)))
-		# print_and_log(self.logger, s)
+		print_and_log(self.logger, s)
 		# self.logger.info(s)
-		print(s)
+		# print(s)
 
 	def validate(self):
 		self.model.eval()
@@ -158,8 +164,8 @@ class RnnAgent:
 			'{}'.format(self.cur_epoch, 
 						round(loss.val, 5), 
 						round(acc.val, 5)))
-		# print_and_log(self.logger, s)
+		print_and_log(self.logger, s)
 		# self.logger.info(s)
-		print(s)
+		# print(s)
 
 		return acc.val, loss.val
