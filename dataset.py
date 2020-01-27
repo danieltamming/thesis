@@ -1,3 +1,4 @@
+import random
 from itertools import cycle, islice
 
 import torch
@@ -35,8 +36,8 @@ class BertDataset(Dataset):
 		return torch.tensor(tknzd, dtype=torch.long)
 
 class RnnDataset(Dataset):
-	def __init__(self, data, input_length, nlp, aug_mode, 
-				geo=None, small_label=None, small_prop=None):
+	def __init__(self, data, input_length, nlp, aug_mode, geo=None, 
+				 small_label=None, small_prop=None, balance_seed=None):
 		self.input_length = input_length
 		self.nlp = nlp
 		self.key2row = nlp.vocab.vectors.key2row
@@ -48,7 +49,7 @@ class RnnDataset(Dataset):
 		if small_label is None and small_prop is None:
 			self.data = data
 		else:
-			self.data = self._im_re_balance(data)
+			self.data = self._im_re_balance(data, balance_seed)
 
 	def __len__(self):
 		return len(self.data)
@@ -73,7 +74,7 @@ class RnnDataset(Dataset):
 		rows = rows[:self.input_length]
 		return torch.tensor(rows, dtype=torch.long)
 
-	def _im_re_balance(self, data):
+	def _im_re_balance(self, data, balance_seed):
 		'''
 		Remove small_prop proportion of data with label small_label
 		Then duplicate this data, so it will be artificially rebalanced
@@ -82,13 +83,15 @@ class RnnDataset(Dataset):
 		TODO introduce randomness, so its not alwasy the first example
 			 that are kept
 		'''
+		random.seed(balance_seed)
 		other_data = [(label, example) for label, example in data 
 					  if label != self.small_label]
 		label_data = [(label, example) for label, example in data 
 					  if label == self.small_label]
 		print(len(other_data), len(label_data))
 		num_orig = len(label_data)
-		label_data = label_data[:int(self.small_prop*num_orig)]
+		num_keep = int(self.small_prop*num_orig)
+		label_data = random.sample(label_data, num_keep)
 		print(len(other_data), len(label_data))
 		label_data = list(islice(cycle(label_data), num_orig))
 		print(len(other_data), len(label_data))

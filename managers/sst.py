@@ -9,7 +9,7 @@ from dataset import BertDataset, RnnDataset
 class SSTDatasetManager:
 	def __init__(self, config, model_type, input_length, 
 				 aug_mode, pct_usage, geo, batch_size, nlp=None,
-				 small_label=None, small_prop=None):
+				 small_label=None, small_prop=None, balance_seed=None):
 		self.config = config
 		self.model_type = model_type
 		self.input_length = input_length
@@ -19,6 +19,7 @@ class SSTDatasetManager:
 		self.batch_size = batch_size
 		self.small_label = small_label
 		self.small_prop = small_prop
+		self.balance_seed = balance_seed
 		self.data_dict = get_sst(self.input_length)
 		
 		if model_type == 'rnn':

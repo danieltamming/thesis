@@ -20,7 +20,7 @@ from utils.logger import print_and_log
 class RnnAgent:
 	def __init__(self, config, data_name, input_length, max_epochs, 
 				 aug_mode, mode, batch_size, small_label, small_prop,
-				 pct_usage=1, geo=0.5):
+				 balance_seed, pct_usage=1, geo=0.5):
 		self.config = config
 		self.input_length = input_length
 		self.max_epochs = max_epochs
@@ -29,6 +29,7 @@ class RnnAgent:
 		self.batch_size = batch_size
 		self.small_label = small_label
 		self.small_prop = small_prop
+		self.balance_seed = balance_seed
 		self.pct_usage = pct_usage
 		self.geo = geo
 
@@ -46,7 +47,7 @@ class RnnAgent:
 			self.mngr = SSTDatasetManager(
 				self.config, 'rnn', self.input_length, self.aug_mode,
 				self.pct_usage, self.geo, self.batch_size, self.nlp,
-				self.small_label, self.small_prop)
+				self.small_label, self.small_prop, self.balance_seed)
 		elif data_name == 'subj':
 			self.num_labels = 2
 			self.mngr = SubjDatasetManager(

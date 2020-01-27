@@ -4,10 +4,10 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 
 def is_training(line):
-	return line.split(' ', 1)[0] == 'INFO:BiLSTMAgent:Training'
+	return line.split(' ', 1)[0].endswith('Training')
 
 def is_validating(line):
-	return line.split(' ', 1)[0] == 'INFO:BiLSTMAgent:Training'
+	return line.split(' ', 1)[0].endswith('Validating')
 
 def get_acc(line):
 	return float(line.split()[-1])
@@ -132,6 +132,11 @@ def process_gridsearch_log(filename, num_fracs, num_geos):
 	plt.ylabel('Geo')
 	plt.show()
 
+def read_desc(line):
+	aug_mode = line.split('Aug mode is ')[1].split(maxsplit=1)[0].rstrip(',')
+	geo = float(line.split('geo is ')[1].split(maxsplit=1)[0].rstrip(','))
+	return {'aug_mode': aug_mode, 'geo': geo}
+
 if __name__ == "__main__":
 	# filename = 'logs/val_no_aug.log'
 	# plot_val_vary_pct(filename, 1, True, None, None)
@@ -139,8 +144,27 @@ if __name__ == "__main__":
 	# filename = 'logs/val_sr_100p.log'
 	# plot_val_gridsearch(filename, 1, True, True)
 
-	filename = 'logs/val_sr_allpcts.log'
-	percentages = ([0.02, 0.04, 0.06, 0.08] 
-				  + [round(0.1*i,2) for i in range(1,11)])
-	for desired_pct in percentages:
-		plot_val_gridsearch(filename, desired_pct, True, True)
+	# filename = 'logs/val_sr_allpcts.log'
+	# percentages = ([0.02, 0.04, 0.06, 0.08] 
+	# 			  + [round(0.1*i,2) for i in range(1,11)])
+	# for desired_pct in percentages:
+	# 	plot_val_gridsearch(filename, desired_pct, True, True)
+
+	experiments = []
+	with open('logs/balance-05-syn-05.log') as f:
+		line = f.readline()
+		while line:
+			exp_dict = read_desc(line)
+			accs = []
+			line = f.readline()
+			while is_training(line) or is_validating(line):
+				if is_validating(line):
+					accs.append(get_acc(line))
+				line = f.readline()
+			exp_dict['accs'] = np.array(accs)
+			experiments.append(exp_dict)
+	for exp_dict in experiments[1:]:
+		plt.plot(experiments[0]['accs'], label='None')
+		plt.plot(exp_dict['accs'], label='geo {}'.format(exp_dict['geo']))
+		plt.legend()
+		plt.show()
