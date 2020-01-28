@@ -44,21 +44,21 @@ class RnnAgent:
 			0, vector=np.zeros(nlp.vocab.vectors.shape[1]))
 		self.nlp = nlp
 
-		args = [self.config, 'rnn', self.input_length, self.aug_mode,
+		mngr_args = [self.config, 'rnn', self.input_length, self.aug_mode,
 				self.pct_usage, self.geo, self.batch_size]
-		kwargs = {'nlp': self.nlp, 'small_label': self.small_label, 
+		mngr_kwargs = {'nlp': self.nlp, 'small_label': self.small_label, 
 				  'small_prop': self.small_prop, 
 				  'balance_seed': self.balance_seed, 
 				  'undersample': undersample}
 		if data_name == 'sst':
 			self.num_labels = 2
-			self.mngr = SSTDatasetManager(*args, **kwargs)
+			self.mngr = SSTDatasetManager(*mngr_args, **mngr_kwargs)
 		elif data_name == 'subj':
 			self.num_labels = 2
-			self.mngr = SubjDatasetManager(*args, **kwargs)
+			self.mngr = SubjDatasetManager(*mngr_args, **mngr_kwargs)
 		elif data_name == 'trec':
 			self.num_labels = 6
-			self.mngr = TrecDatasetManager(*args, **kwargs)
+			self.mngr = TrecDatasetManager(*mngr_args, **mngr_kwargs)
 		else:
 			raise ValueError('Data name not recognized.')
 
