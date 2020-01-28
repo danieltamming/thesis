@@ -19,7 +19,8 @@ from utils.logger import print_and_log
 class BertAgent:
 	def __init__(self, config, data_name, input_length, max_epochs, 
 				 aug_mode, mode, batch_size, small_label=None, 
-				 small_prop=None, balance_seed=None, pct_usage=1, geo=0.5):
+				 small_prop=None, balance_seed=None, undersample=False, 
+				 pct_usage=1, geo=0.5):
 		self.config = config
 		self.input_length = input_length
 		self.max_epochs = max_epochs
@@ -29,32 +30,27 @@ class BertAgent:
 		self.small_label = small_label
 		self.small_prop = small_prop
 		self.balance_seed = balance_seed
+		self.undersample = undersample
 		self.pct_usage = pct_usage
 		self.geo = geo
 
 		self.logger = logging.getLogger('BertAgent')
 
+		args = [self.config, 'bert', self.input_length, self.aug_mode,
+				self.pct_usage, self.geo, self.batch_size]
+		kwargs = {'small_label': self.small_label, 
+				  'small_prop': self.small_prop,
+				  'balance_seed': self.balance_seed, 
+				  'undersample': undersample}
 		if data_name == 'sst':
 			self.num_labels = 2
-			self.mngr = SSTDatasetManager(
-				self.config, 'bert', self.input_length, self.aug_mode,
-				self.pct_usage, self.geo, self.batch_size, 
-				small_label=self.small_label, small_prop=self.small_prop,
-				balance_seed=self.balance_seed)
+			self.mngr = SSTDatasetManager(*args, **kwargs)
 		elif data_name == 'subj':
 			self.num_labels = 2
-			self.mngr = SubjDatasetManager(
-				self.config, 'bert', self.input_length, self.aug_mode,
-				self.pct_usage, self.geo, self.batch_size, 
-				small_label=self.small_label, small_prop=self.small_prop,
-				balance_seed=self.balance_seed)
+			self.mngr = SubjDatasetManager(*args, **kwargs)
 		elif data_name == 'trec':
 			self.num_labels = 6
-			self.mngr = TrecDatasetManager(
-				self.config, 'bert', self.input_length, self.aug_mode,
-				self.pct_usage, self.geo, self.batch_size, 
-				small_label=self.small_label, small_prop=self.small_prop,
-				balance_seed=self.balance_seed)
+			self.mngr = TrecDatasetManager(*args, **kwargs)
 		else:
 			raise ValueError('Data name not recognized.')
 

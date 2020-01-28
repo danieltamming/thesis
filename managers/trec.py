@@ -30,7 +30,7 @@ def get_trec(input_length):
 				set_data.append((label, example))
 		data_dict[set_name] = set_data
 	# split given training split into training and dev set
-	dev_data, train_data = partition_within_classes(data_dict['train'], 0.1)
+	dev_data, train_data = partition_within_classes(data_dict['train'], 0.1, False)
 	data_dict['dev'] = dev_data
 	data_dict['train'] = train_data
 	return data_dict

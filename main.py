@@ -7,11 +7,11 @@ from utils.parsing import get_config
 
 
 # config = get_config()
-# initialize_logger()
-# thing = RnnAgent('foo', 'sst', 25, 50, 'synonym', 'dev', 128, 
-# 				 small_label=0, small_prop=0.5,
-# 				 balance_seed=1, geo=0.5)
-# thing.run()
+initialize_logger()
+thing = BertAgent('foo', 'sst', 25, 50, 'synonym', 'dev', 128, 
+				 small_label=0, small_prop=0.5,
+				 balance_seed=1, undersample=True, geo=0.5)
+thing.run()
 # exit()
 
 for balance_seed in range(5):
