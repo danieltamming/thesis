@@ -18,33 +18,43 @@ from utils.logger import print_and_log
 
 class BertAgent:
 	def __init__(self, config, data_name, input_length, max_epochs, 
-				 aug_mode, mode, batch_size, pct_usage=1, geo=0.5):
+				 aug_mode, mode, batch_size, small_label=None, 
+				 small_prop=None, balance_seed=None, pct_usage=1, geo=0.5):
 		self.config = config
 		self.input_length = input_length
 		self.max_epochs = max_epochs
 		self.aug_mode = aug_mode
 		self.mode = mode
 		self.batch_size = batch_size
+		self.small_label = small_label
+		self.small_prop = small_prop
+		self.balance_seed = balance_seed
 		self.pct_usage = pct_usage
 		self.geo = geo
-		# self.logger = logging.getLogger('BertAgent')
-		self.cur_epoch = 0
+
+		self.logger = logging.getLogger('BertAgent')
 
 		if data_name == 'sst':
 			self.num_labels = 2
 			self.mngr = SSTDatasetManager(
 				self.config, 'bert', self.input_length, self.aug_mode,
-				self.pct_usage, self.geo, self.batch_size)
+				self.pct_usage, self.geo, self.batch_size, 
+				small_label=self.small_label, small_prop=self.small_prop,
+				balance_seed=self.balance_seed)
 		elif data_name == 'subj':
 			self.num_labels = 2
 			self.mngr = SubjDatasetManager(
 				self.config, 'bert', self.input_length, self.aug_mode,
-				self.pct_usage, self.geo, self.batch_size)
+				self.pct_usage, self.geo, self.batch_size, 
+				small_label=self.small_label, small_prop=self.small_prop,
+				balance_seed=self.balance_seed)
 		elif data_name == 'trec':
 			self.num_labels = 6
 			self.mngr = TrecDatasetManager(
 				self.config, 'bert', self.input_length, self.aug_mode,
-				self.pct_usage, self.geo, self.batch_size)
+				self.pct_usage, self.geo, self.batch_size, 
+				small_label=self.small_label, small_prop=self.small_prop,
+				balance_seed=self.balance_seed)
 		else:
 			raise ValueError('Data name not recognized.')
 
@@ -59,9 +69,7 @@ class BertAgent:
 
 	def initialize_model(self):
 		self.model = BertForSequenceClassification.from_pretrained(
-			'bert-base-uncased', num_labels=self.num_labels)
-
-		self.model = self.model.to(self.device)
+			'bert-base-uncased', num_labels=self.num_labels).to(self.device)
 		# ------------------------------------------------
 		# no_decay = ['bias', 'LayerNorm.weight']
 		# optimizer_grouped_parameters = [
@@ -129,9 +137,6 @@ class BertAgent:
 				# 	break
 
 	def train_one_epoch(self):
-		# -----------------------------------
-		# TEST THAT MDOEL IS ACTUALLY LEARNING
-		# -----------------------------------
 		self.model.train()
 		loss = AverageMeter()
 		acc = AverageMeter()
@@ -139,7 +144,6 @@ class BertAgent:
 			attention_mask = (x > 0).float().to(self.device)
 			x = x.to(self.device)
 			y = y.to(self.device)
-			# self.optimizer.zero_grad()
 			self.model.zero_grad()
 			current_loss, output = self.model(
 				x, attention_mask=attention_mask, labels=y)
@@ -158,9 +162,9 @@ class BertAgent:
 		'{}'.format(self.cur_epoch, 
 					round(loss.val, 5), 
 					round(acc.val, 5)))
-		# print_and_log(self.logger, s)
+		print_and_log(self.logger, s)
 		# self.logger.info(s)
-		print(s)
+		# print(s)
 
 	def validate(self):
 		self.model.eval()
@@ -179,8 +183,8 @@ class BertAgent:
 			'{}'.format(self.cur_epoch, 
 						round(loss.val, 5), 
 						round(acc.val, 5)))
-		# print_and_log(self.logger, s)
+		print_and_log(self.logger, s)
 		# self.logger.info(s)
-		print(s)
+		# print(s)
 
 		return acc.val, loss.val

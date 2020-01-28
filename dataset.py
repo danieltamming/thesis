@@ -8,22 +8,31 @@ from transformers import BertTokenizer
 from augs.synonym import syn_aug
 
 class BertDataset(Dataset):
-	def __init__(self, data, input_length, aug_mode=None, geo=None):
-		self.tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
-		self.data = data
+	def __init__(self, data, input_length, aug_mode, geo=None,
+				 small_label=None, small_prop=None, balance_seed=None):
 		self.input_length = input_length
 		self.aug_mode = aug_mode
 		self.geo = geo
+		self.small_label = small_label
+		self.small_prop = small_prop
+
+		self.tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
+
+		if small_label is None and small_prop is None:
+			self.data = data
+		else:
+			self.data = self._im_re_balance(data, balance_seed)
 
 	def __len__(self):
 		return len(self.data)
 
 	def __getitem__(self, idx):
 		label, example = self.data[idx]
-		if self.aug_mode == 'synonym':
+		# if use case is dataset balancing but this is not small label
+		if self.small_label is not None and self.small_label != label:
+			pass
+		elif self.aug_mode == 'synonym':
 			example = syn_aug(example, self.geo)
-		# elif self.aug_mode == 'trans':
-		# 	example = self.translator.aug(example, 'de')
 		elif self.aug_mode is not None:
 			raise ValueError('Unrecognized augmentation technique.')
 		return self._to_tokens(example), label
@@ -34,6 +43,28 @@ class BertDataset(Dataset):
 		if len(tknzd) < self.input_length:
 			tknzd += (self.input_length - len(tknzd))*[self.tokenizer.pad_token_id]
 		return torch.tensor(tknzd, dtype=torch.long)
+
+	def _im_re_balance(self, data, balance_seed):
+		'''
+		Remove small_prop proportion of data with label small_label
+		Then duplicate this data, so it will be artificially rebalanced
+		With augmentation.
+
+		TODO check it is fit to cases with more than 2 classes
+		'''
+		random.seed(balance_seed)
+		other_data = [(label, example) for label, example in data 
+					  if label != self.small_label]
+		label_data = [(label, example) for label, example in data 
+					  if label == self.small_label]
+		print(len(other_data), len(label_data))
+		num_orig = len(label_data)
+		num_keep = int(self.small_prop*num_orig)
+		label_data = random.sample(label_data, num_keep)
+		print(len(other_data), len(label_data))
+		label_data = list(islice(cycle(label_data), num_orig))
+		print(len(other_data), len(label_data))
+		return other_data + label_data
 
 class RnnDataset(Dataset):
 	def __init__(self, data, input_length, nlp, aug_mode, geo=None, 
@@ -80,8 +111,7 @@ class RnnDataset(Dataset):
 		Then duplicate this data, so it will be artificially rebalanced
 		With augmentation.
 
-		TODO introduce randomness, so its not alwasy the first example
-			 that are kept
+		TODO check it is fit to cases with more than 2 classes
 		'''
 		random.seed(balance_seed)
 		other_data = [(label, example) for label, example in data 

@@ -19,8 +19,8 @@ from utils.logger import print_and_log
 
 class RnnAgent:
 	def __init__(self, config, data_name, input_length, max_epochs, 
-				 aug_mode, mode, batch_size, small_label, small_prop,
-				 balance_seed, pct_usage=1, geo=0.5):
+				 aug_mode, mode, batch_size, small_label=None, 
+				 small_prop=None, balance_seed=None, pct_usage=1, geo=0.5):
 		self.config = config
 		self.input_length = input_length
 		self.max_epochs = max_epochs
@@ -34,7 +34,6 @@ class RnnAgent:
 		self.geo = geo
 
 		self.logger = logging.getLogger('RnnAgent')
-		self.cur_epoch = 0
 		self.loss = CrossEntropyLoss()
 
 		nlp = spacy.load(
@@ -46,20 +45,26 @@ class RnnAgent:
 			self.num_labels = 2
 			self.mngr = SSTDatasetManager(
 				self.config, 'rnn', self.input_length, self.aug_mode,
-				self.pct_usage, self.geo, self.batch_size, self.nlp,
-				self.small_label, self.small_prop, self.balance_seed)
+				self.pct_usage, self.geo, self.batch_size, nlp=self.nlp,
+				small_label=self.small_label, small_prop=self.small_prop, 
+				balance_seed=self.balance_seed)
 		elif data_name == 'subj':
 			self.num_labels = 2
 			self.mngr = SubjDatasetManager(
 				self.config, 'rnn', self.input_length, self.aug_mode,
-				self.pct_usage, self.geo, self.batch_size, self.nlp)
+				self.pct_usage, self.geo, self.batch_size, nlp=self.nlp,
+				small_label=self.small_label, small_prop=self.small_prop, 
+				balance_seed=self.balance_seed)
 		elif data_name == 'trec':
 			self.num_labels = 6
 			self.mngr = TrecDatasetManager(
 				self.config, 'rnn', self.input_length, self.aug_mode,
-				self.pct_usage, self.geo, self.batch_size, self.nlp)
+				self.pct_usage, self.geo, self.batch_size, nlp=self.nlp,
+				small_label=self.small_label, small_prop=self.small_prop, 
+				balance_seed=self.balance_seed)
 		else:
 			raise ValueError('Data name not recognized.')
+
 		self.device = (torch.device('cuda:1' if torch.cuda.is_available() 
 					   else 'cpu'))
 		# print('Using '+str(int(100*self.pct_usage))+'% of the dataset.')
@@ -70,10 +75,11 @@ class RnnAgent:
 		# 	print_and_log(self.logger, s)
 		s = 'Aug mode is {}, geo is {}, small_label is {} small_prop is {}'.format(self.aug_mode, self.geo, self.small_label, self.small_prop)
 		print_and_log(self.logger, s)
+
 	def initialize_model(self):
 		embed_arr = torch.from_numpy(self.nlp.vocab.vectors.data)
-		self.model = Rnn(self.config, embed_arr, self.num_labels)
-		self.model = self.model.to(self.device)
+		self.model = Rnn(
+			self.config, embed_arr, self.num_labels).to(self.device)
 		self.optimizer = Adam(self.model.parameters())
 		self.model.train()
 
@@ -127,7 +133,6 @@ class RnnAgent:
 		loss = AverageMeter()
 		acc = AverageMeter()
 		for x, y in tqdm(self.train_loader):
-			# x = x.float()
 			x = x.to(self.device)
 			y = y.to(self.device)
 			output = self.model(x)
@@ -149,11 +154,9 @@ class RnnAgent:
 
 	def validate(self):
 		self.model.eval()
-		
 		loss = AverageMeter()
 		acc = AverageMeter()
 		for x, y in tqdm(self.val_loader):
-			# x = x.float()
 			x = x.to(self.device)
 			y = y.to(self.device)
 			output = self.model(x)
