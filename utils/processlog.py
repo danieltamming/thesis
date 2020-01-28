@@ -134,8 +134,11 @@ def process_gridsearch_log(filename, num_fracs, num_geos):
 
 def read_desc(line):
 	aug_mode = line.split('Aug mode is ')[1].split(maxsplit=1)[0].rstrip(',')
-	geo = float(line.split('geo is ')[1].split(maxsplit=1)[0].rstrip(','))
-	return {'aug_mode': aug_mode, 'geo': geo}
+	if aug_mode == 'None':
+		geo = 1.0
+	else:
+		geo = float(line.split('geo is ')[1].split(maxsplit=1)[0].rstrip(','))
+	return geo
 
 if __name__ == "__main__":
 	# filename = 'logs/val_no_aug.log'
@@ -150,21 +153,26 @@ if __name__ == "__main__":
 	# for desired_pct in percentages:
 	# 	plot_val_gridsearch(filename, desired_pct, True, True)
 
-	experiments = []
-	with open('logs/balance-05-syn-05.log') as f:
+	experiments = {}
+	with open('logs/balance-05-syn-05-avg.log') as f:
 		line = f.readline()
 		while line:
-			exp_dict = read_desc(line)
+			geo = read_desc(line)
 			accs = []
 			line = f.readline()
 			while is_training(line) or is_validating(line):
 				if is_validating(line):
 					accs.append(get_acc(line))
 				line = f.readline()
-			exp_dict['accs'] = np.array(accs)
-			experiments.append(exp_dict)
-	for exp_dict in experiments[1:]:
-		plt.plot(experiments[0]['accs'], label='None')
-		plt.plot(exp_dict['accs'], label='geo {}'.format(exp_dict['geo']))
+			if geo not in experiments:
+				experiments[geo] = np.array(accs)
+			else:
+				experiments[geo] = np.vstack([experiments[geo], np.array(accs)])
+	averages = {geo: mat.mean(0) for geo, mat in experiments.items()}
+	no_aug_average = averages[1]
+	del averages[1]
+	for geo, vec in averages.items():
+		plt.plot(no_aug_average, label='None')
+		plt.plot(vec, label='geo {}'.format(geo))
 		plt.legend()
 		plt.show()
