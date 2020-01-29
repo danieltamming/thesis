@@ -71,7 +71,10 @@ class RnnAgent:
 		# if self.config.aug_mode == 'sr' or self.config.aug_mode == 'ca':
 		# 	s = 'The geometric parameter is '+str(geo)+'.'
 		# 	print_and_log(self.logger, s)
-		s = 'Aug mode is {}, geo is {}, small_label is {} small_prop is {}'.format(self.aug_mode, self.geo, self.small_label, self.small_prop)
+		s = ('Dataset is {}, undersample is {}, aug mode is {}, geo is {},'
+			' small_label is {} small_prop is {}').format(
+				data_name, self.undersample, self.aug_mode, 
+				self.geo, self.small_label, self.small_prop)
 		print_and_log(self.logger, s)
 
 	def initialize_model(self):
