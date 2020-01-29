@@ -10,7 +10,8 @@ from dataset import BertDataset, RnnDataset
 class DatasetManager:
 	def __init__(self, data_func, config, model_type, input_length, 
 				 aug_mode, pct_usage, geo, batch_size, nlp=None,
-				 small_label=None, small_prop=None, balance_seed=None):
+				 small_label=None, small_prop=None, balance_seed=None,
+				 undersample=False):
 		self.config = config
 		self.model_type = model_type
 		self.input_length = input_length
@@ -21,6 +22,7 @@ class DatasetManager:
 		self.small_label = small_label
 		self.small_prop = small_prop
 		self.balance_seed = balance_seed
+		self.undersample = undersample
 		self.data_dict = data_func(self.input_length)
 
 		if model_type == 'rnn':
@@ -52,11 +54,13 @@ class DatasetManager:
 			return BertDataset(self.data_dict[split_key], self.input_length, 
 							  aug_mode, geo=geo, small_label=small_label, 
 							  small_prop=small_prop,
-							  balance_seed=self.balance_seed)
+							  balance_seed=self.balance_seed,
+							  undersample=self.undersample)
 		elif self.model_type == 'rnn':
 			return RnnDataset(self.data_dict[split_key], self.input_length, 
 							  self.nlp, aug_mode, geo=geo, 
 							  small_label=small_label, small_prop=small_prop,
-							  balance_seed=self.balance_seed)
+							  balance_seed=self.balance_seed,
+							  undersample=self.undersample)
 		else:
 			raise ValueError('Unrecognized model type.')

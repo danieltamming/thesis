@@ -26,7 +26,7 @@ def get_subj(input_length):
 			example = ' '.join(example.split()[:input_length])
 			all_data.append((label, example))
 	# let 10% of data be the development set
-	dev_data, train_data = partition_within_classes(all_data, 0.1)
+	dev_data, train_data = partition_within_classes(all_data, 0.1, False)
 	return {'dev': dev_data, 'train': train_data}
 
 # class SubjDatasetManager:

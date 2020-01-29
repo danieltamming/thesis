@@ -9,7 +9,8 @@ from augs.synonym import syn_aug
 
 class BertDataset(Dataset):
 	def __init__(self, data, input_length, aug_mode, geo=None,
-				 small_label=None, small_prop=None, balance_seed=None):
+				 small_label=None, small_prop=None, balance_seed=None,
+				 undersample=False):
 		self.input_length = input_length
 		self.aug_mode = aug_mode
 		self.geo = geo
@@ -21,7 +22,7 @@ class BertDataset(Dataset):
 		if small_label is None and small_prop is None:
 			self.data = data
 		else:
-			self.data = self._im_re_balance(data, balance_seed)
+			self.data = self._im_re_balance(data, balance_seed, undersample)
 
 	def __len__(self):
 		return len(self.data)
@@ -44,11 +45,11 @@ class BertDataset(Dataset):
 			tknzd += (self.input_length - len(tknzd))*[self.tokenizer.pad_token_id]
 		return torch.tensor(tknzd, dtype=torch.long)
 
-	def _im_re_balance(self, data, balance_seed):
+	def _im_re_balance(self, data, balance_seed, undersample):
 		'''
 		Remove small_prop proportion of data with label small_label
-		Then duplicate this data, so it will be artificially rebalanced
-		With augmentation.
+		Then either duplicate this data, so it will be artificially rebalanced
+		With augmentation, or undersample the data.
 
 		TODO check it is fit to cases with more than 2 classes
 		'''
@@ -62,13 +63,32 @@ class BertDataset(Dataset):
 		num_keep = int(self.small_prop*num_orig)
 		label_data = random.sample(label_data, num_keep)
 		print(len(other_data), len(label_data))
-		label_data = list(islice(cycle(label_data), num_orig))
+		if undersample:
+			other_data = self._undersample(other_data, num_keep)
+		else:
+			label_data = list(islice(cycle(label_data), num_orig))
 		print(len(other_data), len(label_data))
 		return other_data + label_data
 
+	def _undersample(self, other_data, num_keep):
+		label_dict = {}
+		for label, example in other_data:
+			if label in label_dict:
+				label_dict[label].append((label, example))
+			else:
+				label_dict[label] = [(label, example)]
+		res_data = []
+		for data_list in label_dict.values():
+			if len(data_list) <= num_keep:
+				res_data.extend(data_list)
+			else:
+				res_data.extend(random.sample(data_list, num_keep))
+		return res_data
+
 class RnnDataset(Dataset):
 	def __init__(self, data, input_length, nlp, aug_mode, geo=None, 
-				 small_label=None, small_prop=None, balance_seed=None):
+				 small_label=None, small_prop=None, balance_seed=None,
+				 undersample=False):
 		self.input_length = input_length
 		self.nlp = nlp
 		self.key2row = nlp.vocab.vectors.key2row
@@ -80,7 +100,7 @@ class RnnDataset(Dataset):
 		if small_label is None and small_prop is None:
 			self.data = data
 		else:
-			self.data = self._im_re_balance(data, balance_seed)
+			self.data = self._im_re_balance(data, balance_seed, undersample)
 
 	def __len__(self):
 		return len(self.data)
@@ -105,7 +125,7 @@ class RnnDataset(Dataset):
 		rows = rows[:self.input_length]
 		return torch.tensor(rows, dtype=torch.long)
 
-	def _im_re_balance(self, data, balance_seed):
+	def _im_re_balance(self, data, balance_seed, undersample):
 		'''
 		Remove small_prop proportion of data with label small_label
 		Then duplicate this data, so it will be artificially rebalanced
@@ -123,6 +143,24 @@ class RnnDataset(Dataset):
 		num_keep = int(self.small_prop*num_orig)
 		label_data = random.sample(label_data, num_keep)
 		print(len(other_data), len(label_data))
-		label_data = list(islice(cycle(label_data), num_orig))
+		if undersample:
+			other_data = self._undersample(other_data, num_keep)
+		else:
+			label_data = list(islice(cycle(label_data), num_orig))
 		print(len(other_data), len(label_data))
 		return other_data + label_data
+
+	def _undersample(self, other_data, num_keep):
+		label_dict = {}
+		for label, example in other_data:
+			if label in label_dict:
+				label_dict[label].append((label, example))
+			else:
+				label_dict[label] = [(label, example)]
+		res_data = []
+		for data_list in label_dict.values():
+			if len(data_list) <= num_keep:
+				res_data.extend(data_list)
+			else:
+				res_data.extend(random.sample(data_list, num_keep))
+		return res_data
