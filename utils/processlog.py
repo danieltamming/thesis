@@ -154,7 +154,7 @@ if __name__ == "__main__":
 	# 	plot_val_gridsearch(filename, desired_pct, True, True)
 
 	experiments = {}
-	with open('logs/balance-05-syn-05-avg.log') as f:
+	with open('logs/balance-05-syn-05-avg-seed.log') as f:
 		line = f.readline()
 		while line:
 			geo = read_desc(line)
