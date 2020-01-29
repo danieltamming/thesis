@@ -3,10 +3,10 @@ import os
 from torch.utils.data import DataLoader
 
 from dataset import BertDataset, RnnDataset
-from managers.parent import DatasetManager
+from managers.parent import DatasetManagerBase
 from utils.data import read_no_aug, read_trans_aug, partition_within_classes
 
-class SubjDatasetManager(DatasetManager):
+class SubjDatasetManager(DatasetManagerBase):
 	def __init__(self, *args, **kwargs):
 		super().__init__(get_subj, *args, **kwargs)
 

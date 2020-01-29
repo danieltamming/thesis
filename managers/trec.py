@@ -3,10 +3,10 @@ import os
 from torch.utils.data import DataLoader
 
 from dataset import BertDataset, RnnDataset
-from managers.parent import DatasetManager
+from managers.parent import DatasetManagerBase
 from utils.data import partition_within_classes, read_no_aug, read_trans_aug
 
-class TrecDatasetManager(DatasetManager):
+class TrecDatasetManager(DatasetManagerBase):
 	def __init__(self, *args, **kwargs):
 		super().__init__(get_trec, *args, **kwargs)
 

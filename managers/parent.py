@@ -7,7 +7,7 @@ from torch.utils.data import DataLoader
 from utils.data import partition_within_classes
 from dataset import BertDataset, RnnDataset
 
-class DatasetManager:
+class DatasetManagerBase:
 	def __init__(self, data_func, config, model_type, input_length, 
 				 aug_mode, pct_usage, geo, batch_size, nlp=None,
 				 small_label=None, small_prop=None, balance_seed=None,

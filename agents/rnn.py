@@ -112,7 +112,7 @@ class RnnAgent:
 
 			start_time = time.time()
 
-			for self.cur_epoch in range(self.max_epochs):
+			for self.cur_epoch in tqdm(range(self.max_epochs)):
 				self.train_one_epoch()
 				acc,_ = self.validate()
 
@@ -130,7 +130,8 @@ class RnnAgent:
 		self.model.train()
 		loss = AverageMeter()
 		acc = AverageMeter()
-		for x, y in tqdm(self.train_loader):
+		# for x, y in tqdm(self.train_loader):
+		for x, y in self.train_loader:
 			x = x.to(self.device)
 			y = y.to(self.device)
 			output = self.model(x)
@@ -154,7 +155,8 @@ class RnnAgent:
 		self.model.eval()
 		loss = AverageMeter()
 		acc = AverageMeter()
-		for x, y in tqdm(self.val_loader):
+		# for x, y in tqdm(self.val_loader):
+		for x, y in self.val_loader:
 			x = x.to(self.device)
 			y = y.to(self.device)
 			output = self.model(x)
