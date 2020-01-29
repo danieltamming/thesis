@@ -8,7 +8,7 @@ from utils.parsing import get_config
 
 # config = get_config()
 initialize_logger()
-thing = BertAgent('foo', 'trec', 25, 50, 'synonym', 'dev', 128, 
+thing = RnnAgent('foo', 'trec', 25, 50, 'synonym', 'dev', 128, 
 				 small_label=0, small_prop=0.5,
 				 balance_seed=1, undersample=False, geo=0.5)
 # TRY UNDERSAMPLE=TRUE
