@@ -1,6 +1,6 @@
 import os
 import random
-import pickle
+from collections import Counter
 
 import numpy as np
 
@@ -40,3 +40,21 @@ def partition_within_classes(data, pct_in_A, make_A_balanced):
 			A.extend(arr[:A_label_size])
 			B.extend(arr[A_label_size:])
 		return A, B
+
+def read_trans_aug(set_path):
+	set_data = []
+	with open(set_path) as f:
+		line = f.readline().strip('\n')
+		while line:
+			label = int(line)
+			example = f.readline().strip('\n')
+			aug_counter = Counter()
+			line = f.readline().strip('\n')
+			while line:
+				count, aug_example = line.split(maxsplit=1)
+				count = int(count)
+				aug_counter[aug_example] = count
+				line = f.readline().strip('\n')
+			set_data.append((label, example, aug_counter))
+			line = f.readline().strip('\n')
+	return set_data

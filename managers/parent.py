@@ -23,7 +23,7 @@ class DatasetManager:
 		self.small_prop = small_prop
 		self.balance_seed = balance_seed
 		self.undersample = undersample
-		self.data_dict = data_func(self.input_length)
+		self.data_dict = data_func(self.input_length, self.aug_mode)
 
 		if model_type == 'rnn':
 			assert nlp is not None

@@ -1,9 +1,19 @@
 import os
+import random
+import itertools
 import string
 from collections import Counter
 
 from tqdm import tqdm
 import torch
+
+def trans_aug(example, aug_counter, geo):
+	# keep example with probability geo
+	if random.random() < geo or not aug_counter:
+		return example
+	else:
+		i = random.randrange(sum(aug_counter.values()))
+		return next(itertools.islice(aug_counter.elements(), i, None))
 
 class Translator():
 	def __init__(self):
@@ -86,14 +96,15 @@ def gen_save_trans(downloaded_dir, data_name, en2de, de2en):
 					g.write(str(count) + ' ' + example_aug + '\n')
 				g.write('\n')
 
-device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
-en2de = torch.hub.load(
-	'pytorch/fairseq', 'transformer.wmt19.en-de.single_model', 
-	tokenizer='moses', bpe='fastbpe').to(device)
-de2en = torch.hub.load(
-	'pytorch/fairseq', 'transformer.wmt19.de-en.single_model',
-	tokenizer='moses', bpe='fastbpe').to(device)
+if __name__ == '__main__':
+	device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
+	en2de = torch.hub.load(
+		'pytorch/fairseq', 'transformer.wmt19.en-de.single_model', 
+		tokenizer='moses', bpe='fastbpe').to(device)
+	de2en = torch.hub.load(
+		'pytorch/fairseq', 'transformer.wmt19.de-en.single_model',
+		tokenizer='moses', bpe='fastbpe').to(device)
 
-downloaded_dir = '../DownloadedData/'
-for data_name in ['sst', 'subj', 'trec']:
-	gen_save_trans(downloaded_dir, data_name, en2de, de2en)
+	downloaded_dir = '../DownloadedData/'
+	for data_name in ['sst', 'subj', 'trec']:
+		gen_save_trans(downloaded_dir, data_name, en2de, de2en)

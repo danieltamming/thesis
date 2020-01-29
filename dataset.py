@@ -6,6 +6,7 @@ from torch.utils.data import Dataset
 from transformers import BertTokenizer
 
 from augs.synonym import syn_aug
+from augs.trans import trans_aug
 
 class BertDataset(Dataset):
 	def __init__(self, data, input_length, aug_mode, geo=None,
@@ -16,6 +17,7 @@ class BertDataset(Dataset):
 		self.geo = geo
 		self.small_label = small_label
 		self.small_prop = small_prop
+		self.undersample = undersample
 
 		self.tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
 
@@ -28,12 +30,14 @@ class BertDataset(Dataset):
 		return len(self.data)
 
 	def __getitem__(self, idx):
-		label, example = self.data[idx]
+		label, example, aug_counter = self.data[idx]
 		# if use case is dataset balancing but this is not small label
 		if self.small_label is not None and self.small_label != label:
 			pass
 		elif self.aug_mode == 'synonym':
 			example = syn_aug(example, self.geo)
+		elif self.aug_mode == 'trans':
+			example = trans_aug(example, aug_counter, self.geo)
 		elif self.aug_mode is not None:
 			raise ValueError('Unrecognized augmentation technique.')
 		return self._to_tokens(example), label
@@ -54,10 +58,10 @@ class BertDataset(Dataset):
 		TODO check it is fit to cases with more than 2 classes
 		'''
 		random.seed(balance_seed)
-		other_data = [(label, example) for label, example in data 
-					  if label != self.small_label]
-		label_data = [(label, example) for label, example in data 
-					  if label == self.small_label]
+		other_data = [(label, example, aug_counter) for label, example, aug_counter
+					  in data if label != self.small_label]
+		label_data = [(label, example, aug_counter) for label, example, aug_counter
+					  in data if label == self.small_label]
 		print(len(other_data), len(label_data))
 		num_orig = len(label_data)
 		num_keep = int(self.small_prop*num_orig)
@@ -72,11 +76,12 @@ class BertDataset(Dataset):
 
 	def _undersample(self, other_data, num_keep):
 		label_dict = {}
-		for label, example in other_data:
+		for tup in other_data:
+			label = tup[0]
 			if label in label_dict:
-				label_dict[label].append((label, example))
+				label_dict[label].append(tup)
 			else:
-				label_dict[label] = [(label, example)]
+				label_dict[label] = [tup]
 		res_data = []
 		for data_list in label_dict.values():
 			if len(data_list) <= num_keep:
@@ -96,6 +101,7 @@ class RnnDataset(Dataset):
 		self.geo = geo
 		self.small_label = small_label
 		self.small_prop = small_prop
+		self.undersample = undersample
 
 		if small_label is None and small_prop is None:
 			self.data = data
@@ -106,12 +112,14 @@ class RnnDataset(Dataset):
 		return len(self.data)
 
 	def __getitem__(self, idx):
-		label, example = self.data[idx]
+		label, example, aug_counter = self.data[idx]
 		# if use case is dataset balancing but this is not small label
 		if self.small_label is not None and self.small_label != label:
 			pass
 		elif self.aug_mode == 'synonym':
 			example = syn_aug(example, self.geo)
+		elif self.aug_mode == 'trans':
+			example = trans_aug(example, aug_counter, self.geo)
 		elif self.aug_mode is not None:
 			raise ValueError('Unrecognized augmentation technique.')
 		return self._to_rows(example), label
@@ -128,16 +136,16 @@ class RnnDataset(Dataset):
 	def _im_re_balance(self, data, balance_seed, undersample):
 		'''
 		Remove small_prop proportion of data with label small_label
-		Then duplicate this data, so it will be artificially rebalanced
-		With augmentation.
+		Then either duplicate this data, so it will be artificially rebalanced
+		With augmentation, or undersample the data.
 
 		TODO check it is fit to cases with more than 2 classes
 		'''
 		random.seed(balance_seed)
-		other_data = [(label, example) for label, example in data 
-					  if label != self.small_label]
-		label_data = [(label, example) for label, example in data 
-					  if label == self.small_label]
+		other_data = [(label, example, aug_counter) for label, example, aug_counter
+					  in data if label != self.small_label]
+		label_data = [(label, example, aug_counter) for label, example, aug_counter
+					  in data if label == self.small_label]
 		print(len(other_data), len(label_data))
 		num_orig = len(label_data)
 		num_keep = int(self.small_prop*num_orig)
@@ -152,11 +160,12 @@ class RnnDataset(Dataset):
 
 	def _undersample(self, other_data, num_keep):
 		label_dict = {}
-		for label, example in other_data:
+		for tup in other_data:
+			label = tup[0]
 			if label in label_dict:
-				label_dict[label].append((label, example))
+				label_dict[label].append(tup)
 			else:
-				label_dict[label] = [(label, example)]
+				label_dict[label] = [tup]
 		res_data = []
 		for data_list in label_dict.values():
 			if len(data_list) <= num_keep:
