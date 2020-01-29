@@ -154,7 +154,9 @@ if __name__ == "__main__":
 	# 	plot_val_gridsearch(filename, desired_pct, True, True)
 
 	experiments = {}
-	with open('logs/balance-05-syn-05-avg-seed.log') as f:
+	# filename = 'logs/balance-05-syn-05-avg-seed.log'
+	filename = 'logs/balance-05-trans-avg-seed.log'
+	with open(filename) as f:
 		line = f.readline()
 		while line:
 			geo = read_desc(line)
@@ -172,6 +174,7 @@ if __name__ == "__main__":
 	no_aug_average = averages[1]
 	del averages[1]
 	for geo, vec in averages.items():
+		plt.ylim((0.76, 0.82))
 		plt.plot(no_aug_average, label='None')
 		plt.plot(vec, label='geo {}'.format(geo))
 		plt.legend()

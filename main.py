@@ -23,7 +23,7 @@ for balance_seed in range(5):
 	# 				 small_label=0, small_prop=0.5, 
 	# 				 balance_seed=balance_seed)
 	# thing.run()
-	for geo in [0.1, 0.3, 0.5, 0.7]:
+	for geo in [0.6, 0.8]:
 		initialize_logger()
 		thing = RnnAgent('foo', 'sst', 25, num_epochs, 'trans', 'dev', 128, 
 						 small_label=0, small_prop=0.5, 

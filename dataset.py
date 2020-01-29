@@ -37,10 +37,8 @@ class DatasetBase(Dataset):
 		TODO check it is fit to cases with more than 2 classes
 		'''
 		random.seed(balance_seed)
-		other_data = [(label, example, aug_counter) for label, example, aug_counter
-					  in data if label != self.small_label]
-		label_data = [(label, example, aug_counter) for label, example, aug_counter
-					  in data if label == self.small_label]
+		other_data = [tup for tup in data if tup[0] != self.small_label]
+		label_data = [tup for tup in data if tup[0] == self.small_label]
 		print(len(other_data), len(label_data))
 		num_orig = len(label_data)
 		num_keep = int(self.small_prop*num_orig)
