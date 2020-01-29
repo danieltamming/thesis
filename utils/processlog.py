@@ -173,7 +173,7 @@ if __name__ == "__main__":
 	averages = {geo: mat.mean(0) for geo, mat in experiments.items()}
 	no_aug_average = averages[1]
 	del averages[1]
-	for geo, vec in averages.items():
+	for geo, vec in sorted(averages.items()):
 		plt.ylim((0.76, 0.82))
 		plt.plot(no_aug_average, label='None')
 		plt.plot(vec, label='geo {}'.format(geo))
