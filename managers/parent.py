@@ -32,12 +32,10 @@ class DatasetManagerBase:
 	def get_dev_ldrs(self):
 		train_dataset = self.get_dataset('train')
 		train_loader = DataLoader(
-			train_dataset, self.batch_size, 
-			pin_memory=True, num_workers=8, shuffle=True)
+			train_dataset, self.batch_size, pin_memory=True, shuffle=True)
 		val_dataset = self.get_dataset('dev')
 		val_loader = DataLoader(
-			val_dataset, self.batch_size, 
-			pin_memory=True, num_workers=8)
+			val_dataset, self.batch_size, pin_memory=True)
 		return train_loader, val_loader
 
 	def get_dataset(self, split_key):
