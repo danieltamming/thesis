@@ -12,17 +12,19 @@ from agents.bert import BertAgent
 
 from utils.logger import initialize_logger
 
-initialize_logger(name='exp_syn_sst')
+this_script_name = os.path.basename(__file__).split('.')[0]
+
+logger = initialize_logger(this_script_name)
 num_epochs = 100
 for balance_seed in range(5):
 	for undersample in [False, True]:
-		agent = RnnAgent('foo', 'sst', 25, num_epochs, None, 'dev', 128, 
+		agent = RnnAgent('foo', logger, 'sst', 25, num_epochs, None, 'dev', 128, 
 						 small_label=0, small_prop=0.5, 
 						 balance_seed=balance_seed, undersample=undersample)
 		agent.run()
 	for geo in np.arange(0.3, 1.0, 0.1):
 		geo = round(geo, 2)
-		agent = RnnAgent('foo', 'sst', 25, num_epochs, 'synonym', 'dev', 128, 
+		agent = RnnAgent('foo', logger, 'sst', 25, num_epochs, 'synonym', 'dev', 128, 
 						 small_label=0, small_prop=0.5, 
 						 balance_seed=balance_seed, geo=geo)
 		agent.run()

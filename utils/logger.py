@@ -10,7 +10,8 @@ def get_log_name(name):
 	folder_name = 'logs/'+name
 	if not os.path.exists(folder_name): 
 		os.mkdir(folder_name)
-	log_name_list = os.listdir(folder_name)
+	log_name_list = [s for s in os.listdir(folder_name) 
+					 if s.split('.')[0].isdigit()]
 	if not log_name_list:
 		n = 0
 	else:

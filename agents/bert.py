@@ -17,12 +17,13 @@ from utils.metrics import AverageMeter, get_accuracy, EarlyStopper
 from utils.logger import print_and_log
 
 class BertAgent:
-	def __init__(self, config, data_name, input_length, max_epochs, 
+	def __init__(self, config, logger, data_name, input_length, max_epochs, 
 				 aug_mode, mode, batch_size, small_label=None, 
 				 small_prop=None, balance_seed=None, undersample=False, 
 				 pct_usage=1, geo=0.5):
 		assert not (undersample and aug_mode is not None), 'Cant undersample and augment'
 		self.config = config
+		self.logger = logger
 		self.input_length = input_length
 		self.max_epochs = max_epochs
 		self.aug_mode = aug_mode
@@ -34,8 +35,6 @@ class BertAgent:
 		self.undersample = undersample
 		self.pct_usage = pct_usage
 		self.geo = geo
-
-		self.logger = logging.getLogger('BertAgent')
 
 		mngr_args = [self.config, 'bert', self.input_length, self.aug_mode,
 				self.pct_usage, self.geo, self.batch_size]
