@@ -72,9 +72,9 @@ class RnnAgent:
 		# 	s = 'The geometric parameter is '+str(geo)+'.'
 		# 	print_and_log(self.logger, s)
 		s = ('Dataset is {}, undersample is {}, aug mode is {}, geo is {},'
-			' small_label is {} small_prop is {}').format(
-				data_name, self.undersample, self.aug_mode, 
-				self.geo, self.small_label, self.small_prop)
+			' small_label is {} small_prop is {}, balance_seed is {}').format(
+				data_name, self.undersample, self.aug_mode, self.geo, 
+				self.small_label, self.small_prop, self.balance_seed)
 		print_and_log(self.logger, s)
 
 	def initialize_model(self):
