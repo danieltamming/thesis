@@ -8,8 +8,7 @@ def get_log_name(name, seed):
 	the next log. 
 	'''
 	folder_name = 'logs/'+name
-	if not os.path.exists(folder_name): 
-		os.mkdir(folder_name)
+	os.makedirs(folder_name, exist_ok=True)
 	log_name_list = [s for s in os.listdir(folder_name) 
 					 if 'seed_{}'.format(seed) in s]
 	if not log_name_list:

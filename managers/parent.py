@@ -33,11 +33,11 @@ class DatasetManagerBase:
 		train_dataset = self.get_dataset('train')
 		train_loader = DataLoader(
 			train_dataset, self.batch_size, 
-			pin_memory=True, num_workers=8, shuffle=True)
+			pin_memory=True, num_workers=0, shuffle=True)
 		val_dataset = self.get_dataset('dev')
 		val_loader = DataLoader(
 			val_dataset, self.batch_size, 
-			pin_memory=True, num_workers=8)
+			pin_memory=True, num_workers=0)
 		return train_loader, val_loader
 
 	def get_dataset(self, split_key):
