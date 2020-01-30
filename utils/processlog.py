@@ -133,7 +133,7 @@ def process_gridsearch_log(filename, num_fracs, num_geos):
 	plt.show()
 
 def read_desc(line):
-	aug_mode = line.split('Aug mode is ')[1].split(maxsplit=1)[0].rstrip(',')
+	aug_mode = line.split('aug mode is ')[1].split(maxsplit=1)[0].rstrip(',')
 	if aug_mode == 'None':
 		geo = 1.0
 	else:
@@ -155,9 +155,13 @@ if __name__ == "__main__":
 
 	experiments = {}
 	# filename = 'logs/balance-05-syn-05-avg-seed.log'
-	filename = 'logs/balance-05-trans-avg-seed.log'
+	# filename = 'logs/balance-05-trans-avg-seed.log'
+	# filename = 'logs/exp_trans_subj.log'
+	filename = 'logs/exp_trans_sst.log'
 	with open(filename) as f:
 		line = f.readline()
+		if 'RUN START' in line:
+			line = f.readline()
 		while line:
 			geo = read_desc(line)
 			accs = []
@@ -174,8 +178,11 @@ if __name__ == "__main__":
 	no_aug_average = averages[1]
 	del averages[1]
 	for geo, vec in sorted(averages.items()):
+		# plt.ylim((0.87,0.93))
 		plt.ylim((0.76, 0.82))
 		plt.plot(no_aug_average, label='None')
+		plt.hlines(no_aug_average[10:].mean(), 0, 100, color='b', linestyle='--')
 		plt.plot(vec, label='geo {}'.format(geo))
+		plt.hlines(vec[10:].mean(), 0, 100, color='tab:orange', linestyle='--')
 		plt.legend()
 		plt.show()
