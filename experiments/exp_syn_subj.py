@@ -19,9 +19,9 @@ this_script_name = os.path.basename(__file__).split('.')[0]
 num_epochs = 100
 
 def experiment(balance_seed):
+	logger = initialize_logger(this_script_name, balance_seed)
 	for small_label in [0, 1]:
 		for undersample in [False, True]:
-			logger = initialize_logger(this_script_name, balance_seed)
 			agent = RnnAgent('foo', logger, 'subj', 25, num_epochs, None, 'dev', 128, 
 							 small_label=small_label, small_prop=0.5, 
 							 balance_seed=balance_seed, undersample=undersample)
