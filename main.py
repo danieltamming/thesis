@@ -1,21 +1,23 @@
+import os
+
 import numpy as np
 
-# from agents.bilstm import BiLSTMAgent
 from agents.rnn import RnnAgent
 from agents.bert import BertAgent
-
 from utils.logger import initialize_logger
 from utils.parsing import get_config
 
 
 # config = get_config()
-initialize_logger()
-thing = RnnAgent('foo', 'sst', 25, 50, None, 'dev', 128, 
+this_script_name = os.path.basename(__file__).split('.')[0]
+balance_seed = 0
+logger = initialize_logger(this_script_name, balance_seed)
+thing = RnnAgent('foo', logger, 'sst', 25, 50, None, 'dev', 128, 
 				 small_label=0, small_prop=0.5,
 				 balance_seed=1, undersample=True)
 # TRY UNDERSAMPLE=TRUE
 thing.run()
-# exit()
+exit()
 
 
 num_epochs = 100
