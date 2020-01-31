@@ -105,11 +105,7 @@ class BertAgent:
 			for self.cur_epoch in range(self.max_epochs):
 				# -----------------------------
 				acc, _ = self.validate()
-				s = ('Training epoch {} | loss: {} - accuracy: ' 
-					'{}'.format(self.cur_epoch, 
-					round(loss.val, 5), 
-					round(acc.val, 5)))
-				print(s)
+				print(acc)
 				# -----------------------------
 				self.train_one_epoch()
 				acc,_ = self.validate()
