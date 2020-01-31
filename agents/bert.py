@@ -58,7 +58,7 @@ class BertAgent:
 		self.device = (torch.device('cuda:1' if torch.cuda.is_available() 
 					   else 'cpu'))
 		s = ('Model is Bert, dataset is {}, undersample is {}, aug mode is {}, geo is {},'
-			' small_label is {} small_prop is {}, balance_seed is {}').format(
+			' small_label is {}, small_prop is {}, balance_seed is {}').format(
 				data_name, self.undersample, self.aug_mode, self.geo, 
 				self.small_label, self.small_prop, self.balance_seed)
 		print_and_log(self.logger, s)
@@ -83,9 +83,9 @@ class BertAgent:
 			self.train_loader, self.val_loader = self.mngr.get_dev_ldrs()
 			self.initialize_model()
 			total_steps = len(self.train_loader) * self.max_epochs
-			self.scheduler = get_constant_schedule(self.optimizer)
-			# self.scheduler = get_linear_schedule_with_warmup(
-				# self.optimizer, num_warmup_steps=0, num_training_steps=total_steps)
+			# self.scheduler = get_constant_schedule(self.optimizer)
+			self.scheduler = get_linear_schedule_with_warmup(
+				self.optimizer, num_warmup_steps=0, num_training_steps=total_steps)
 			self.train()
 			# self.validate()
 		else:
