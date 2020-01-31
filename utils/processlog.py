@@ -12,177 +12,82 @@ def is_validating(line):
 def get_acc(line):
 	return float(line.split()[-1])
 
-def get_pct(line):
-	return float(line.split()[1])
+def get_aug_mode(line):
+	return line.split('aug mode is ')[1].split(',', 1)[0]
 
-def get_frac(line):
-	return float(line.split(':')[-1].split('%', 1)[0])/100
+def get_small_label(line):
+	return int(line.split('small_label is ')[1].split(maxsplit=1)[0])
 
-def get_geo(line):
-	return float(line.split()[-1].rstrip('.'))
-
-def read_val(filename, early_stopping, aug):
-	'''
-	Process the val log
-	early_stopping => ignore extra line
-	aug => frac, geo not None
-	'''
-	records = {}
-	with open(filename) as f:
-		line = f.readline()
-		while line:
-			train_accs = []
-			val_accs = []
-			pct_usage = get_pct(line)
-			if aug:
-				frac = get_frac(f.readline())
-				geo = get_geo(f.readline())
-			else:
-				frac = None
-				geo = None
-			line = f.readline()
-			while is_training(line):
-				train_accs.append(get_acc(line))
-				line = f.readline()
-				val_accs.append(get_acc(line))
-				line = f.readline()
-			train_accs = 100*np.array(train_accs)
-			val_accs = 100*np.array(val_accs)
-			records[(pct_usage, frac, geo)] = (train_accs, val_accs)
-			if early_stopping:
-				# Ignore previously read line taht explains early stop
-				line = f.readline()
-	return records
-
-def plot_val_gridsearch(filename, desired_pct_usage, early_stopping, aug):
-	'''
-	Plots heatmap graph with frac and geo on axes
-	TODO test this
-	'''
-	records = read_val(filename, early_stopping, aug)
-	fig = plt.figure()
-	fracs = []
-	geos = []
-	accs = []
-	for (pct_usage, frac, geo), (train_accs, val_accs) in records.items():
-		if pct_usage != desired_pct_usage: 
-			continue
-		fracs.append(frac)
-		geos.append(geo)
-		accs.append(np.max(val_accs))
-	plt.scatter(fracs, geos, c=accs)
-	plt.colorbar()
-	plt.title('{}% of the dataset used'.format(100*desired_pct_usage))
-	plt.xlabel('Frac')
-	plt.ylabel('Geo')
-	plt.show()
-
-def plot_val_vary_pct(filename, desired_pct_usage, early_stopping, desired_frac, desired_geo):
-	aug = (desired_frac, desired_geo) != (None, None)
-	records = read_val(filename, early_stopping, aug)
-	xs = []
-	ys = []
-	for (pct_usage, frac, geo), (train_accs, val_accs) in records.items():
-		if (frac, geo) != (desired_frac, desired_geo):
-			continue
-		xs.append(pct_usage)
-		ys.append(np.max(val_accs))
-	plt.plot(xs, ys, '-o')
-	axes = plt.gca()
-	axes.set_ylim(70, 100)
-	plt.xlabel('pct_usage')
-	plt.ylabel('Validation Accuracy')
-	plt.show()
-
-def process_gridsearch_log(filename, num_fracs, num_geos):
-	f = open(filename)
-	results_grid = {}
-	for _ in range(num_fracs*num_geos):
-		(frac, geo), arr = process_grid(f)
-		results_grid[(frac, geo)] = arr
-	f.close()
-
-	# for (frac, geo), avg_accs in results_grid.items():
-	# 	print('Using '+str(frac)+' of the original dataset, geo of '+str(geo)+':')
-	# 	print(np.argmax(avg_accs))
-	# 	print(np.max(avg_accs))
-	# 	plt.plot(avg_accs)
-	# 	plt.title('Learning Curve With '+str(frac)+' of the original dataset, geo of '+str(geo))
-	# 	plt.ylabel('Cross Validation Accuracy (%)')
-	# 	plt.xlabel('Epoch')
-	# 	plt.show()
-	fracs = [key[0] for key in results_grid.keys()]
-	geos = [key[1] for key in results_grid.keys()]
-	# accs = [arr[-1] for arr in results_grid.values()]
-	accs = [np.max(arr) for arr in results_grid.values()]
-	# accs = [np.argmax(arr) for arr in results_grid.values()]
-
-	fig = plt.figure()
-	# ax = fig.add_subplot(111, projection='3d')
-	# for (frac, geo), avg_accs in results_grid.items():
-	# 	ax.scatter(geo,frac,np.max(avg_accs), cmap='gray')
-	# ax.set_xlabel('Frac')
-	# ax.set_ylabel('Geo')
-	# ax.set_zlabel('Acurracy')
-	# plt.show()
-
-	plt.scatter(fracs, geos, c=accs)
-	plt.colorbar()
-	plt.xlabel('Frac')
-	plt.ylabel('Geo')
-	plt.show()
+def get_undersample(line):
+	return line.split('undersample is ')[1].split(',', 1)[0] == 'True'
 
 def read_desc(line):
-	aug_mode = line.split('aug mode is ')[1].split(maxsplit=1)[0].rstrip(',')
+	aug_mode = get_aug_mode(line)
+	small_label = get_small_label(line)
 	if aug_mode == 'None':
-		geo = 1.0
+		undersample = get_undersample(line)
+		return (-1, undersample, small_label)
 	else:
 		geo = float(line.split('geo is ')[1].split(maxsplit=1)[0].rstrip(','))
-	return geo
+		return (geo, None, small_label)
 
 if __name__ == "__main__":
-	# filename = 'logs/val_no_aug.log'
-	# plot_val_vary_pct(filename, 1, True, None, None)
-
-	# filename = 'logs/val_sr_100p.log'
-	# plot_val_gridsearch(filename, 1, True, True)
-
-	# filename = 'logs/val_sr_allpcts.log'
-	# percentages = ([0.02, 0.04, 0.06, 0.08] 
-	# 			  + [round(0.1*i,2) for i in range(1,11)])
-	# for desired_pct in percentages:
-	# 	plot_val_gridsearch(filename, desired_pct, True, True)
-
 	experiments = {}
-	# filename = 'logs/balance-05-syn-05-avg-seed.log'
-	# filename = 'logs/balance-05-trans-avg-seed.log'
-	# filename = 'logs/exp_trans_subj.log'
-	filename = 'logs/exp_trans_sst.log'
-	with open(filename) as f:
+	aug_mode = 'SR'
+	# aug_mode = 'BT'
+	# data_name = 'SST'
+	data_name = 'Subj'
+	if aug_mode == 'SR':
+		if data_name == 'SST':
+			folder_name = 'exp_syn_sst'
+		elif data_name == 'Subj':
+			folder_name = 'exp_syn_subj'
+	elif aug_mode == 'BT':
+		if data_name == 'SST':
+			folder_name = 'exp_trans_sst'
+		elif data_name == 'Subj':
+			folder_name = 'exp_trans_subj'
+
+	filepath = 'logs/'+folder_name+'/joined.log'
+	with open(filepath) as f:
 		line = f.readline()
 		if 'RUN START' in line:
 			line = f.readline()
 		while line:
-			geo = read_desc(line)
+			tup = read_desc(line)
 			accs = []
 			line = f.readline()
 			while is_training(line) or is_validating(line):
 				if is_validating(line):
 					accs.append(get_acc(line))
 				line = f.readline()
-			if geo not in experiments:
-				experiments[geo] = np.array(accs)
+			if tup not in experiments:
+				experiments[tup] = np.array(accs)
 			else:
-				experiments[geo] = np.vstack([experiments[geo], np.array(accs)])
-	averages = {geo: mat.mean(0) for geo, mat in experiments.items()}
-	no_aug_average = averages[1]
-	del averages[1]
-	for geo, vec in sorted(averages.items()):
-		# plt.ylim((0.87,0.93))
-		plt.ylim((0.76, 0.82))
-		plt.plot(no_aug_average, label='None')
-		plt.hlines(no_aug_average[10:].mean(), 0, 100, color='b', linestyle='--')
-		plt.plot(vec, label='geo {}'.format(geo))
-		plt.hlines(vec[10:].mean(), 0, 100, color='tab:orange', linestyle='--')
-		plt.legend()
-		plt.show()
+				experiments[tup] = np.vstack([experiments[tup], np.array(accs)])
+	averages = {tup: 100*mat.mean(0) for tup, mat in experiments.items()}
+	for small_label in set([key[-1] for key in averages.keys()]):
+		small_label_averages = {key: avg for key, avg in averages.items() 
+								if key[-1] == small_label}
+		oversample_avg = small_label_averages[(-1, False, small_label)]
+		undersample_avg = small_label_averages[(-1, True, small_label)]
+		del small_label_averages[(-1, False, small_label)]
+		del small_label_averages[(-1, True, small_label)]
+		for (geo, _, _), vec in sorted(small_label_averages.items()):
+			plt.title('Rebalancing {} with {} after 50% of label {}'
+					  ' is removed.'.format(data_name, aug_mode, small_label))
+			plt.ylabel('Validation Accuracy (%)')
+			plt.xlabel('Training Epoch')
+			if data_name == 'SST':
+				plt.ylim((78, 82))
+			elif data_name == 'Subj':
+				plt.ylim((88, 92))
+			plt.plot(oversample_avg, label='oversampling', color='g', alpha=0.5)
+			plt.hlines(oversample_avg[25:].mean(), 0, 100, color='g')
+			plt.plot(undersample_avg, label='undersampling', color='r', alpha=0.5)
+			plt.hlines(undersample_avg[25:].mean(), 0, 100, color='r')
+			plt.plot(vec, label='geo {}'.format(geo), color='b', alpha=0.5)
+			plt.hlines(vec[25:].mean(), 0, 100, color='b')
+			plt.legend()
+			plt.show()
+			exit()
