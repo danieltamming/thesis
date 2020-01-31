@@ -84,9 +84,6 @@ class BertAgent:
 			total_steps = len(self.train_loader) * self.max_epochs
 			self.scheduler = get_linear_schedule_with_warmup(
 				self.optimizer, num_warmup_steps=0, num_training_steps=total_steps)
-			# -----------------------------
-			self.validate()
-			# -----------------------------
 			self.train()
 			# self.validate()
 		else:
@@ -106,6 +103,14 @@ class BertAgent:
 			start_time = time.time()
 
 			for self.cur_epoch in range(self.max_epochs):
+				# -----------------------------
+				acc, _ = self.validate()
+				s = ('Training epoch {} | loss: {} - accuracy: ' 
+					'{}'.format(self.cur_epoch, 
+					round(loss.val, 5), 
+					round(acc.val, 5)))
+				print(s)
+				# -----------------------------
 				self.train_one_epoch()
 				acc,_ = self.validate()
 
