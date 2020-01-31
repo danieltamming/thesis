@@ -104,7 +104,7 @@ class BertAgent:
 
 			start_time = time.time()
 
-			for self.cur_epoch in range(self.max_epochs):
+			for self.cur_epoch in tqdm(range(self.max_epochs)):
 				self.train_one_epoch()
 				acc,_ = self.validate()
 
@@ -122,7 +122,7 @@ class BertAgent:
 		self.model.train()
 		loss = AverageMeter()
 		acc = AverageMeter()
-		for x, y in tqdm(self.train_loader):
+		for x, y in self.train_loader:
 			attention_mask = (x > 0).float().to(self.device)
 			x = x.to(self.device)
 			y = y.to(self.device)
@@ -152,7 +152,7 @@ class BertAgent:
 		self.model.eval()
 		loss = AverageMeter()
 		acc = AverageMeter()
-		for x, y in tqdm(self.val_loader):
+		for x, y in self.val_loader:
 			attention_mask = (x > 0).float().to(self.device)
 			x = x.to(self.device)
 			y = y.to(self.device)
