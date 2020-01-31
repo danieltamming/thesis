@@ -106,6 +106,7 @@ if __name__ == "__main__":
 			line = f.readline()
 		train_acc = 100*np.array(train_acc)
 		val_acc = 100*np.array(val_acc)
+		print(train_acc.max(), val_acc.max())
 		plt.plot(train_acc, label='training')
 		plt.plot(val_acc, label='validation')
 		plt.show()

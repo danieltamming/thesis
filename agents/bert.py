@@ -7,7 +7,8 @@ import torch.nn as nn
 from torch.optim import Adam
 from tqdm import tqdm
 from transformers import (BertForSequenceClassification, BertTokenizer,
-						  AdamW, get_linear_schedule_with_warmup)
+						  AdamW, get_linear_schedule_with_warmup, 
+						  get_constant_schedule)
 
 from graphs.losses.loss import CrossEntropyLoss
 from managers.sst import SSTDatasetManager
@@ -65,7 +66,7 @@ class BertAgent:
 	def initialize_model(self):
 		self.model = BertForSequenceClassification.from_pretrained(
 			'bert-base-uncased', num_labels=self.num_labels).to(self.device)
-		self.optimizer = AdamW(self.model.parameters(), lr=2e-5, eps=1e-8)
+		self.optimizer = AdamW(self.model.parameters(), lr=5e-5, eps=1e-8)
 		self.model.train()
 
 	def run(self):
@@ -82,8 +83,9 @@ class BertAgent:
 			self.train_loader, self.val_loader = self.mngr.get_dev_ldrs()
 			self.initialize_model()
 			total_steps = len(self.train_loader) * self.max_epochs
-			self.scheduler = get_linear_schedule_with_warmup(
-				self.optimizer, num_warmup_steps=0, num_training_steps=total_steps)
+			self.scheduler = get_constant_schedule(self.optimizer)
+			# self.scheduler = get_linear_schedule_with_warmup(
+				# self.optimizer, num_warmup_steps=0, num_training_steps=total_steps)
 			self.train()
 			# self.validate()
 		else:
@@ -103,10 +105,6 @@ class BertAgent:
 			start_time = time.time()
 
 			for self.cur_epoch in range(self.max_epochs):
-				# -----------------------------
-				acc, _ = self.validate()
-				print(acc)
-				# -----------------------------
 				self.train_one_epoch()
 				acc,_ = self.validate()
 
