@@ -10,7 +10,7 @@ from utils.parsing import get_config
 
 # config = get_config()
 this_script_name = os.path.basename(__file__).split('.')[0]
-num_epochs = 100
+num_epochs = 4
 batch_size = 32
 balance_seed = 0
 undersample = True

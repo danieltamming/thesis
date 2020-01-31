@@ -31,7 +31,7 @@ def read_desc(line):
 		geo = float(line.split('geo is ')[1].split(maxsplit=1)[0].rstrip(','))
 		return (geo, None, small_label)
 
-if __name__ == "__main__":
+def plot_experiments():
 	experiments = {}
 	aug_mode = 'SR'
 	# aug_mode = 'BT'
@@ -90,4 +90,22 @@ if __name__ == "__main__":
 			plt.hlines(vec[25:].mean(), 0, 100, color='b')
 			plt.legend()
 			plt.show()
-			exit()
+
+if __name__ == "__main__":
+	# plot_experiments()
+	with open('logs/main/seed_0_num_0.log') as f:
+		f.readline()
+		line = f.readline()
+		train_acc = []
+		val_acc = []
+		while line:
+			if is_training(line):
+				train_acc.append(get_acc(line))
+			elif is_validating(line):
+				val_acc.append(get_acc(line))
+			line = f.readline()
+		train_acc = 100*np.array(train_acc)
+		val_acc = 100*np.array(val_acc)
+		plt.plot(train_acc, label='training')
+		plt.plot(val_acc, label='validation')
+		plt.show()
