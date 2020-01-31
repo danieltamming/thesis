@@ -56,12 +56,11 @@ class BertAgent:
 
 		self.device = (torch.device('cuda:1' if torch.cuda.is_available() 
 					   else 'cpu'))
-		# print('Using '+str(int(100*self.pct_usage))+'% of the dataset.')
-		# self.logger.info('Using '+str(self.pct_usage)+' of the dataset.')
-
-		# if self.config.aug_mode == 'sr' or self.config.aug_mode == 'ca':
-		# 	s = 'The geometric parameter is '+str(geo)+'.'
-		# 	print_and_log(self.logger, s)
+		s = ('Model is Bert, dataset is {}, undersample is {}, aug mode is {}, geo is {},'
+			' small_label is {} small_prop is {}, balance_seed is {}').format(
+				data_name, self.undersample, self.aug_mode, self.geo, 
+				self.small_label, self.small_prop, self.balance_seed)
+		print_and_log(self.logger, s)
 
 	def initialize_model(self):
 		self.model = BertForSequenceClassification.from_pretrained(
@@ -82,12 +81,9 @@ class BertAgent:
 		elif self.mode == 'dev':
 			self.train_loader, self.val_loader = self.mngr.get_dev_ldrs()
 			self.initialize_model()
-
-			# -----------------------------------------------------
 			total_steps = len(self.train_loader) * self.max_epochs
 			self.scheduler = get_linear_schedule_with_warmup(
 				self.optimizer, num_warmup_steps=0, num_training_steps=total_steps)
-			# ----------------------------------------------------
 			self.train()
 			# self.validate()
 		else:
