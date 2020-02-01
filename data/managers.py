@@ -4,8 +4,8 @@ import random
 import numpy as np
 from torch.utils.data import DataLoader
 
-from utils.data import partition_within_classes
-from dataset import BertDataset, RnnDataset
+from utils.data import get_sst, get_subj, get_trec, partition_within_classes
+from data.datasets import BertDataset, RnnDataset
 
 class DatasetManagerBase:
 	def __init__(self, data_func, config, model_type, input_length, 
@@ -64,3 +64,16 @@ class DatasetManagerBase:
 							  undersample=self.undersample)
 		else:
 			raise ValueError('Unrecognized model type.')
+
+
+class SSTDatasetManager(DatasetManagerBase):
+	def __init__(self, *args, **kwargs):
+		super().__init__(get_sst, *args, **kwargs)
+
+class SubjDatasetManager(DatasetManagerBase):
+	def __init__(self, *args, **kwargs):
+		super().__init__(get_subj, *args, **kwargs)
+
+class TrecDatasetManager(DatasetManagerBase):
+	def __init__(self, *args, **kwargs):
+		super().__init__(get_trec, *args, **kwargs)

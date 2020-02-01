@@ -78,3 +78,67 @@ def read_trans_aug(set_path):
 			set_data.append((label, example, aug_counter))
 			line = f.readline().strip('\n')
 	return set_data
+
+def get_sst(input_length, aug_mode):
+	script_path = os.path.dirname(os.path.realpath(__file__))
+	repo_path = os.path.join(script_path, os.pardir)
+	data_parent = os.path.join(repo_path, os.pardir, 'DownloadedData')
+	data_path = os.path.join(data_parent,'sst')
+	if aug_mode is None or aug_mode == 'synonym':
+		data_dict = {}
+		for set_name in ['train', 'dev', 'test']:
+			set_path = os.path.join(data_path, set_name+'.txt')
+			data_dict[set_name] = read_no_aug(set_path, input_length, False)
+		return data_dict
+	elif aug_mode == 'trans':
+		aug_data_path = os.path.join(data_path,'trans_aug')
+		data_dict = {}
+		for set_name in ['train', 'dev', 'test']:
+			set_path = os.path.join(aug_data_path, set_name+'.txt')
+			data_dict[set_name] = read_trans_aug(set_path)
+		return data_dict
+	else:
+		raise ValueError('Unrecognized augmentation.')
+
+def get_subj(input_length, aug_mode):
+	script_path = os.path.dirname(os.path.realpath(__file__))
+	repo_path = os.path.join(script_path, os.pardir)
+	data_parent = os.path.join(repo_path, os.pardir, 'DownloadedData')
+	data_path = os.path.join(data_parent, 'subj')
+	if aug_mode is None or aug_mode == 'synonym':
+		file_path = os.path.join(data_path,'subj.txt')
+		all_data = read_no_aug(file_path, input_length, True)
+		# let 10% of data be the development set
+		# dev_data, train_data = partition_within_classes(all_data, 0.1, False)
+		# return {'dev': dev_data, 'train': train_data}
+	elif aug_mode == 'trans':
+		aug_file_path = os.path.join(data_path, 'trans_aug/subj.txt')
+		all_data = read_trans_aug(aug_file_path)
+	else:
+		raise ValueError('Unrecognized augmentation.')
+	dev_data, train_data = partition_within_classes(all_data, 0.1, False)
+	return {'dev': dev_data, 'train': train_data}
+
+def get_trec(input_length, aug_mode):
+	script_path = os.path.dirname(os.path.realpath(__file__))
+	repo_path = os.path.join(script_path, os.pardir)
+	data_parent = os.path.join(repo_path, os.pardir, 'DownloadedData')
+	target_parent = os.path.join(repo_path, 'data')
+	data_path = os.path.join(data_parent,'trec')
+	data_dict = {}
+	if aug_mode is None or aug_mode == 'synonym':
+		for set_name in ['train', 'test']:
+			set_path = os.path.join(data_path, set_name+'.txt')
+			data_dict[set_name] = read_no_aug(set_path, input_length, True)
+	elif aug_mode == 'trans':
+		aug_data_path = os.path.join(data_path, 'trans_aug')
+		for set_name in ['train', 'test']:
+			set_path = os.path.join(aug_data_path, set_name+'.txt')
+			data_dict[set_name] = read_trans_aug(set_path)
+	else:
+		raise ValueError('Unrecognized augmentation.')
+	# split given training split into training and dev set
+	dev_data, train_data = partition_within_classes(data_dict['train'], 0.1, False)
+	data_dict['dev'] = dev_data
+	data_dict['train'] = train_data
+	return data_dict

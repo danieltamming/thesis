@@ -10,10 +10,9 @@ from transformers import (BertForSequenceClassification, BertTokenizer,
 						  AdamW, get_linear_schedule_with_warmup, 
 						  get_constant_schedule)
 
-from graphs.losses.loss import CrossEntropyLoss
-from managers.sst import SSTDatasetManager
-from managers.subj import SubjDatasetManager
-from managers.trec import TrecDatasetManager
+from graphs.loss import CrossEntropyLoss
+from data.managers import (SSTDatasetManager, SubjDatasetManager, 
+						   TrecDatasetManager)
 from utils.metrics import AverageMeter, get_accuracy, EarlyStopper
 from utils.logger import print_and_log
 

@@ -16,7 +16,7 @@ from agents.bert import BertAgent
 from utils.logger import initialize_logger
 
 this_script_name = os.path.basename(__file__).split('.')[0]
-num_epochs = 4
+num_epochs = 10
 data_name = 'subj'
 aug_mode = 'synonym'
 batch_size = 32

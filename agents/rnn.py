@@ -8,12 +8,10 @@ import torch.nn as nn
 from torch.optim import Adam
 from tqdm import tqdm
 
-from graphs.models.bilstm import BiLSTM
-from graphs.models.rnn import Rnn
-from graphs.losses.loss import CrossEntropyLoss
-from managers.sst import SSTDatasetManager
-from managers.subj import SubjDatasetManager
-from managers.trec import TrecDatasetManager
+from graphs.rnn import Rnn
+from graphs.loss import CrossEntropyLoss
+from data.managers import (SSTDatasetManager, SubjDatasetManager, 
+						   TrecDatasetManager)
 from utils.metrics import AverageMeter, get_accuracy, EarlyStopper
 from utils.logger import print_and_log
 

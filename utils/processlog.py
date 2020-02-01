@@ -16,7 +16,7 @@ def get_aug_mode(line):
 	return line.split('aug mode is ')[1].split(',', 1)[0]
 
 def get_small_label(line):
-	return int(line.split('small_label is ')[1].split(maxsplit=1)[0])
+	return int(line.split('small_label is ')[1].split(' ', 1)[0].rstrip(','))
 
 def get_undersample(line):
 	return line.split('undersample is ')[1].split(',', 1)[0] == 'True'
@@ -33,22 +33,13 @@ def read_desc(line):
 
 def plot_experiments():
 	experiments = {}
-	aug_mode = 'SR'
-	# aug_mode = 'BT'
-	# data_name = 'SST'
-	data_name = 'Subj'
-	if aug_mode == 'SR':
-		if data_name == 'SST':
-			folder_name = 'exp_syn_sst'
-		elif data_name == 'Subj':
-			folder_name = 'exp_syn_subj'
-	elif aug_mode == 'BT':
-		if data_name == 'SST':
-			folder_name = 'exp_trans_sst'
-		elif data_name == 'Subj':
-			folder_name = 'exp_trans_subj'
-
-	filepath = 'logs/'+folder_name+'/joined.log'
+	model = 'rnn'
+	# model = 'bert'
+	# aug_mode = 'syn'
+	aug_mode = 'trans'
+	# data_name = 'sst'
+	data_name = 'subj'
+	filepath = 'logs/archived/{}_{}_{}_joined.log'.format(model, aug_mode, data_name)
 	with open(filepath) as f:
 		line = f.readline()
 		if 'RUN START' in line:
@@ -83,30 +74,31 @@ def plot_experiments():
 			elif data_name == 'Subj':
 				plt.ylim((88, 92))
 			plt.plot(oversample_avg, label='oversampling', color='g', alpha=0.5)
-			plt.hlines(oversample_avg[25:].mean(), 0, 100, color='g')
 			plt.plot(undersample_avg, label='undersampling', color='r', alpha=0.5)
-			plt.hlines(undersample_avg[25:].mean(), 0, 100, color='r')
 			plt.plot(vec, label='geo {}'.format(geo), color='b', alpha=0.5)
-			plt.hlines(vec[25:].mean(), 0, 100, color='b')
+			if model == 'rnn':
+				plt.hlines(oversample_avg[25:].mean(), 0, 100, color='g')
+				plt.hlines(undersample_avg[25:].mean(), 0, 100, color='r')
+				plt.hlines(vec[25:].mean(), 0, 100, color='b')
 			plt.legend()
 			plt.show()
 
 if __name__ == "__main__":
-	# plot_experiments()
-	with open('logs/main/seed_0_num_0.log') as f:
-		f.readline()
-		line = f.readline()
-		train_acc = []
-		val_acc = []
-		while line:
-			if is_training(line):
-				train_acc.append(get_acc(line))
-			elif is_validating(line):
-				val_acc.append(get_acc(line))
-			line = f.readline()
-		train_acc = 100*np.array(train_acc)
-		val_acc = 100*np.array(val_acc)
-		print(train_acc.max(), val_acc.max())
-		plt.plot(train_acc, label='training')
-		plt.plot(val_acc, label='validation')
-		plt.show()
+	plot_experiments()
+	# with open('logs/main/seed_0_num_0.log') as f:
+	# 	f.readline()
+	# 	line = f.readline()
+	# 	train_acc = []
+	# 	val_acc = []
+	# 	while line:
+	# 		if is_training(line):
+	# 			train_acc.append(get_acc(line))
+	# 		elif is_validating(line):
+	# 			val_acc.append(get_acc(line))
+	# 		line = f.readline()
+	# 	train_acc = 100*np.array(train_acc)
+	# 	val_acc = 100*np.array(val_acc)
+	# 	print(train_acc.max(), val_acc.max())
+	# 	plt.plot(train_acc, label='training')
+	# 	plt.plot(val_acc, label='validation')
+	# 	plt.show()
