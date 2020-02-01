@@ -55,7 +55,7 @@ class BertAgent:
 		else:
 			raise ValueError('Data name not recognized.')
 
-		self.device = (torch.device('cuda:0' if torch.cuda.is_available() 
+		self.device = (torch.device('cuda:1' if torch.cuda.is_available() 
 					   else 'cpu'))
 		s = ('Model is Bert, dataset is {}, undersample is {}, aug mode is {}, geo is {},'
 			' small_label is {}, small_prop is {}, balance_seed is {}').format(
