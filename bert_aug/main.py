@@ -1,58 +1,45 @@
 import os
-import random
-import pickle
-import time
-import argparse
+import sys
+import inspect
+
+current_dir = os.path.dirname(
+	os.path.abspath(inspect.getfile(inspect.currentframe()))
+	)
+parent_dir = os.path.dirname(current_dir)
+sys.path.insert(0, parent_dir) 
 
 from tqdm import tqdm
 import numpy as np
 import torch
 import torch.nn as nn
-
 from torch.utils.data import Dataset, DataLoader
-
 from transformers import (BertForMaskedLM, BertTokenizer, 
 						  AdamW, get_linear_schedule_with_warmup)
 
-from utils.preprocess import get_data, make_length
+from utils.data import get_sst, get_subj, get_trec
 from utils.metrics import AverageMeter
 
-
-def get_args():
-	parser = argparse.ArgumentParser()
-	parser.add_argument('--batch_size', default=512, type=int)
-	parser.add_argument('--num_workers', default=8, type=int)
-	parser.add_argument('--num_epochs', default=2, type=int)
-	parser.add_argument('--checkpoint', default='bert-base-uncased', type=str)
-	parser.add_argument('--output_dir', default='ckpt', type=str)
-	parser.add_argument('--data_filename', default='data/bert_ids.pickle', type=str)
-	parser.add_argument('--aug_data_filename', default='data/aug_bert_ids.pickle', type=str)
-	return parser.parse_args()
-
 class TextDataset(Dataset):
-	def __init__(self, dataset_name, tokenizer, data_filename, input_length):
-		folder_name = data_filename.split('/')[0]
-		if not os.path.exists(folder_name):
-			os.mkdir(folder_name)
-
-		if os.path.exists(data_filename):
-			with open(data_filename, 'rb') as f:
-				self.examples = pickle.load(f)
+	def __init__(self, data_name, tokenizer, input_length):
+		if data_name == 'sst':
+			data = get_sst(None, None)['train']
+		elif data_name == 'subj':
+			data = get_subj(None, None)['train']
+		elif data_name == 'trec':
+			data = get_trec(None, None)['train']
 		else:
-			data = get_data(dataset_name)
-			self.examples = []
-			for label, text in data:
-				tokenized_text = tokenizer.tokenize(text)
-				ids_text = tokenizer.convert_tokens_to_ids(tokenized_text)
-				input_text = tokenizer.build_inputs_with_special_tokens(
-					ids_text)
-				self.examples.append((input_text, label))
-			with open(data_filename, 'wb') as f:
-				pickle.dump(self.examples, f, 
-							protocol=pickle.HIGHEST_PROTOCOL)
-
-		self.examples = make_length(self.examples, tokenizer, input_length)
-
+			raise ValueError('Unrecognized data_name.')
+		self.examples = []
+		for (label, text, _) in data:
+			tokenized_text = tokenizer.tokenize(text)
+			ids_text = tokenizer.convert_tokens_to_ids(tokenized_text)
+			input_ids = tokenizer.build_inputs_with_special_tokens(
+				ids_text)
+			input_ids = input_ids[:input_length]
+			input_ids.extend((input_length - len(input_ids))
+							 * [tokenizer.pad_token_id])
+			self.examples.append((input_ids, label))
+		# self.examples = make_length(self.examples, tokenizer, input_length)
 	def __len__(self):
 		return len(self.examples)
 
@@ -60,8 +47,8 @@ class TextDataset(Dataset):
 		'''
 		May need to convert one or both elements of this tuple to torch tensor
 		'''
-		sequence, category = self.examples[idx]
-		return torch.tensor(sequence), category
+		sequence, label = self.examples[idx]
+		return torch.tensor(sequence), label
 
 def mask_tokens(inputs, tokenizer):
 	mlm_prob = 0.15
@@ -71,6 +58,10 @@ def mask_tokens(inputs, tokenizer):
 	prob_matrix.masked_fill_(torch.from_numpy(special_tokens_mask), value=0)
 	masked_indices = torch.bernoulli(prob_matrix).bool()
 	targets[~masked_indices] = -1
+	# -------------------------------------------
+	# new add for bug fix. check docs to see whether masked should be -1 or 0
+	targets[~masked_indices] = 0
+	# ----------------------------------------
 	indices_replaced = (
 		torch.bernoulli(torch.full(inputs.shape, 0.8)).bool() 
 		& masked_indices)
@@ -106,26 +97,21 @@ def mask_gen(seq, tokenizer):
 		seq[i] = num
 
 class BertAgent:
-	def __init__(self, args):
-		self.batch_size = args.batch_size
-		self.num_workers = args.num_workers
-		self.num_train_epochs = args.num_epochs
-		self.checkpoint = args.checkpoint
-		self.output_dir = args.output_dir
-		self.data_filename = args.data_filename
-		self.aug_data_filename = args.aug_data_filename
+	def __init__(self, data_name):
+		self.data_name = data_name
+		# CHANGE INPUT LENGTH. MAYBE 50?
 		self.input_length = 25
-		# self.gradient_accumulation_steps = 1
+		self.batch_size = 32
+		self.num_train_epochs = 5
+		self.checkpoint = 'bert-base-uncased'
+		self.output_dir = 'ckpt'
 		self.weight_decay = 0.0
 		self.max_grad_norm = 1.0
-		# data_filename = 'data/bert_ids.pickle'
 		self.tokenizer = BertTokenizer.from_pretrained(self.checkpoint)
 		self.model = BertForMaskedLM.from_pretrained(self.checkpoint)
-		self.dataset = TextDataset(
-			'procon', self.tokenizer, self.data_filename, self.input_length)
-
+		self.dataset = TextDataset(self.data_name, self.tokenizer, 
+								   self.input_length)
 		self.loader = DataLoader(self.dataset, self.batch_size, 
-								 num_workers=self.num_workers, 
 								 pin_memory=True, shuffle=True)
 		self.device = (torch.device('cuda:0' if torch.cuda.is_available() 
 					   else 'cpu'))
@@ -138,9 +124,6 @@ class BertAgent:
 		self.tokenizer.save_pretrained(self.output_dir)
 
 	def train(self):
-		# t_total = (len(self.loader) // self.gradient_accumulation_steps
-		# 		   * self.num_train_epochs)
-		# warmup_steps = int(0.01*t_total)
 		no_decay = ['bias', 'LayerNorm.weight']
 		optimizer_grouped_parameters = [
 			{'params': [p for n, p in self.model.named_parameters() if
@@ -172,6 +155,18 @@ class BertAgent:
 			attention_mask = attention_mask.to(self.device)
 			token_type_ids = token_type_ids.to(self.device)
 			targets = targets.to(self.device)
+
+			# print(inputs)
+			# # print(attention_mask.shape)
+			# # print(token_type_ids.shape)
+			# print(targets)
+			# exit()
+
+			# ----------------------------------------
+			# check that targets and mask is created correctly
+			# do research on MLM setup and training
+			# ----------------------------------------
+
 			loss, prediction_scores = self.model(
 				inputs, attention_mask=attention_mask, 
 				token_type_ids=token_type_ids, masked_lm_labels=targets)
@@ -277,8 +272,10 @@ class BertAgent:
 
 
 if __name__ == "__main__":
-	args = get_args()
-	agent = BertAgent(args)
+	data_name = 'sst'
+	# data_name = 'subj'
+	# data_name = 'trec'
+	agent = BertAgent(data_name)
 	agent.train()
 	agent.save_checkpoint()
 	# agent.develop()

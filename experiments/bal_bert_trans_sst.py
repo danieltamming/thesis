@@ -19,7 +19,7 @@ this_script_name = os.path.basename(__file__).split('.')[0]
 num_epochs = 10
 data_name = 'sst'
 aug_mode = 'trans'
-batch_size = 32
+batch_size = 16
 def experiment(balance_seed):
 	for small_label in [0, 1]:
 		for undersample in [False, True]:
