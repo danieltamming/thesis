@@ -61,7 +61,7 @@ class RnnAgent:
 		else:
 			raise ValueError('Data name not recognized.')
 
-		self.device = (torch.device('cuda:0' if torch.cuda.is_available() 
+		self.device = (torch.device('cuda:1' if torch.cuda.is_available() 
 					   else 'cpu'))
 
 		s = ('Model is RNN, dataset is {}, undersample is {}, aug mode is {}, geo is {},'
