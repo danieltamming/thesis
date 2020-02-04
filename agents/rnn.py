@@ -21,7 +21,6 @@ class RnnAgent:
 				 small_prop=None, balance_seed=None, undersample=False,
 				 pct_usage=1, geo=0.5):
 		assert not (undersample and aug_mode is not None), 'Cant undersample and augment'
-		self.config = config
 		self.logger = logger
 		self.input_length = input_length
 		self.max_epochs = max_epochs
