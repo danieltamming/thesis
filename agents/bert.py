@@ -35,7 +35,7 @@ class BertAgent:
 		self.pct_usage = pct_usage
 		self.geo = geo
 
-		mngr_args = [self.config, 'bert', self.input_length, self.aug_mode,
+		mngr_args = ['bert', self.input_length, self.aug_mode,
 				self.pct_usage, self.geo, self.batch_size]
 		mngr_kwargs = {'small_label': self.small_label, 
 				  'small_prop': self.small_prop,
@@ -69,14 +69,7 @@ class BertAgent:
 
 	def run(self):
 		if self.mode == 'crosstest':
-			for fold in range(self.config.num_folds):
-				self.initialize_model()
-				s = 'Fold number {}'.format(fold)
-				# print_and_log(self.logger, s)
-				(self.train_loader, 
-				self.val_loader) = self.mngr.crosstest_ldrs(fold)
-				self.train()
-				self.validate()
+			pass
 		elif self.mode == 'dev':
 			self.train_loader, self.val_loader = self.mngr.get_dev_ldrs()
 			self.initialize_model()
@@ -91,9 +84,7 @@ class BertAgent:
 
 	def train(self):
 		if self.mode == 'crosstest':
-			for self.cur_epoch in range(self.config.num_epochs):
-				self.train_one_epoch()
-			s = 'Stopped after ' + str(self.config.num_epochs) + ' epochs'
+			pass
 			# print_and_log(self.logger, s)
 
 		elif self.mode == 'dev':

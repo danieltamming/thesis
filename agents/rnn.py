@@ -42,7 +42,7 @@ class RnnAgent:
 			0, vector=np.zeros(nlp.vocab.vectors.shape[1]))
 		self.nlp = nlp
 
-		mngr_args = [self.config, 'rnn', self.input_length, self.aug_mode,
+		mngr_args = ['rnn', self.input_length, self.aug_mode,
 				self.pct_usage, self.geo, self.batch_size]
 		mngr_kwargs = {'nlp': self.nlp, 'small_label': self.small_label, 
 				  'small_prop': self.small_prop, 
@@ -72,20 +72,13 @@ class RnnAgent:
 	def initialize_model(self):
 		embed_arr = torch.from_numpy(self.nlp.vocab.vectors.data)
 		self.model = Rnn(
-			self.config, embed_arr, self.num_labels).to(self.device)
+			embed_arr, self.num_labels).to(self.device)
 		self.optimizer = Adam(self.model.parameters())
 		self.model.train()
 
 	def run(self):
 		if self.mode == 'crosstest':
-			for fold in range(self.config.num_folds):
-				self.initialize_model()
-				s = 'Fold number {}'.format(fold)
-				# print_and_log(self.logger, s)
-				(self.train_loader, 
-				self.val_loader) = self.mngr.crosstest_ldrs(fold)
-				self.train()
-				self.validate()
+			pass
 		elif self.mode == 'dev':
 			self.train_loader, self.val_loader = self.mngr.get_dev_ldrs()
 			self.initialize_model()
@@ -96,9 +89,7 @@ class RnnAgent:
 
 	def train(self):
 		if self.mode == 'crosstest':
-			for self.cur_epoch in range(self.config.num_epochs):
-				self.train_one_epoch()
-			s = 'Stopped after ' + str(self.config.num_epochs) + ' epochs'
+			pass
 			# print_and_log(self.logger, s)
 
 		elif self.mode == 'dev':

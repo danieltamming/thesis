@@ -1,7 +1,7 @@
 import torch.nn as nn
 
 class Rnn(nn.Module):
-	def __init__(self, config, emb_arr, num_classes):
+	def __init__(self, emb_arr, num_classes):
 		super(Rnn, self).__init__()
 		self.emb = nn.Embedding.from_pretrained(emb_arr)
 		self.lstm1 = nn.LSTM(input_size=300, hidden_size=64, batch_first=True, num_layers=1, bidirectional=True)

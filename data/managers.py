@@ -8,11 +8,10 @@ from utils.data import get_sst, get_subj, get_trec, partition_within_classes
 from data.datasets import BertDataset, RnnDataset
 
 class DatasetManagerBase:
-	def __init__(self, data_func, config, model_type, input_length, 
+	def __init__(self, data_func, model_type, input_length, 
 				 aug_mode, pct_usage, geo, batch_size, nlp=None,
 				 small_label=None, small_prop=None, balance_seed=None,
 				 undersample=False):
-		self.config = config
 		self.model_type = model_type
 		self.input_length = input_length
 		self.aug_mode = aug_mode
