@@ -14,7 +14,9 @@ import numpy as np
 from agents.rnn import RnnAgent
 from agents.bert import BertAgent
 from utils.logger import initialize_logger
+from utils.parsing import get_device
 
+device = get_device()
 this_script_name = os.path.basename(__file__).split('.')[0]
 num_epochs = 100
 def experiment(balance_seed):
@@ -23,7 +25,7 @@ def experiment(balance_seed):
 		small_prop = round(small_prop, 2)
 		for small_label in [0, 1]:
 			for undersample in [False, True]:
-				agent = RnnAgent('foo', logger, 'sst', 25, num_epochs, 
+				agent = RnnAgent(device, logger, 'sst', 25, num_epochs, 
 								 None, 'dev', 128, 
 								 small_label=small_label, 
 								 small_prop=small_prop, 
@@ -32,7 +34,7 @@ def experiment(balance_seed):
 				agent.run()
 			for geo in np.arange(0.5, 1.0, 0.1):
 				geo = round(geo, 2)
-				agent = RnnAgent('foo', logger, 'sst', 25, num_epochs, 
+				agent = RnnAgent(device, logger, 'sst', 25, num_epochs, 
 								 'trans', 'dev', 128, 
 								 small_label=small_label, 
 								 small_prop=small_prop, 

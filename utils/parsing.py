@@ -24,3 +24,9 @@ def get_config():
         config.batch_size = args.batch_size
 
     return config
+
+def get_device():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-g', '--gpu', type=int, required=True,
+                        help='GPU number?')
+    return 'cuda:{}'.format(parser.parse_args().gpu)

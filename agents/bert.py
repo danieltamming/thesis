@@ -17,7 +17,7 @@ from utils.metrics import AverageMeter, get_accuracy, EarlyStopper
 from utils.logger import print_and_log
 
 class BertAgent:
-	def __init__(self, config, logger, data_name, input_length, max_epochs, 
+	def __init__(self, device, logger, data_name, input_length, max_epochs, 
 				 aug_mode, mode, batch_size, small_label=None, 
 				 small_prop=None, balance_seed=None, undersample=False, 
 				 pct_usage=1, geo=0.5):
@@ -54,7 +54,7 @@ class BertAgent:
 		else:
 			raise ValueError('Data name not recognized.')
 
-		self.device = (torch.device('cuda:1' if torch.cuda.is_available() 
+		self.device = (torch.device(device if torch.cuda.is_available() 
 					   else 'cpu'))
 		s = ('Model is Bert, dataset is {}, undersample is {}, aug mode is {}, geo is {},'
 			' small_label is {}, small_prop is {}, balance_seed is {}').format(
