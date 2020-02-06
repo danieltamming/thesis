@@ -43,11 +43,11 @@ class RnnAgent:
 		self.nlp = nlp
 
 		mngr_args = ['rnn', self.input_length, self.aug_mode,
-				self.pct_usage, self.geo, self.batch_size]
+					 self.pct_usage, self.geo, self.batch_size]
 		mngr_kwargs = {'nlp': self.nlp, 'small_label': self.small_label, 
-				  'small_prop': self.small_prop, 
-				  'balance_seed': self.balance_seed, 
-				  'undersample': undersample}
+					   'small_prop': self.small_prop, 
+					   'balance_seed': self.balance_seed, 
+					   'undersample': undersample}
 		if data_name == 'sst':
 			self.num_labels = 2
 			self.mngr = SSTDatasetManager(*mngr_args, **mngr_kwargs)
