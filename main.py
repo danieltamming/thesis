@@ -19,6 +19,6 @@ for balance_seed in range(5):
 					  small_label=None, small_prop=None,
 					  balance_seed=balance_seed, undersample=False,
 					  pct_usage=1)
+	thing.run()
 # TRY UNDERSAMPLE=TRUE
-thing.run()
 exit()
