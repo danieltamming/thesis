@@ -37,14 +37,14 @@ def read_desc(line):
 
 def plot_experiments():
 	experiments = {}
-	# model = 'rnn'
-	model = 'bert'
-	# aug_mode = 'syn'
-	aug_mode = 'trans'
+	model = 'rnn'
+	# model = 'bert'
+	aug_mode = 'syn'
+	# aug_mode = 'trans'
 	data_name = 'sst'
 	# data_name = 'subj'
 	filepath = 'logs/archived/bal_{}_{}_{}_pct.log'.format(model, aug_mode, data_name)
-	filepath = 'logs/archived/bal_bert_trans_subj.log'
+	# filepath = 'logs/archived/bal_bert_trans_subj.log'
 	with open(filepath) as f:
 		line = f.readline()
 		if 'RUN START' in line:
@@ -74,7 +74,7 @@ def plot_experiments():
 			del small_prop_label_averages[(-1, False, small_label, small_prop)]
 			del small_prop_label_averages[(-1, True, small_label, small_prop)]
 			for (geo, _, _, _), vec in sorted(small_prop_label_averages.items()):
-				if geo != 0.8 or small_prop == 1.0:
+				if small_prop == 1.0:
 					continue
 				# print('Geo: {}, label: {}, pct: {}'.format(geo, small_label, small_prop))
 				plt.title('Rebalancing {} with {} after on {}% of label {}'
