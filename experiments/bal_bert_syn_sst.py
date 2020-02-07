@@ -31,7 +31,7 @@ def experiment(balance_seed):
 							  small_label=small_label, small_prop=0.5, 
 							  balance_seed=balance_seed, undersample=undersample)
 			agent.run()
-		for geo in np.arange(0.3, 1.0, 0.1):
+		for geo in np.arange(0.5, 1.0, 0.1):
 			geo = round(geo, 2)
 			agent = BertAgent(device, logger, data_name, 25, num_epochs, 
 							  aug_mode, 'dev', batch_size, 
