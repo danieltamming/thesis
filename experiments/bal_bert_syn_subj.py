@@ -18,25 +18,27 @@ from utils.parsing import get_device
 
 device = get_device()
 this_script_name = os.path.basename(__file__).split('.')[0]
-num_epochs = 10
+num_epochs = 4
 data_name = 'subj'
 aug_mode = 'synonym'
 batch_size = 16
 def experiment(balance_seed):
-	for small_label in [0, 1]:
-		for undersample in [False, True]:
-			agent = BertAgent(device, logger, data_name, 25, num_epochs, 
-							  None, 'dev', batch_size, 
-							  small_label=small_label, small_prop=0.5, 
-							  balance_seed=balance_seed, undersample=undersample)
-			agent.run()
-		for geo in np.arange(0.5, 1.0, 0.1):
-			geo = round(geo, 2)
-			agent = BertAgent(device, logger, data_name, 25, num_epochs, 
-							  aug_mode, 'dev', batch_size, 
-							  small_label=small_label, small_prop=0.5, 
-							  balance_seed=balance_seed, geo=geo)
-			agent.run()
+	for small_prop in np.arange(0.1, 1.0, 0.1):
+		small_prop = round(small_prop, 2)
+		for small_label in [0, 1]:
+			for undersample in [False, True]:
+				agent = BertAgent(device, logger, data_name, 25, num_epochs, 
+								  None, 'dev', batch_size, 
+								  small_label=small_label, small_prop=small_prop, 
+								  balance_seed=balance_seed, undersample=undersample)
+				agent.run()
+			for geo in np.arange(0.5, 1.0, 0.1):
+				geo = round(geo, 2)
+				agent = BertAgent(device, logger, data_name, 25, num_epochs, 
+								  aug_mode, 'dev', batch_size, 
+								  small_label=small_label, small_prop=small_prop, 
+								  balance_seed=balance_seed, geo=geo)
+				agent.run()
 
 for balance_seed in range(5):
 	logger = initialize_logger(this_script_name, balance_seed)
