@@ -9,7 +9,7 @@ from utils.parsing import get_device
 
 device = get_device()
 this_script_name = os.path.basename(__file__).split('.')[0]
-num_epochs = 4
+num_epochs = 10
 aug_mode = None
 batch_size = 16
 for balance_seed in range(5):

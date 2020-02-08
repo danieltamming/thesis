@@ -16,13 +16,21 @@ def get_aug_mode(line):
 	return line.split('aug mode is ')[1].split(',', 1)[0]
 
 def get_small_label(line):
-	return int(line.split('small_label is ')[1].split(' ', 1)[0].rstrip(','))
+	small_label = line.split('small_label is ')[1].split(' ', 1)[0].rstrip(',')
+	if small_label == 'None':
+		return None
+	else:
+		return int(small_label)
 
 def get_undersample(line):
 	return line.split('undersample is ')[1].split(',', 1)[0] == 'True'
 
 def get_small_prop(line):
-	return float(line.split('small_prop is ')[1].split(',', 1)[0])
+	small_prop = line.split('small_prop is ')[1].split(',', 1)[0]
+	if small_prop == 'None':
+		return None
+	else:
+		return float(small_prop)
 
 def read_desc(line):
 	aug_mode = get_aug_mode(line)
@@ -37,14 +45,15 @@ def read_desc(line):
 
 def plot_experiments():
 	experiments = {}
-	model = 'rnn'
-	# model = 'bert'
+	# model = 'rnn'
+	model = 'bert'
 	aug_mode = 'syn'
 	# aug_mode = 'trans'
 	data_name = 'sst'
 	# data_name = 'subj'
 	# filepath = 'logs/archived/bal_{}_{}_{}_pct.log'.format(model, aug_mode, data_name)
-	filepath = 'logs/archived/bal_bert_trans_subj.log'
+	# filepath = 'logs/archived/bal_bert_trans_subj.log'
+	filepath = 'logs/main/first.log'
 	with open(filepath) as f:
 		line = f.readline()
 		if 'RUN START' in line:
@@ -99,20 +108,26 @@ def plot_experiments():
 
 if __name__ == "__main__":
 	plot_experiments()
-	# with open('logs/main/seed_0_num_0.log') as f:
-	# 	f.readline()
-	# 	line = f.readline()
-	# 	train_acc = []
-	# 	val_acc = []
-	# 	while line:
-	# 		if is_training(line):
-	# 			train_acc.append(get_acc(line))
-	# 		elif is_validating(line):
-	# 			val_acc.append(get_acc(line))
+	# avgs = []
+	# for name in ['first.log', 'second.log']:
+	# 	with open('logs/main/' + name) as f:
+	# 		f.readline()
 	# 		line = f.readline()
-	# 	train_acc = 100*np.array(train_acc)
-	# 	val_acc = 100*np.array(val_acc)
-	# 	print(train_acc.max(), val_acc.max())
-	# 	plt.plot(train_acc, label='training')
-	# 	plt.plot(val_acc, label='validation')
-	# 	plt.show()
+	# 		accs = []
+	# 		all_accs = []
+	# 		while line:
+	# 			if is_training(line):
+	# 				accs.append(get_acc(line))
+	# 			elif is_validating(line):
+	# 				pass
+	# 			else:
+	# 				# f.readline()
+	# 				all_accs.append(np.array(accs))
+	# 				accs = []
+	# 			line = f.readline()
+	# 	all_accs = np.vstack(all_accs)
+	# 	avgs.append(all_accs.mean(0))
+	# plt.plot(avgs[0], label='first', color='b')
+	# plt.plot(avgs[1], label='second', color='g')
+	# plt.legend()
+	# plt.show()
