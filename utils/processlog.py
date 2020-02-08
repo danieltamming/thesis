@@ -107,27 +107,27 @@ def plot_experiments():
 				plt.show()
 
 if __name__ == "__main__":
-	plot_experiments()
-	# avgs = []
-	# for name in ['first.log', 'second.log']:
-	# 	with open('logs/main/' + name) as f:
-	# 		f.readline()
-	# 		line = f.readline()
-	# 		accs = []
-	# 		all_accs = []
-	# 		while line:
-	# 			if is_training(line):
-	# 				accs.append(get_acc(line))
-	# 			elif is_validating(line):
-	# 				pass
-	# 			else:
-	# 				# f.readline()
-	# 				all_accs.append(np.array(accs))
-	# 				accs = []
-	# 			line = f.readline()
-	# 	all_accs = np.vstack(all_accs)
-	# 	avgs.append(all_accs.mean(0))
-	# plt.plot(avgs[0], label='first', color='b')
-	# plt.plot(avgs[1], label='second', color='g')
-	# plt.legend()
-	# plt.show()
+	# plot_experiments()
+	avgs = []
+	for name in ['first.log', 'second.log']:
+		with open('logs/main/' + name) as f:
+			f.readline()
+			line = f.readline()
+			accs = []
+			all_accs = []
+			while line:
+				if is_training(line):
+					pass
+				elif is_validating(line):
+					accs.append(get_acc(line))
+				else:
+					# f.readline()
+					all_accs.append(np.array(accs))
+					accs = []
+				line = f.readline()
+		all_accs = np.vstack(all_accs)
+		avgs.append(all_accs.mean(0))
+	plt.plot(avgs[0], label='first', color='b')
+	plt.plot(avgs[1], label='second', color='g')
+	plt.legend()
+	plt.show()
