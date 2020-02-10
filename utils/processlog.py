@@ -45,15 +45,14 @@ def read_desc(line):
 
 def plot_experiments():
 	experiments = {}
-	# model = 'rnn'
-	model = 'bert'
+	model = 'rnn'
+	# model = 'bert'
 	aug_mode = 'syn'
 	# aug_mode = 'trans'
-	data_name = 'sst'
-	# data_name = 'subj'
-	# filepath = 'logs/archived/bal_{}_{}_{}_pct.log'.format(model, aug_mode, data_name)
+	# data_name = 'sst'
+	data_name = 'subj'
+	filepath = 'logs/archived/bal_{}_{}_{}_pct.log'.format(model, aug_mode, data_name)
 	# filepath = 'logs/archived/bal_bert_trans_subj.log'
-	filepath = 'logs/main/first.log'
 	with open(filepath) as f:
 		line = f.readline()
 		if 'RUN START' in line:
@@ -83,7 +82,7 @@ def plot_experiments():
 			del small_prop_label_averages[(-1, False, small_label, small_prop)]
 			del small_prop_label_averages[(-1, True, small_label, small_prop)]
 			for (geo, _, _, _), vec in sorted(small_prop_label_averages.items()):
-				if geo not in [0.5, 0.6, 0.7] or small_prop == 1.0:
+				if small_prop == 1.0:
 					continue
 				# print('Geo: {}, label: {}, pct: {}'.format(geo, small_label, small_prop))
 				plt.title('Rebalancing {} with {} after on {}% of label {}'
@@ -92,22 +91,24 @@ def plot_experiments():
 						  		100*small_prop, small_label))
 				plt.ylabel('Validation Accuracy (%)')
 				plt.xlabel('Training Epoch')
-				# if data_name == 'sst':
-				# 	plt.ylim((68, 84))
-				# elif data_name == 'subj':
-				# 	plt.ylim((80, 92))
+				if data_name == 'sst':
+					plt.ylim((68, 84))
+				elif data_name == 'subj':
+					plt.ylim((80, 92))
 				plt.plot(oversample_avg, label='oversampling', color='g', alpha=0.5)
 				plt.plot(undersample_avg, label='undersampling', color='r', alpha=0.5)
 				plt.plot(vec, label='geo {}'.format(geo), color='b', alpha=0.5)
 				if model == 'rnn':
-					plt.hlines(oversample_avg[25:].mean(), 0, 100, color='g')
-					plt.hlines(undersample_avg[25:].mean(), 0, 100, color='r')
-					plt.hlines(vec[25:].mean(), 0, 100, color='b')
+					plt.hlines(np.median(oversample_avg[25:]), 0, 100, color='g')
+					plt.hlines(np.median(undersample_avg[25:]), 0, 100, color='r')
+					plt.hlines(np.median(vec[25:]), 0, 100, color='b')
 				plt.legend()
 				plt.show()
 
 if __name__ == "__main__":
-	# plot_experiments()
+	plot_experiments()
+	exit()
+
 	avgs = []
 	for name in ['first.log', 'second.log']:
 	# for name in ['third.log']:

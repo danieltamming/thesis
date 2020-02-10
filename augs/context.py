@@ -1,6 +1,7 @@
 import os
 import sys
 import inspect
+import pickle
 
 current_dir = os.path.dirname(
 	os.path.abspath(inspect.getfile(inspect.currentframe()))
@@ -108,7 +109,7 @@ class BertAgent:
 		self.data_name = data_name
 		# CHANGE INPUT LENGTH. MAYBE 50?
 		self.input_length = 25
-		self.batch_size = 32
+		self.batch_size = 16
 		self.num_train_epochs = 4
 		self.checkpoint = 'bert-base-uncased'
 		self.output_dir = 'bert-ckpt'
@@ -285,8 +286,9 @@ class BertAgent:
 			# exit()
 			data.append((clean_seq, cat, aug))
 
-		# target_filename = 'data/aug_bert_ids.pickle'
-		with open(self.aug_data_filename, 'wb') as f:
+		context_aug_filepath = ('../DownloadedData/' + data_name 
+						   + '/context_aug/train.pickle')
+		with open(context_aug_filepath, 'wb') as f:
 			pickle.dump(data, f, protocol=pickle.HIGHEST_PROTOCOL)
 
 
@@ -296,7 +298,7 @@ if __name__ == "__main__":
 	# data_name = 'subj'
 	# data_name = 'trec'
 	agent = BertAgent(data_name)
-	# agent.train()
+	agent.train()
 	# agent.save_checkpoint()
 	# agent.develop()
 	agent.augment()
