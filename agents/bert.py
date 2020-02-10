@@ -35,6 +35,8 @@ class BertAgent:
 		self.pct_usage = pct_usage
 		self.geo = geo
 
+		self.accumulation_steps = 4
+
 		mngr_args = ['bert', self.input_length, self.aug_mode,
 				self.pct_usage, self.geo, self.batch_size]
 		mngr_kwargs = {'small_label': self.small_label, 
@@ -75,7 +77,8 @@ class BertAgent:
 		elif self.mode == 'dev':
 			self.train_loader, self.val_loader = self.mngr.get_dev_ldrs()
 			self.initialize_model()
-			total_steps = len(self.train_loader) * self.max_epochs
+			total_steps = (len(self.train_loader) 
+						   // self.accumulation_steps) * self.max_epochs
 			# self.scheduler = get_constant_schedule(self.optimizer)
 			# scheduler immediately below had worse performance
 			# self.scheduler = get_linear_schedule_with_warmup(
@@ -114,24 +117,26 @@ class BertAgent:
 				# 	break
 
 	def train_one_epoch(self):
+		self.optimizer.zero_grad()
 		self.model.train()
 		loss = AverageMeter()
 		acc = AverageMeter()
-		for x, y in self.train_loader:
+		for i, (x, y) in enumerate(self.train_loader):
 			attention_mask = (x > 0).float().to(self.device)
 			x = x.to(self.device)
 			y = y.to(self.device)
-			self.model.zero_grad()
 			current_loss, output = self.model(
 				x, attention_mask=attention_mask, labels=y)
+			current_loss = current_loss / self.accumulation_steps
 			loss.update(current_loss.item())
 			current_loss.backward()
-			MAX_GRAD_NORM = 1.0
-			nn.utils.clip_grad_norm_(self.model.parameters(),
-									 MAX_GRAD_NORM)
-			self.optimizer.step()
-			self.scheduler.step()
-			# self.optimizer.zero_grad()
+			# MAX_GRAD_NORM = 1.0
+			# nn.utils.clip_grad_norm_(self.model.parameters(),
+			# 						 MAX_GRAD_NORM)
+			if (i+1) % self.accumulation_steps == 0:
+				self.optimizer.step()
+				self.scheduler.step()
+				self.optimizer.zero_grad()
 			accuracy = get_accuracy(output, y)
 			acc.update(accuracy, y.shape[0])
 		# if self.mode == 'crossval':
