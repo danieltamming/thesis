@@ -18,9 +18,9 @@ from utils.logger import print_and_log
 
 class BertAgent:
 	def __init__(self, device, logger, data_name, input_length, max_epochs, 
-				 aug_mode, mode, batch_size, small_label=None, 
-				 small_prop=None, balance_seed=None, undersample=False, 
-				 pct_usage=1, geo=0.5):
+				 aug_mode, mode, batch_size, accumulation_steps, 
+				 small_label=None, small_prop=None, balance_seed=None, 
+				 undersample=False, pct_usage=1, geo=0.5):
 		assert not (undersample and aug_mode is not None), 'Cant undersample and augment'
 		self.logger = logger
 		self.input_length = input_length
@@ -28,14 +28,13 @@ class BertAgent:
 		self.aug_mode = aug_mode
 		self.mode = mode
 		self.batch_size = batch_size
+		self.accumulation_steps = accumulation_steps
 		self.small_label = small_label
 		self.small_prop = small_prop
 		self.balance_seed = balance_seed
 		self.undersample = undersample
 		self.pct_usage = pct_usage
 		self.geo = geo
-
-		self.accumulation_steps = 4
 
 		mngr_args = ['bert', self.input_length, self.aug_mode,
 				self.pct_usage, self.geo, self.batch_size]
@@ -130,9 +129,9 @@ class BertAgent:
 			current_loss = current_loss / self.accumulation_steps
 			loss.update(current_loss.item())
 			current_loss.backward()
-			MAX_GRAD_NORM = 1.0
-			nn.utils.clip_grad_norm_(self.model.parameters(),
-									 MAX_GRAD_NORM)
+			# MAX_GRAD_NORM = 1.0
+			# nn.utils.clip_grad_norm_(self.model.parameters(),
+			# 						 MAX_GRAD_NORM)
 			if (i+1) % self.accumulation_steps == 0:
 				self.optimizer.step()
 				self.scheduler.step()

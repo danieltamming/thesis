@@ -109,8 +109,8 @@ def plot_experiments():
 if __name__ == "__main__":
 	# plot_experiments()
 	avgs = []
-	# for name in ['first.log', 'second.log']:
-	for name in ['third.log']:
+	for name in ['first.log', 'second.log']:
+	# for name in ['third.log']:
 		with open('logs/main/' + name) as f:
 			f.readline()
 			line = f.readline()
@@ -129,7 +129,7 @@ if __name__ == "__main__":
 		all_accs = np.vstack(all_accs)
 		avgs.append(all_accs.mean(0))
 	plt.plot(avgs[0], label='first', color='b')
-	# plt.plot(avgs[1], label='second', color='g')
+	plt.plot(avgs[1], label='second', color='g')
 	print(avgs[0].max())
 	# print(avgs[1].max())
 	plt.legend()

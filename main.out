@@ -1,115 +1,0 @@
-  0%|          | 0/10 [00:00<?, ?it/s] 10%|█         | 1/10 [01:27<13:09, 87.70s/it] 20%|██        | 2/10 [02:54<11:38, 87.29s/it] 30%|███       | 3/10 [04:20<10:08, 86.99s/it] 40%|████      | 4/10 [05:46<08:40, 86.81s/it] 50%|█████     | 5/10 [07:12<07:13, 86.65s/it] 60%|██████    | 6/10 [08:39<05:46, 86.54s/it] 70%|███████   | 7/10 [10:02<04:17, 85.69s/it] 80%|████████  | 8/10 [11:24<02:48, 84.41s/it] 90%|█████████ | 9/10 [12:45<01:23, 83.53s/it]100%|██████████| 10/10 [14:07<00:00, 82.90s/it]100%|██████████| 10/10 [14:07<00:00, 84.73s/it]
-  0%|          | 0/10 [00:00<?, ?it/s] 10%|█         | 1/10 [01:26<13:02, 86.94s/it] 20%|██        | 2/10 [02:53<11:35, 86.93s/it] 30%|███       | 3/10 [04:20<10:08, 86.88s/it] 40%|████      | 4/10 [05:42<08:33, 85.52s/it] 50%|█████     | 5/10 [07:04<07:01, 84.26s/it] 60%|██████    | 6/10 [08:25<05:33, 83.38s/it] 70%|███████   | 7/10 [09:47<04:08, 82.84s/it] 80%|████████  | 8/10 [11:08<02:44, 82.35s/it] 90%|█████████ | 9/10 [12:29<01:22, 82.05s/it]100%|██████████| 10/10 [13:51<00:00, 81.95s/it]100%|██████████| 10/10 [13:51<00:00, 83.15s/it]
-  0%|          | 0/10 [00:00<?, ?it/s] 10%|█         | 1/10 [01:27<13:08, 87.63s/it] 20%|██        | 2/10 [02:51<11:32, 86.52s/it] 30%|███       | 3/10 [04:12<09:54, 84.96s/it] 40%|████      | 4/10 [05:34<08:23, 83.95s/it] 50%|█████     | 5/10 [06:56<06:56, 83.30s/it] 60%|██████    | 6/10 [08:17<05:30, 82.72s/it] 70%|███████   | 7/10 [09:38<04:06, 82.25s/it] 80%|████████  | 8/10 [11:00<02:43, 81.98s/it] 90%|█████████ | 9/10 [12:21<01:21, 81.75s/it]100%|██████████| 10/10 [13:42<00:00, 81.58s/it]100%|██████████| 10/10 [13:42<00:00, 82.25s/it]
-  0%|          | 0/10 [00:00<?, ?it/s] 10%|█         | 1/10 [01:26<13:02, 86.99s/it] 20%|██        | 2/10 [02:54<11:36, 87.10s/it] 30%|███       | 3/10 [04:21<10:09, 87.09s/it] 40%|████      | 4/10 [05:48<08:42, 87.08s/it] 50%|█████     | 5/10 [07:15<07:15, 87.03s/it] 60%|██████    | 6/10 [08:42<05:48, 87.02s/it] 70%|███████   | 7/10 [10:09<04:21, 87.01s/it] 80%|████████  | 8/10 [11:36<02:54, 87.02s/it] 90%|█████████ | 9/10 [13:03<01:27, 87.03s/it]100%|██████████| 10/10 [14:30<00:00, 87.00s/it]100%|██████████| 10/10 [14:30<00:00, 87.04s/it]
-  0%|          | 0/10 [00:00<?, ?it/s] 10%|█         | 1/10 [01:27<13:03, 87.08s/it] 20%|██        | 2/10 [02:54<11:36, 87.11s/it] 30%|███       | 3/10 [04:21<10:10, 87.16s/it] 40%|████      | 4/10 [05:54<08:53, 88.87s/it] 50%|█████     | 5/10 [07:27<07:30, 90.03s/it] 60%|██████    | 6/10 [08:59<06:03, 90.82s/it] 70%|███████   | 7/10 [10:27<04:29, 89.79s/it] 80%|████████  | 8/10 [11:54<02:57, 88.92s/it] 90%|█████████ | 9/10 [13:20<01:28, 88.31s/it]100%|██████████| 10/10 [14:48<00:00, 88.04s/it]100%|██████████| 10/10 [14:48<00:00, 88.84s/it]
-Model is Bert, dataset is sst, undersample is False, aug mode is None, geo is 0.5, small_label is None, small_prop is None, balance_seed is 0
-Training epoch 0 | loss: 0.12117 - accuracy: 0.74046
-Validating epoch 0 | loss: 0.32742 - accuracy: 0.86583
-87.701 s/it
-Training epoch 1 | loss: 0.06275 - accuracy: 0.90217
-Validating epoch 1 | loss: 0.36274 - accuracy: 0.8555
-Training epoch 2 | loss: 0.02924 - accuracy: 0.95983
-Validating epoch 2 | loss: 0.38107 - accuracy: 0.87959
-Training epoch 3 | loss: 0.01404 - accuracy: 0.98324
-Validating epoch 3 | loss: 0.44304 - accuracy: 0.87271
-Training epoch 4 | loss: 0.00738 - accuracy: 0.99133
-Validating epoch 4 | loss: 0.52626 - accuracy: 0.87959
-Training epoch 5 | loss: 0.00521 - accuracy: 0.99436
-Validating epoch 5 | loss: 0.51764 - accuracy: 0.88647
-Training epoch 6 | loss: 0.00261 - accuracy: 0.9974
-Validating epoch 6 | loss: 0.57451 - accuracy: 0.87959
-Training epoch 7 | loss: 0.00136 - accuracy: 0.99855
-Validating epoch 7 | loss: 0.6173 - accuracy: 0.88991
-Training epoch 8 | loss: 0.00104 - accuracy: 0.99899
-Validating epoch 8 | loss: 0.6497 - accuracy: 0.88073
-Training epoch 9 | loss: 0.00077 - accuracy: 0.99942
-Validating epoch 9 | loss: 0.66023 - accuracy: 0.87959
-Model is Bert, dataset is sst, undersample is False, aug mode is None, geo is 0.5, small_label is None, small_prop is None, balance_seed is 1
-Training epoch 0 | loss: 0.11987 - accuracy: 0.74465
-Validating epoch 0 | loss: 0.31095 - accuracy: 0.87959
-86.944 s/it
-Training epoch 1 | loss: 0.05731 - accuracy: 0.90896
-Validating epoch 1 | loss: 0.31222 - accuracy: 0.88532
-Training epoch 2 | loss: 0.0228 - accuracy: 0.9672
-Validating epoch 2 | loss: 0.38774 - accuracy: 0.89564
-Training epoch 3 | loss: 0.01056 - accuracy: 0.98627
-Validating epoch 3 | loss: 0.48645 - accuracy: 0.88417
-Training epoch 4 | loss: 0.00561 - accuracy: 0.99306
-Validating epoch 4 | loss: 0.61541 - accuracy: 0.875
-Training epoch 5 | loss: 0.00441 - accuracy: 0.99509
-Validating epoch 5 | loss: 0.64256 - accuracy: 0.87729
-Training epoch 6 | loss: 0.00191 - accuracy: 0.99783
-Validating epoch 6 | loss: 0.6822 - accuracy: 0.87385
-Training epoch 7 | loss: 0.00127 - accuracy: 0.99884
-Validating epoch 7 | loss: 0.70912 - accuracy: 0.88188
-Training epoch 8 | loss: 0.00102 - accuracy: 0.99884
-Validating epoch 8 | loss: 0.72673 - accuracy: 0.88073
-Training epoch 9 | loss: 0.00028 - accuracy: 0.99986
-Validating epoch 9 | loss: 0.73762 - accuracy: 0.88073
-Model is Bert, dataset is sst, undersample is False, aug mode is None, geo is 0.5, small_label is None, small_prop is None, balance_seed is 2
-Training epoch 0 | loss: 0.11517 - accuracy: 0.75968
-Validating epoch 0 | loss: 0.31314 - accuracy: 0.87156
-87.629 s/it
-Training epoch 1 | loss: 0.0566 - accuracy: 0.91546
-Validating epoch 1 | loss: 0.33273 - accuracy: 0.88417
-Training epoch 2 | loss: 0.02442 - accuracy: 0.96633
-Validating epoch 2 | loss: 0.43111 - accuracy: 0.87959
-Training epoch 3 | loss: 0.01016 - accuracy: 0.98656
-Validating epoch 3 | loss: 0.48255 - accuracy: 0.87729
-Training epoch 4 | loss: 0.00579 - accuracy: 0.9922
-Validating epoch 4 | loss: 0.55708 - accuracy: 0.87729
-Training epoch 5 | loss: 0.00284 - accuracy: 0.99653
-Validating epoch 5 | loss: 0.62254 - accuracy: 0.88761
-Training epoch 6 | loss: 0.00146 - accuracy: 0.99841
-Validating epoch 6 | loss: 0.62862 - accuracy: 0.89335
-Training epoch 7 | loss: 0.00074 - accuracy: 0.99928
-Validating epoch 7 | loss: 0.66959 - accuracy: 0.8922
-Training epoch 8 | loss: 0.00117 - accuracy: 0.99841
-Validating epoch 8 | loss: 0.62228 - accuracy: 0.8922
-Training epoch 9 | loss: 0.00048 - accuracy: 0.99928
-Validating epoch 9 | loss: 0.64868 - accuracy: 0.89335
-Model is Bert, dataset is sst, undersample is False, aug mode is None, geo is 0.5, small_label is None, small_prop is None, balance_seed is 3
-Training epoch 0 | loss: 0.12124 - accuracy: 0.74639
-Validating epoch 0 | loss: 0.30074 - accuracy: 0.87385
-86.989 s/it
-Training epoch 1 | loss: 0.05965 - accuracy: 0.90867
-Validating epoch 1 | loss: 0.30864 - accuracy: 0.875
-Training epoch 2 | loss: 0.02279 - accuracy: 0.96749
-Validating epoch 2 | loss: 0.35672 - accuracy: 0.87615
-Training epoch 3 | loss: 0.01031 - accuracy: 0.98786
-Validating epoch 3 | loss: 0.50779 - accuracy: 0.87385
-Training epoch 4 | loss: 0.00733 - accuracy: 0.99003
-Validating epoch 4 | loss: 0.46864 - accuracy: 0.87844
-Training epoch 5 | loss: 0.00382 - accuracy: 0.99624
-Validating epoch 5 | loss: 0.53781 - accuracy: 0.87729
-Training epoch 6 | loss: 0.00159 - accuracy: 0.99841
-Validating epoch 6 | loss: 0.62646 - accuracy: 0.88417
-Training epoch 7 | loss: 0.00177 - accuracy: 0.99798
-Validating epoch 7 | loss: 0.60466 - accuracy: 0.88647
-Training epoch 8 | loss: 0.00085 - accuracy: 0.9987
-Validating epoch 8 | loss: 0.62816 - accuracy: 0.88647
-Training epoch 9 | loss: 0.0005 - accuracy: 0.99942
-Validating epoch 9 | loss: 0.6307 - accuracy: 0.88417
-Model is Bert, dataset is sst, undersample is False, aug mode is None, geo is 0.5, small_label is None, small_prop is None, balance_seed is 4
-Training epoch 0 | loss: 0.12385 - accuracy: 0.74205
-Validating epoch 0 | loss: 0.33477 - accuracy: 0.86124
-87.082 s/it
-Training epoch 1 | loss: 0.05912 - accuracy: 0.90882
-Validating epoch 1 | loss: 0.31129 - accuracy: 0.87844
-Training epoch 2 | loss: 0.02427 - accuracy: 0.96633
-Validating epoch 2 | loss: 0.46384 - accuracy: 0.86697
-Training epoch 3 | loss: 0.01123 - accuracy: 0.98656
-Validating epoch 3 | loss: 0.42428 - accuracy: 0.88991
-Training epoch 4 | loss: 0.00546 - accuracy: 0.99379
-Validating epoch 4 | loss: 0.55168 - accuracy: 0.88303
-Training epoch 5 | loss: 0.00343 - accuracy: 0.9961
-Validating epoch 5 | loss: 0.57389 - accuracy: 0.87959
-Training epoch 6 | loss: 0.00215 - accuracy: 0.99711
-Validating epoch 6 | loss: 0.63059 - accuracy: 0.88188
-Training epoch 7 | loss: 0.00116 - accuracy: 0.99841
-Validating epoch 7 | loss: 0.64456 - accuracy: 0.88303
-Training epoch 8 | loss: 0.00046 - accuracy: 0.99942
-Validating epoch 8 | loss: 0.67992 - accuracy: 0.87959
-Training epoch 9 | loss: 0.00035 - accuracy: 0.99971
-Validating epoch 9 | loss: 0.6881 - accuracy: 0.87959

@@ -88,9 +88,16 @@ def cat_to_token_type(categories, seq_len):
 	return torch.ger(categories, torch.ones(seq_len, dtype=torch.long))
 
 def mask_gen(seq, tokenizer):
+	'''
+	A generator that returns the masked index 
+	and sequence with that index masked.
+	It does not return partial words
+	such as '##asse', nor does it return special tokens
+	'''
 	for i in range(seq.shape[0]):
 		num = seq[i].item()
-		if num in tokenizer.all_special_ids:
+		s = tokenizer.convert_ids_to_tokens(num)
+		if num in tokenizer.all_special_ids or not s.isalpha():
 			continue
 		seq[i] = tokenizer.mask_token_id
 		yield i, seq
@@ -102,9 +109,9 @@ class BertAgent:
 		# CHANGE INPUT LENGTH. MAYBE 50?
 		self.input_length = 25
 		self.batch_size = 32
-		self.num_train_epochs = 5
+		self.num_train_epochs = 4
 		self.checkpoint = 'bert-base-uncased'
-		self.output_dir = 'ckpt'
+		self.output_dir = 'bert-ckpt'
 		self.weight_decay = 0.0
 		self.max_grad_norm = 1.0
 		self.tokenizer = BertTokenizer.from_pretrained(self.checkpoint)
@@ -137,7 +144,9 @@ class BertAgent:
 		self.optimizer = AdamW(optimizer_grouped_parameters)
 		total_steps = len(self.loader) * self.num_train_epochs
 		self.scheduler = get_linear_schedule_with_warmup(
-			self.optimizer, num_warmup_steps=0, num_training_steps=total_steps)
+			self.optimizer, num_warmup_steps=0.1*total_steps, 
+			num_training_steps=total_steps
+			)
 		self.model.train()
 		self.model.zero_grad()
 		for epoch in range(self.num_train_epochs):
@@ -177,8 +186,8 @@ class BertAgent:
 			# --------------------------------------------------------
 			loss_meter.update(loss.item())
 			loss.backward()
-			nn.utils.clip_grad_norm_(self.model.parameters(), 
-									 self.max_grad_norm)
+			# nn.utils.clip_grad_norm_(self.model.parameters(), 
+			# 						 self.max_grad_norm)
 			self.optimizer.step()
 			self.scheduler.step()
 			self.model.zero_grad()
@@ -190,10 +199,12 @@ class BertAgent:
 		'''
 		# augment_loader = DataLoader(self.dataset, 1)
 		# for seq, cat in tqdm(augment_loader):
+		self.model.eval()
 		count = 0
 		for seq, cat in self.dataset:
 			count += 1
 			print(cat)
+			print(self.tokenizer.decode(seq.tolist()))
 			print(self.tokenizer.convert_ids_to_tokens(seq.tolist()))
 			for i, masked_seq in mask_gen(seq, self.tokenizer):
 				print(i)
@@ -212,7 +223,9 @@ class BertAgent:
 				# ith_pred = F.softmax(ith_pred, 0)
 				# top_5_vals, top_5_idxs = torch.topk(ith_preds, 5)
 				top_10_ids = torch.topk(ith_preds, 10)[1].tolist()
-				print(self.tokenizer.convert_ids_to_tokens(top_10_ids))
+				top_10_toks = self.tokenizer.convert_ids_to_tokens(top_10_ids)
+				top_toks = [s for s in top_10_toks if '##' not in s]
+				print(top_toks)
 				print()
 				# plt.hist(ith_pred.numpy())
 				# plt.show()
@@ -223,10 +236,11 @@ class BertAgent:
 				# first_seq = pred[0,...].tolist()
 				# print(self.tokenizer.convert_ids_to_tokens(first_seq)[i])
 				# print()
-			if count > 5:
+			if count >= 5:
 				exit()
 
 	def augment(self):
+		self.model.eval()
 		data = []
 		for seq, cat in tqdm(self.dataset):
 			aug = {}
@@ -244,25 +258,31 @@ class BertAgent:
 					token_type_ids=token_type_ids)[0].data
 				ith_preds = prediction_scores[0,i,:]
 				top_10_ids = torch.topk(ith_preds, 10)[1].tolist()
-				# top_10_toks = self.tokenizer.convert_ids_to_tokens(top_10_ids)
+				top_10_toks = self.tokenizer.convert_ids_to_tokens(top_10_ids)
+				top_toks = [s for s in top_10_toks if s.isalpha()]
+				top_ids = self.tokenizer.convert_tokens_to_ids(top_toks)
 
 				# changed to shift aug dict, since follwing line shifts seq by 1
 				# aug[i] = top_10_ids
-				aug[i-1] = top_10_ids
+				# aug[i-1] = top_10_ids
+				aug[i-1] = top_ids
 			# remove all padding and other special token ids
 			clean_seq = [eyedee for eyedee in seq.tolist() if eyedee 
 						 not in self.tokenizer.all_special_ids]
 			assert clean_seq == seq.tolist()[1:1+len(clean_seq)]
 			# -----------------------------------
-			s = self.tokenizer.decode(clean_seq)
-			flag = False
-			for i in range(len(s)-3):
-				if all(s[i] == c for c in s[i+1:i+3]):
-					flag = True
-					print(s)
-			assert not flag
+			# s = self.tokenizer.decode(clean_seq)
+			# flag = False
+			# for i in range(len(s)-3):
+			# 	if all(s[i] == c for c in s[i+1:i+3]):
+			# 		flag = True
+			# 		print(s)
+			# assert not flag
 			# -----------------------------------
-
+			# print(self.tokenizer.convert_ids_to_tokens(clean_seq))
+			# for i, ids in aug.items():
+			# 	print(i, self.tokenizer.convert_ids_to_tokens(ids))
+			# exit()
 			data.append((clean_seq, cat, aug))
 
 		# target_filename = 'data/aug_bert_ids.pickle'
@@ -276,10 +296,10 @@ if __name__ == "__main__":
 	# data_name = 'subj'
 	# data_name = 'trec'
 	agent = BertAgent(data_name)
-	agent.train()
-	agent.save_checkpoint()
+	# agent.train()
+	# agent.save_checkpoint()
 	# agent.develop()
-	# agent.augment()
+	agent.augment()
 
 
 '''
