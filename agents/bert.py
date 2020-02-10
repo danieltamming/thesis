@@ -130,9 +130,9 @@ class BertAgent:
 			current_loss = current_loss / self.accumulation_steps
 			loss.update(current_loss.item())
 			current_loss.backward()
-			# MAX_GRAD_NORM = 1.0
-			# nn.utils.clip_grad_norm_(self.model.parameters(),
-			# 						 MAX_GRAD_NORM)
+			MAX_GRAD_NORM = 1.0
+			nn.utils.clip_grad_norm_(self.model.parameters(),
+									 MAX_GRAD_NORM)
 			if (i+1) % self.accumulation_steps == 0:
 				self.optimizer.step()
 				self.scheduler.step()
