@@ -42,6 +42,6 @@ def experiment(balance_seed):
 								  balance_seed=balance_seed, geo=geo)
 				agent.run()
 
-for balance_seed in range(5):
+for balance_seed in range(3):
 	logger = initialize_logger(this_script_name, balance_seed)
 	experiment(balance_seed)

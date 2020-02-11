@@ -22,7 +22,13 @@ class DatasetManagerBase:
 		self.small_prop = small_prop
 		self.balance_seed = balance_seed
 		self.undersample = undersample
-		self.data_dict = data_func(self.input_length, self.aug_mode)
+
+		if aug_mode == 'context':
+			kwargs = {'pct_usage': pct_usage, 'small_label': small_label,
+					  'small_prop': small_prop, 'seed': balance_seed}
+		else:
+			kwargs = {}
+		self.data_dict = data_func(self.input_length, self.aug_mode, **kwargs)
 
 		if model_type == 'rnn':
 			assert nlp is not None
