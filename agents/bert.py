@@ -6,7 +6,7 @@ import torch
 import torch.nn as nn
 from torch.optim import Adam
 from tqdm import tqdm
-from transformers import (BertForSequenceClassification, BertTokenizer,
+from transformers import (BertForSequenceClassification,
 						  AdamW, get_linear_schedule_with_warmup, 
 						  get_constant_schedule)
 
@@ -20,7 +20,7 @@ class BertAgent:
 	def __init__(self, device, logger, data_name, input_length, max_epochs, 
 				 aug_mode, mode, batch_size, accumulation_steps, 
 				 small_label=None, small_prop=None, balance_seed=None, 
-				 undersample=False, pct_usage=1, geo=0.5):
+				 undersample=False, pct_usage=None, geo=0.5):
 		assert not (undersample and aug_mode is not None), 'Cant undersample and augment'
 		self.logger = logger
 		self.input_length = input_length

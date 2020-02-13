@@ -7,6 +7,7 @@ from transformers import BertTokenizer
 
 from augs.synonym import syn_aug
 from augs.trans import trans_aug
+from augs.context import context_aug
 
 class DatasetBase(Dataset):
 	def __init__(self, to_ids_func):
@@ -16,14 +17,20 @@ class DatasetBase(Dataset):
 		return len(self.data)
 
 	def __getitem__(self, idx):
-		label, example, aug_counter = self.data[idx]
+		label, example, aug_dict = self.data[idx]
 		# if use case is dataset balancing but this is not small label
 		if self.small_label is not None and self.small_label != label:
 			pass
 		elif self.aug_mode == 'synonym':
 			example = syn_aug(example, self.geo)
 		elif self.aug_mode == 'trans':
-			example = trans_aug(example, aug_counter, self.geo)
+			example = trans_aug(example, aug_dict, self.geo)
+		elif self.aug_mode == 'context':
+			example_ids = context_aug(example, aug_dict, self.geo)
+			# wasting time here when model is bert by 
+			# converting to string then back to ids
+			example = self.tokenizer.decode(
+				example_ids, skip_special_tokens=True)
 		elif self.aug_mode is not None:
 			raise ValueError('Unrecognized augmentation technique.')
 		return self.to_ids_func(example), label
@@ -108,6 +115,10 @@ class RnnDataset(DatasetBase):
 		self.small_label = small_label
 		self.small_prop = small_prop
 		self.undersample = undersample
+
+		if aug_mode == 'context':
+			self.tokenizer = BertTokenizer.from_pretrained(
+				'bert-base-uncased')
 
 		if small_label is None and small_prop is None:
 			self.data = data

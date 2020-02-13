@@ -43,14 +43,25 @@ def read_desc(line):
 		geo = float(line.split('geo is ')[1].split(maxsplit=1)[0].rstrip(','))
 		return (geo, None, small_label, small_prop)
 
+def plot_with_err_bars(mat, *args, **kwargs):
+	avg = mat.mean(0)
+	dev = mat.std(0)
+	plt.plot(avg, *args, **kwargs)
+	kwargs['alpha'] = kwargs['alpha']/5
+	del kwargs['label']
+	plt.fill_between(list(range(mat.shape[1])), 
+					 avg-dev, avg+dev, *args, **kwargs)
+	plt.plot(np.argmax(avg), avg.max(), color=kwargs['color'], marker='o')
+	# plt.hlines(np.max(avg), 0, 100, color=kwargs['color'])
+
 def plot_experiments():
 	experiments = {}
 	model = 'rnn'
 	# model = 'bert'
-	aug_mode = 'syn'
-	# aug_mode = 'trans'
-	# data_name = 'sst'
-	data_name = 'subj'
+	# aug_mode = 'syn'
+	aug_mode = 'trans'
+	data_name = 'sst'
+	# data_name = 'subj'
 	filepath = 'logs/archived/bal_{}_{}_{}_pct.log'.format(model, aug_mode, data_name)
 	# filepath = 'logs/archived/bal_bert_trans_subj.log'
 	with open(filepath) as f:
@@ -69,7 +80,18 @@ def plot_experiments():
 				experiments[tup] = np.array(accs)
 			else:
 				experiments[tup] = np.vstack([experiments[tup], np.array(accs)])
-	averages = {tup: 100*mat.mean(0) for tup, mat in experiments.items()}
+
+	# diffs = []
+	# for key, tup in experiments.items():
+	# 	meds = 100*np.median(tup[:,25:], 1)
+	# 	diffs.append(max(meds.max()-meds.mean(), meds.mean()-meds.min()))
+	# plt.hist(diffs, bins=20)
+	# plt.show()
+	# exit()
+	
+	# averages = {tup: 100*(mat.mean(0), mat.std(0)) for tup, mat in experiments.items()}
+	averages = experiments
+
 	for small_prop in sorted(list(set(key[3] for key in averages))):
 		small_prop_averages = {key: avg for key, avg in averages.items()
 							   if key[3] == small_prop}
@@ -91,17 +113,10 @@ def plot_experiments():
 						  		100*small_prop, small_label))
 				plt.ylabel('Validation Accuracy (%)')
 				plt.xlabel('Training Epoch')
-				if data_name == 'sst':
-					plt.ylim((68, 84))
-				elif data_name == 'subj':
-					plt.ylim((80, 92))
-				plt.plot(oversample_avg, label='oversampling', color='g', alpha=0.5)
-				plt.plot(undersample_avg, label='undersampling', color='r', alpha=0.5)
-				plt.plot(vec, label='geo {}'.format(geo), color='b', alpha=0.5)
-				if model == 'rnn':
-					plt.hlines(np.median(oversample_avg[25:]), 0, 100, color='g')
-					plt.hlines(np.median(undersample_avg[25:]), 0, 100, color='r')
-					plt.hlines(np.median(vec[25:]), 0, 100, color='b')
+				# plt.ylim((60, 95))
+				plot_with_err_bars(100*oversample_avg, label='oversampling', color='g', alpha=0.5)
+				plot_with_err_bars(100*undersample_avg, label='undersampling', color='r', alpha=0.5)
+				plot_with_err_bars(100*vec, label='geo {}'.format(geo), color='b', alpha=0.5)
 				plt.legend()
 				plt.show()
 

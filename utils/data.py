@@ -1,10 +1,11 @@
 import os
 import random
+import pickle
 from collections import Counter
 
 import numpy as np
 
-def partition_within_classes(data, pct_in_A, make_A_balanced):
+def partition_within_classes(data, pct_in_A, make_A_balanced, seed=0):
 	'''
 	Partitions data into A and B, where A pct_in_A of the dataset and B is
 	the rest. A will have perfectly even distribution among classes. 
@@ -12,9 +13,11 @@ def partition_within_classes(data, pct_in_A, make_A_balanced):
 
 	TODO: SET SEED AND USE RANDOM. CURRENTLY DETERMINISTIC BUT WIHTOUT SEED
 	'''
+	random.seed(seed)
+	random.shuffle(data)
 	if pct_in_A == 1:
 		return data, []
-	num_classes = len(set([label for label, _, _ in data]))
+	num_classes = len(set([tup[0] for tup in data]))
 
 	if make_A_balanced:
 		A_size_per_class = int(pct_in_A*len(data)/num_classes)
@@ -80,23 +83,45 @@ def read_trans_aug(set_path):
 			line = f.readline().strip('\n')
 	return set_data
 
-def get_sst(input_length, aug_mode):
+def read_context_aug(aug_data_path, pct_usage, small_label, 
+					 small_prop, seed):
+	'''
+	Unlike trans aug, this only retrieves that train set
+	'''
+	filename = '{}-{}-{}-{}.pickle'.format(pct_usage, small_label, 
+											small_prop, seed)
+	filepath = os.path.join(aug_data_path, filename)
+	with open(filepath, 'rb') as f:
+		data = pickle.load(f)
+	return data
+
+def get_sst(input_length, aug_mode, pct_usage=None, 
+			small_label=None, small_prop=None, seed=None):
 	script_path = os.path.dirname(os.path.realpath(__file__))
 	repo_path = os.path.join(script_path, os.pardir)
 	data_parent = os.path.join(repo_path, os.pardir, 'DownloadedData')
 	data_path = os.path.join(data_parent,'sst')
+	data_dict = {}
 	if aug_mode is None or aug_mode == 'synonym':
-		data_dict = {}
 		for set_name in ['train', 'dev', 'test']:
 			set_path = os.path.join(data_path, set_name+'.txt')
-			data_dict[set_name] = read_no_aug(set_path, input_length, False)
+			data_dict[set_name] = read_no_aug(
+				set_path, input_length, False)
 		return data_dict
 	elif aug_mode == 'trans':
 		aug_data_path = os.path.join(data_path,'trans_aug')
-		data_dict = {}
 		for set_name in ['train', 'dev', 'test']:
 			set_path = os.path.join(aug_data_path, set_name+'.txt')
 			data_dict[set_name] = read_trans_aug(set_path)
+		return data_dict
+	elif aug_mode == 'context':
+		aug_data_path = os.path.join(data_path, 'context_aug')
+		for set_name in ['dev', 'test']:
+			set_path = os.path.join(data_path, set_name+'.txt')
+			data_dict[set_name] = read_no_aug(
+				set_path, input_length, False)
+		data_dict['train'] = read_context_aug(
+			aug_data_path, pct_usage, small_label, small_prop, seed)
 		return data_dict
 	else:
 		raise ValueError('Unrecognized augmentation.')
@@ -115,9 +140,14 @@ def get_subj(input_length, aug_mode):
 	elif aug_mode == 'trans':
 		aug_file_path = os.path.join(data_path, 'trans_aug/subj.txt')
 		all_data = read_trans_aug(aug_file_path)
+	elif aug_mode == 'context':
+		context_train_data = read_context_aug(
+			data_path+'/context_aug/train.pickle')
 	else:
 		raise ValueError('Unrecognized augmentation.')
 	dev_data, train_data = partition_within_classes(all_data, 0.1, False)
+	if aug_mode == 'context':
+		train_data = context_train_data
 	return {'dev': dev_data, 'train': train_data}
 
 def get_trec(input_length, aug_mode):
