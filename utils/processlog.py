@@ -56,13 +56,14 @@ def plot_with_err_bars(mat, *args, **kwargs):
 
 def plot_experiments():
 	experiments = {}
-	model = 'rnn'
-	# model = 'bert'
+	# model = 'rnn'
+	model = 'bert'
 	# aug_mode = 'syn'
 	aug_mode = 'trans'
 	data_name = 'sst'
 	# data_name = 'subj'
 	filepath = 'logs/archived/bal_{}_{}_{}_pct.log'.format(model, aug_mode, data_name)
+	# filepath = 'logs/archived/bal_bert_trans_sst.log'
 	# filepath = 'logs/archived/bal_bert_trans_subj.log'
 	with open(filepath) as f:
 		line = f.readline()
@@ -96,6 +97,8 @@ def plot_experiments():
 		small_prop_averages = {key: avg for key, avg in averages.items()
 							   if key[3] == small_prop}
 		for small_label in sorted(list(set([key[2] for key in averages]))):
+			# if small_label == 1:
+			# 	continue
 			# print(averages.keys())
 			small_prop_label_averages = {key: avg for key, avg in small_prop_averages.items() 
 										 if key[2] == small_label}
@@ -103,20 +106,33 @@ def plot_experiments():
 			undersample_avg = small_prop_label_averages[(-1, True, small_label, small_prop)]
 			del small_prop_label_averages[(-1, False, small_label, small_prop)]
 			del small_prop_label_averages[(-1, True, small_label, small_prop)]
-			for (geo, _, _, _), vec in sorted(small_prop_label_averages.items()):
+
+			plt.title('Rebalancing {} with {} after on {}% of label {}'
+					  ' is kept.'.format(
+							data_name, aug_mode, 
+							100*small_prop, small_label))
+			plt.ylabel('Validation Accuracy (%)')
+			plt.xlabel('Training Epoch')
+			# for (geo, _, _, _), vec in sorted(small_prop_label_averages.items()):
+			colors = ['b', 'g', 'r', 'c', 'm']
+			for ((geo, _, _, _), vec), color in zip(sorted(small_prop_label_averages.items()), colors):
 				if small_prop == 1.0:
 					continue
-				# print('Geo: {}, label: {}, pct: {}'.format(geo, small_label, small_prop))
-				plt.title('Rebalancing {} with {} after on {}% of label {}'
-						  ' is kept.'.format(
-						  		data_name, aug_mode, 
-						  		100*small_prop, small_label))
-				plt.ylabel('Validation Accuracy (%)')
-				plt.xlabel('Training Epoch')
-				# plt.ylim((60, 95))
-				plot_with_err_bars(100*oversample_avg, label='oversampling', color='g', alpha=0.5)
-				plot_with_err_bars(100*undersample_avg, label='undersampling', color='r', alpha=0.5)
-				plot_with_err_bars(100*vec, label='geo {}'.format(geo), color='b', alpha=0.5)
+				# if geo not in [0.5, 0.7, 0.9]:
+				# 	continue
+				# plt.title('Rebalancing {} with {} after on {}% of label {}'
+				# 		  ' is kept.'.format(
+				# 		  		data_name, aug_mode, 
+				# 		  		100*small_prop, small_label))
+				# plt.ylabel('Validation Accuracy (%)')
+				# plt.xlabel('Training Epoch')
+				# plot_with_err_bars(100*oversample_avg, label='oversampling', color='g', alpha=0.5)
+				# plot_with_err_bars(100*undersample_avg, label='undersampling', color='r', alpha=0.5)
+				# plot_with_err_bars(100*vec, label='geo {}'.format(geo), color='b', alpha=0.5)
+				# plt.legend()
+				# plt.show()
+				plot_with_err_bars(100*vec, label='geo {}'.format(geo), color=color, alpha=0.5)
+			if small_prop != 1.0:
 				plt.legend()
 				plt.show()
 

@@ -10,20 +10,33 @@ from utils.parsing import get_device
 device = get_device()
 this_script_name = os.path.basename(__file__).split('.')[0]
 num_epochs = 4
-aug_mode = 'context'
 batch_size = 4
 accumulation_steps = 4
 seed = 0
 pct_usage = None
-small_label = 0
-small_prop = 0.5
+small_label = None
+small_prop = None
+data_name = 'subj'
+# mode = 'dev'
+mode = 'save'
+# mode = 'test-aug'
+# aug_mode = 'trans'
+aug_mode = None
 
 logger = initialize_logger(this_script_name, seed)
-thing = BertAgent(device, logger, 'sst', 25, num_epochs, 
-				  aug_mode, 'dev', batch_size, accumulation_steps,
+thing = BertAgent(device, logger, data_name, 25, num_epochs, 
+				  aug_mode, mode, batch_size, accumulation_steps,
 				  small_label=small_label, small_prop=small_prop,
 				  balance_seed=seed, undersample=False,
-				  pct_usage=pct_usage)
+				  pct_usage=pct_usage, verbose=True)
+
+# batch_size = 64
+# num_epochs = 100
+# thing = RnnAgent(device, logger, 'sst', 25, num_epochs, 
+# 				  aug_mode, mode, batch_size,
+# 				  small_label=small_label, small_prop=small_prop,
+# 				  balance_seed=seed, undersample=False,
+# 				  pct_usage=pct_usage, verbose=True)
 thing.run()
 
 exit()

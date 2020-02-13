@@ -19,6 +19,9 @@ def partition_within_classes(data, pct_in_A, make_A_balanced, seed=0):
 		return data, []
 	num_classes = len(set([tup[0] for tup in data]))
 
+	print(len([1 for tup in data if tup[0] == 0]), 
+		  len([1 for tup in data if tup[0] == 1]))
+
 	if make_A_balanced:
 		A_size_per_class = int(pct_in_A*len(data)/num_classes)
 		A_class_deficits = {i:-A_size_per_class for i in range(num_classes)}
@@ -30,6 +33,8 @@ def partition_within_classes(data, pct_in_A, make_A_balanced, seed=0):
 				A_class_deficits[label] += 1
 			else:
 				B.append(tup)
+		print(len([1 for tup in A if tup[0] == 0]), 
+			  len([1 for tup in A if tup[0] == 1]))
 		return A, B
 	else:
 		label_dict = {}

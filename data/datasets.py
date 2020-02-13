@@ -5,6 +5,7 @@ import torch
 from torch.utils.data import Dataset
 from transformers import BertTokenizer
 
+from utils.data import partition_within_classes, get_sst, get_subj
 from augs.synonym import syn_aug
 from augs.trans import trans_aug
 from augs.context import context_aug
@@ -26,13 +27,22 @@ class DatasetBase(Dataset):
 		elif self.aug_mode == 'trans':
 			example = trans_aug(example, aug_dict, self.geo)
 		elif self.aug_mode == 'context':
-			example_ids = context_aug(example, aug_dict, self.geo)
+			example = context_aug(example, aug_dict, self.geo)
 			# wasting time here when model is bert by 
 			# converting to string then back to ids
-			example = self.tokenizer.decode(
-				example_ids, skip_special_tokens=True)
 		elif self.aug_mode is not None:
 			raise ValueError('Unrecognized augmentation technique.')
+
+		if self.aug_mode == 'context':
+			example = self.tokenizer.decode(example, skip_special_tokens=True)
+		
+		# print('---------------')
+		# print(example)
+		# example = self.tokenizer.decode(
+		# 	example_ids, skip_special_tokens=True)
+		# print(example)
+		# print('---------------')
+
 		return self.to_ids_func(example), label
 
 	def _im_re_balance(self, data, balance_seed, undersample):
@@ -76,12 +86,13 @@ class DatasetBase(Dataset):
 
 
 class BertDataset(DatasetBase):
-	def __init__(self, data, input_length, aug_mode, geo=None,
+	def __init__(self, data, input_length, aug_mode, pct_usage=None, geo=None,
 				 small_label=None, small_prop=None, balance_seed=None,
 				 undersample=False):
 		super().__init__(self._to_tokens)
 		self.input_length = input_length
 		self.aug_mode = aug_mode
+		self.pct_usage = pct_usage
 		self.geo = geo
 		self.small_label = small_label
 		self.small_prop = small_prop
@@ -89,10 +100,17 @@ class BertDataset(DatasetBase):
 
 		self.tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
 
-		if small_label is None and small_prop is None:
-			self.data = data
-		else:
+		if small_label is not None and small_prop is not None:
 			self.data = self._im_re_balance(data, balance_seed, undersample)
+		elif pct_usage is not None:
+			self.data, _ = partition_within_classes(
+				data, pct_usage, True, seed=balance_seed)
+		else:
+			self.data = data
+
+		##############################################
+		# TEST ABOVE LOGIC IN HERE AND RNNDATASET
+		##############################################
 
 	def _to_tokens(self, example):
 		tknzd = self.tokenizer.encode(
@@ -103,7 +121,7 @@ class BertDataset(DatasetBase):
 
 
 class RnnDataset(DatasetBase):
-	def __init__(self, data, input_length, nlp, aug_mode, geo=None, 
+	def __init__(self, nlp, data, input_length, aug_mode, pct_usage=None, geo=None, 
 				 small_label=None, small_prop=None, balance_seed=None,
 				 undersample=False):
 		super().__init__(self._to_rows)
@@ -120,10 +138,13 @@ class RnnDataset(DatasetBase):
 			self.tokenizer = BertTokenizer.from_pretrained(
 				'bert-base-uncased')
 
-		if small_label is None and small_prop is None:
-			self.data = data
-		else:
+		if small_label is not None and small_prop is not None:
 			self.data = self._im_re_balance(data, balance_seed, undersample)
+		elif pct_usage is not None:
+			self.data, _ = partition_within_classes(
+				data, pct_usage, True, seed=balance_seed)
+		else:
+			self.data = data
 
 	def _to_rows(self, example):
 		# also ensures length == self.INPUT_LENGTH
@@ -133,3 +154,30 @@ class RnnDataset(DatasetBase):
 			rows += (self.input_length - len(rows))*[self.key2row[0]]
 		rows = rows[:self.input_length]
 		return torch.tensor(rows, dtype=torch.long)
+
+
+class TestTimeDataset(BertDataset):
+	def __init__(self, data_name, input_length, aug_mode):
+		assert aug_mode == 'trans'
+		if data_name == 'sst':
+			self.data = get_sst(input_length, aug_mode)['dev']
+		elif data_name == 'subj':
+			self.data = get_subj(input_length, aug_mode)['dev']
+		super().__init__(self.data, input_length, aug_mode)
+
+	def __len__(self):
+		return len(self.data)
+
+	def __getitem__(self, idx):
+		label, example, aug_dict = self.data[idx]
+		if self.aug_mode == 'synonym':
+			raise NotImplementedError('Synonym test time aug.')
+			# aug_examples = syn_aug(example, self.geo)
+		elif self.aug_mode == 'trans':
+			seqs = torch.cat([self.to_ids_func(example).unsqueeze(0)] 
+							 + [self.to_ids_func(s).unsqueeze(0) for s 
+								in aug_dict.keys()])
+			weights = torch.tensor([1] + list(aug_dict.values()))
+			return seqs, weights, label
+		else:
+			raise ValueError('Unrecognized augmentation technique.')

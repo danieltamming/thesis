@@ -1,12 +1,14 @@
-import numpy as np
+import os
 import logging
 import time
 
+import numpy as np
 import spacy
 import torch
 import torch.nn as nn
 from torch.optim import Adam
 from tqdm import tqdm
+import torch.nn.functional as F
 
 from graphs.rnn import Rnn
 from graphs.loss import CrossEntropyLoss
@@ -19,9 +21,15 @@ class RnnAgent:
 	def __init__(self, device, logger, data_name, input_length, max_epochs, 
 				 aug_mode, mode, batch_size, small_label=None, 
 				 small_prop=None, balance_seed=None, undersample=False,
-				 pct_usage=1, geo=0.5):
-		assert not (undersample and aug_mode is not None), 'Cant undersample and augment'
+				 pct_usage=1, geo=0.5, verbose=False):
+		assert not (undersample and aug_mode is not None), \
+			   'Cant undersample and augment'
+		assert sum([mode == 'save', 
+					pct_usage is not None, 
+					small_label is not None]) == 1, \
+			   'Either saving, balancing, or trying on specific percentage'
 		self.logger = logger
+		self.data_name = data_name
 		self.input_length = input_length
 		self.max_epochs = max_epochs
 		self.aug_mode = aug_mode
@@ -33,6 +41,7 @@ class RnnAgent:
 		self.undersample = undersample
 		self.pct_usage = pct_usage
 		self.geo = geo
+		self.verbose = verbose
 
 		self.loss = CrossEntropyLoss()
 
@@ -64,8 +73,8 @@ class RnnAgent:
 					   else 'cpu'))
 
 		s = ('Model is RNN, dataset is {}, undersample is {}, aug mode is {}, geo is {},'
-			' small_label is {} small_prop is {}, balance_seed is {}').format(
-				data_name, self.undersample, self.aug_mode, self.geo, 
+			' pct_usage is {}, small_label is {}, small_prop is {}, balance_seed is {}').format(
+				data_name, self.undersample, self.aug_mode, self.geo, self.pct_usage,
 				self.small_label, self.small_prop, self.balance_seed)
 		print_and_log(self.logger, s)
 
@@ -76,48 +85,55 @@ class RnnAgent:
 		self.optimizer = Adam(self.model.parameters())
 		self.model.train()
 
+	def save_checkpoint(self):
+		ckpt_file = 'checkpoints/rnn-{}.pth'.format(self.data_name)
+		torch.save(self.model.state_dict(), ckpt_file)
+
 	def run(self):
 		if self.mode == 'crosstest':
-			pass
+			raise NotImplementedError('Crosstest not implemented.')
 		elif self.mode == 'dev':
 			self.train_loader, self.val_loader = self.mngr.get_dev_ldrs()
 			self.initialize_model()
 			self.train()
 			# self.validate()
+		elif self.mode == 'save':
+			self.train_loader, self.val_loader = self.mngr.get_dev_ldrs()
+			self.initialize_model()
+			self.train()
+			self.save_checkpoint()
 		else:
 			raise ValueException('Unrecognized mode.')
 
 	def train(self):
-		if self.mode == 'crosstest':
-			pass
-			# print_and_log(self.logger, s)
+		start_time = time.time()
+		if self.verbose:
+			iterator = range(self.max_epochs)
+		else:
+			iterator = tqdm(range(self.max_epochs))
+		for self.cur_epoch in iterator:
+			self.train_one_epoch()
+			acc,_ = self.validate()
 
-		elif self.mode == 'dev':
-			# stopper = EarlyStopper(self.config.patience, 
-			# 					   self.config.min_epochs)
+			if start_time is not None:
+				print('{} s/it'.format(round(time.time()-start_time,3)))
+				start_time = None
 
-			start_time = time.time()
-
-			for self.cur_epoch in tqdm(range(self.max_epochs)):
-				self.train_one_epoch()
-				acc,_ = self.validate()
-
-				if start_time is not None:
-					print('{} s/it'.format(round(time.time()-start_time,3)))
-					start_time = None
-
-				# if stopper.update_and_check(acc, printing=True): 
-				# 	s = ('Stopped early with patience '
-				# 		'{}'.format(self.config.patience))
-				# 	print_and_log(self.logger, s)
-				# 	break
+			# if stopper.update_and_check(acc, printing=True): 
+			# 	s = ('Stopped early with patience '
+			# 		'{}'.format(self.config.patience))
+			# 	print_and_log(self.logger, s)
+			# 	break
 
 	def train_one_epoch(self):
 		self.model.train()
 		loss = AverageMeter()
 		acc = AverageMeter()
-		# for x, y in tqdm(self.train_loader):
-		for x, y in self.train_loader:
+		if self.verbose:
+			iterator = tqdm(self.train_loader)
+		else:
+			iterator = self.train_loader
+		for x, y in iterator:
 			x = x.to(self.device)
 			y = y.to(self.device)
 			output = self.model(x)

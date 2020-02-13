@@ -105,6 +105,16 @@ if __name__ == '__main__':
 		'pytorch/fairseq', 'transformer.wmt19.de-en.single_model',
 		tokenizer='moses', bpe='fastbpe').to(device)
 
+	# example = 'hello my ( name ) is Daniel'
+	# for ex in gen_trans_aug(example, en2de, de2en, 5, 0.8):
+	# 	print(ex)
+	# print()
+	# example = 'hello my -lrb- name -rrb- is Daniel'
+	# for ex in gen_trans_aug(example, en2de, de2en, 5, 0.8):
+	# 	print(ex)
+	# exit()
+
 	downloaded_dir = '../DownloadedData/'
-	for data_name in ['sst', 'subj', 'trec']:
+	# for data_name in ['sst', 'subj', 'trec']:
+	for data_name in ['sst']:
 		gen_save_trans(downloaded_dir, data_name, en2de, de2en)
