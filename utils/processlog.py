@@ -56,8 +56,8 @@ def plot_with_err_bars(mat, *args, **kwargs):
 
 def plot_experiments():
 	experiments = {}
-	# model = 'rnn'
-	model = 'bert'
+	model = 'rnn'
+	# model = 'bert'
 	# aug_mode = 'syn'
 	aug_mode = 'trans'
 	data_name = 'sst'
@@ -120,21 +120,22 @@ def plot_experiments():
 					continue
 				# if geo not in [0.5, 0.7, 0.9]:
 				# 	continue
-				# plt.title('Rebalancing {} with {} after on {}% of label {}'
-				# 		  ' is kept.'.format(
-				# 		  		data_name, aug_mode, 
-				# 		  		100*small_prop, small_label))
-				# plt.ylabel('Validation Accuracy (%)')
-				# plt.xlabel('Training Epoch')
-				# plot_with_err_bars(100*oversample_avg, label='oversampling', color='g', alpha=0.5)
-				# plot_with_err_bars(100*undersample_avg, label='undersampling', color='r', alpha=0.5)
-				# plot_with_err_bars(100*vec, label='geo {}'.format(geo), color='b', alpha=0.5)
-				# plt.legend()
-				# plt.show()
-				plot_with_err_bars(100*vec, label='geo {}'.format(geo), color=color, alpha=0.5)
-			if small_prop != 1.0:
+				plt.title('Rebalancing {} with {} after on {}% of label {}'
+						  ' is kept.'.format(
+						  		data_name, aug_mode, 
+						  		100*small_prop, small_label))
+				plt.ylabel('Validation Accuracy (%)')
+				plt.xlabel('Training Epoch')
+				plot_with_err_bars(100*oversample_avg, label='oversampling', color='g', alpha=0.5)
+				plot_with_err_bars(100*undersample_avg, label='undersampling', color='r', alpha=0.5)
+				plot_with_err_bars(100*vec, label='geo {}'.format(geo), color='b', alpha=0.5)
 				plt.legend()
 				plt.show()
+
+				# plot_with_err_bars(100*vec, label='geo {}'.format(geo), color=color, alpha=0.5)
+			# if small_prop != 1.0:
+			# 	plt.legend()
+			# 	plt.show()
 
 if __name__ == "__main__":
 	plot_experiments()

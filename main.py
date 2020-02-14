@@ -18,10 +18,10 @@ small_label = None
 small_prop = None
 data_name = 'subj'
 # mode = 'dev'
-mode = 'save'
-# mode = 'test-aug'
-# aug_mode = 'trans'
-aug_mode = None
+# mode = 'save'
+mode = 'test-aug'
+aug_mode = 'trans'
+# aug_mode = None
 
 logger = initialize_logger(this_script_name, seed)
 thing = BertAgent(device, logger, data_name, 25, num_epochs, 
