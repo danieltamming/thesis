@@ -21,7 +21,7 @@ this_script_name = os.path.basename(__file__).split('.')[0]
 num_epochs = 100
 def experiment(balance_seed):
 	logger = initialize_logger(this_script_name, balance_seed)
-	for small_prop in np.arange(0.1, 1.1, 0.1):
+	for small_prop in np.arange(0.1, 1.0, 0.1):
 		small_prop = round(small_prop, 2)
 		for small_label in [0, 1]:
 			for undersample in [False, True]:
@@ -32,7 +32,7 @@ def experiment(balance_seed):
 								 balance_seed=balance_seed, 
 								 undersample=undersample)
 				agent.run()
-			for geo in np.arange(0.5, 1.0, 0.1):
+			for geo in np.arange(0.1, 0.5, 0.1):
 				geo = round(geo, 2)
 				agent = RnnAgent(device, logger, 'subj', 25, num_epochs, 
 								 'trans', 'dev', 128, 
