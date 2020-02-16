@@ -21,7 +21,7 @@ class RnnAgent:
 	def __init__(self, device, logger, data_name, input_length, max_epochs, 
 				 aug_mode, mode, batch_size, small_label=None, 
 				 small_prop=None, balance_seed=None, undersample=False,
-				 pct_usage=1, geo=0.5, verbose=False):
+				 pct_usage=None, geo=0.5, verbose=False):
 		assert not (undersample and aug_mode is not None), \
 			   'Cant undersample and augment'
 		assert sum([mode == 'save', 
