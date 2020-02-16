@@ -1,0 +1,25 @@
+Number of cpus: 40
+multiprocessing.pool.RemoteTraceback: 
+"""
+Traceback (most recent call last):
+  File "/usr/lib/python3.6/multiprocessing/pool.py", line 119, in worker
+    result = (True, func(*args, **kwds))
+  File "/usr/lib/python3.6/multiprocessing/pool.py", line 44, in mapstar
+    return list(map(*args))
+  File "experiments/bal_rnn_trans_subj.py", line 33, in experiment
+    undersample=undersample)
+  File "/u6/dltammin/thesis/agents/rnn.py", line 30, in __init__
+    'Either saving, balancing, or trying on specific percentage'
+AssertionError: Either saving, balancing, or trying on specific percentage
+"""
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "experiments/bal_rnn_trans_subj.py", line 47, in <module>
+    pool.map(experiment, list(range(5)))
+  File "/usr/lib/python3.6/multiprocessing/pool.py", line 266, in map
+    return self._map_async(func, iterable, mapstar, chunksize).get()
+  File "/usr/lib/python3.6/multiprocessing/pool.py", line 644, in get
+    raise self._value
+AssertionError: Either saving, balancing, or trying on specific percentage
