@@ -190,7 +190,7 @@ class BertAgent:
 			accuracy = get_accuracy(output, y)
 			acc.update(accuracy, y.shape[0])
 
-			del loss
+			del current_loss
 			del output
 		# if self.mode == 'crossval':
 		s = ('Training epoch {} | loss: {} - accuracy: ' 
