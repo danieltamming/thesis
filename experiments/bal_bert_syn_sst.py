@@ -34,7 +34,6 @@ def experiment(balance_seed):
 								  small_label=small_label, small_prop=small_prop, 
 								  balance_seed=balance_seed, undersample=undersample)
 				agent.run()
-				torch.cuda.empty_cache()
 			for geo in np.arange(0.5, 1.0, 0.1):
 				geo = round(geo, 2)
 				agent = BertAgent(device, logger, data_name, 25, num_epochs, 
@@ -42,7 +41,6 @@ def experiment(balance_seed):
 								  small_label=small_label, small_prop=small_prop, 
 								  balance_seed=balance_seed, geo=geo)
 				agent.run()
-				torch.cuda.empty_cache()
 
 for balance_seed in range(3):
 	logger = initialize_logger(this_script_name, balance_seed)

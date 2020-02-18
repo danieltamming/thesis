@@ -200,17 +200,18 @@ class BertAgent:
 
 	def validate(self):
 		self.model.eval()
-		loss = AverageMeter()
-		acc = AverageMeter()
-		for x, y in self.val_loader:
-			attention_mask = (x > 0).float().to(self.device)
-			x = x.to(self.device)
-			y = y.to(self.device)
-			current_loss, output = self.model(
-				x, attention_mask=attention_mask, labels=y)
-			loss.update(current_loss.item())
-			accuracy = get_accuracy(output, y)
-			acc.update(accuracy, y.shape[0])
+		with torch.no_grad():
+			loss = AverageMeter()
+			acc = AverageMeter()
+			for x, y in self.val_loader:
+				attention_mask = (x > 0).float().to(self.device)
+				x = x.to(self.device)
+				y = y.to(self.device)
+				current_loss, output = self.model(
+					x, attention_mask=attention_mask, labels=y)
+				loss.update(current_loss.item())
+				accuracy = get_accuracy(output, y)
+				acc.update(accuracy, y.shape[0])
 		s = ('Validating epoch {} | loss: {} - accuracy: ' 
 			'{}'.format(self.cur_epoch, 
 						round(loss.val, 5), 

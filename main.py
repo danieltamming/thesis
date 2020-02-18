@@ -11,26 +11,26 @@ device = get_device()
 this_script_name = os.path.basename(__file__).split('.')[0]
 num_epochs = 4
 batch_size = 4
-accumulation_steps = 4
+accumulation_steps = 1
 seed = 0
 pct_usage = None
 small_label = 0
-small_prop = 0.2
+small_prop = 0.1
 data_name = 'sst'
 # data_name = 'subj'
 mode = 'dev'
 # mode = 'save'
 # mode = 'test-aug'
 # aug_mode = 'trans'
-# aug_mode = 'syn'
-aug_mode = None
+aug_mode = 'synonym'
+# aug_mode = None
 
 logger = initialize_logger(this_script_name, seed)
 thing = BertAgent(device, logger, data_name, 25, num_epochs, 
 				  aug_mode, mode, batch_size, accumulation_steps,
 				  small_label=small_label, small_prop=small_prop,
 				  balance_seed=seed, undersample=False,
-				  pct_usage=pct_usage, verbose=True)
+				  pct_usage=pct_usage, verbose=True, geo=0.8)
 
 # batch_size = 64
 # num_epochs = 100

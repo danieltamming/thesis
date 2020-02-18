@@ -155,21 +155,22 @@ class RnnAgent:
 
 	def validate(self):
 		self.model.eval()
-		loss = AverageMeter()
-		acc = AverageMeter()
-		# for x, y in tqdm(self.val_loader):
-		for x, y in self.val_loader:
-			x = x.to(self.device)
-			y = y.to(self.device)
-			output = self.model(x)
-			current_loss = self.loss(output, y)
-			loss.update(current_loss.item())
-			accuracy = get_accuracy(output, y)
-			acc.update(accuracy, y.shape[0])
-		s = ('Validating epoch {} | loss: {} - accuracy: ' 
-			'{}'.format(self.cur_epoch, 
-						round(loss.val, 5), 
-						round(acc.val, 5)))
+		with torch.no_grad():
+			loss = AverageMeter()
+			acc = AverageMeter()
+			# for x, y in tqdm(self.val_loader):
+			for x, y in self.val_loader:
+				x = x.to(self.device)
+				y = y.to(self.device)
+				output = self.model(x)
+				current_loss = self.loss(output, y)
+				loss.update(current_loss.item())
+				accuracy = get_accuracy(output, y)
+				acc.update(accuracy, y.shape[0])
+			s = ('Validating epoch {} | loss: {} - accuracy: ' 
+				'{}'.format(self.cur_epoch, 
+							round(loss.val, 5), 
+							round(acc.val, 5)))
 		print_and_log(self.logger, s)
 		# self.logger.info(s)
 		# print(s)
