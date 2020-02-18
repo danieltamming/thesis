@@ -21,8 +21,8 @@ this_script_name = os.path.basename(__file__).split('.')[0]
 num_epochs = 4
 data_name = 'sst'
 aug_mode = 'synonym'
-batch_size = 4
-accumulation_steps = 4
+batch_size = 2
+accumulation_steps = 8
 def experiment(balance_seed):
 	for small_prop in np.arange(0.1, 1.0, 0.1):
 		small_prop = round(small_prop, 2)
