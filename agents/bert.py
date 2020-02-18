@@ -187,11 +187,12 @@ class BertAgent:
 				self.optimizer.step()
 				self.scheduler.step()
 				self.optimizer.zero_grad()
-			accuracy = get_accuracy(output, y)
+			accuracy = get_accuracy(output.data, y)
 			acc.update(accuracy, y.shape[0])
 
 			del current_loss
 			del output
+			del accuracy
 		# if self.mode == 'crossval':
 		s = ('Training epoch {} | loss: {} - accuracy: ' 
 		'{}'.format(self.cur_epoch, 
