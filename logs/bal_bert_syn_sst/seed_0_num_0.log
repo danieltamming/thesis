@@ -1,1 +1,7 @@
 Model is Bert, dataset is sst, undersample is False, aug mode is None, geo is 0.5, pct_usage is None, small_label is 0, small_prop is 0.1, balance_seed is 0
+Training epoch 0 | loss: 0.03853 - accuracy: 0.85679
+Validating epoch 0 | loss: 0.74527 - accuracy: 0.77867
+Training epoch 1 | loss: 0.00504 - accuracy: 0.98844
+Validating epoch 1 | loss: 1.34638 - accuracy: 0.70986
+Training epoch 2 | loss: 0.00154 - accuracy: 0.99725
+Validating epoch 2 | loss: 1.28157 - accuracy: 0.75115
