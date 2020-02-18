@@ -189,6 +189,9 @@ class BertAgent:
 				self.optimizer.zero_grad()
 			accuracy = get_accuracy(output, y)
 			acc.update(accuracy, y.shape[0])
+
+			del loss
+			del output
 		# if self.mode == 'crossval':
 		s = ('Training epoch {} | loss: {} - accuracy: ' 
 		'{}'.format(self.cur_epoch, 
