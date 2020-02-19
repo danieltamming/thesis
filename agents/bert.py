@@ -178,8 +178,8 @@ class BertAgent:
 			current_loss, output = self.model(
 				x, attention_mask=attention_mask, labels=y)
 			current_loss = current_loss / self.accumulation_steps
-			loss.update(current_loss.item())
 			current_loss.backward()
+			loss.update(current_loss.item())
 			# MAX_GRAD_NORM = 1.0
 			# nn.utils.clip_grad_norm_(self.model.parameters(),
 			# 						 MAX_GRAD_NORM)
