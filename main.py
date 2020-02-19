@@ -27,6 +27,7 @@ aug_mode = 'synonym'
 
 import gc
 from collections import Counter
+import torch
 def get_tensors():
 	counts = Counter()
 	for obj in gc.get_objects():
