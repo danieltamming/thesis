@@ -51,6 +51,7 @@ thing = BertAgent(device, logger, data_name, 25, num_epochs,
 				  small_label=small_label, small_prop=small_prop,
 				  balance_seed=seed, undersample=False,
 				  pct_usage=pct_usage, verbose=False, geo=0.9)
+thing.run()
 
 tensors = get_tensors()
 for key, count in tensors.items():
