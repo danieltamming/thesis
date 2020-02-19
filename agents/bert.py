@@ -220,7 +220,9 @@ class BertAgent:
 				y = y.to(self.device)
 				current_loss, output = self.model(
 					x, attention_mask=attention_mask, labels=y)
-				loss.update(current_loss.item())
+				loss.update(current_loss.detach().item())
+				output = output.detach().cpu().numpy()
+				y = y.cpu().numpy()
 				accuracy = get_accuracy(output, y)
 				acc.update(accuracy, y.shape[0])
 		s = ('Validating epoch {} | loss: {} - accuracy: ' 
