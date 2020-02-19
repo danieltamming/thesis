@@ -10,7 +10,7 @@ from utils.parsing import get_device
 device = get_device()
 this_script_name = os.path.basename(__file__).split('.')[0]
 num_epochs = 4
-batch_size = 4
+batch_size = 32
 accumulation_steps = 1
 seed = 0
 pct_usage = None
@@ -30,7 +30,7 @@ thing = BertAgent(device, logger, data_name, 25, num_epochs,
 				  aug_mode, mode, batch_size, accumulation_steps,
 				  small_label=small_label, small_prop=small_prop,
 				  balance_seed=seed, undersample=False,
-				  pct_usage=pct_usage, verbose=True, geo=0.8)
+				  pct_usage=pct_usage, verbose=False, geo=0.9)
 
 # batch_size = 64
 # num_epochs = 100
