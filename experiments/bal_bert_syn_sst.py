@@ -17,6 +17,19 @@ from agents.bert import BertAgent
 from utils.logger import initialize_logger
 from utils.parsing import get_device
 
+
+
+import gc
+def print_tensors():
+	for obj in gc.get_objects():
+	    try:
+	        if torch.is_tensor(obj) or (hasattr(obj, 'data') and torch.is_tensor(obj.data)):
+	            print(type(obj), obj.size())
+	    except:
+	        pass
+
+
+
 device = get_device()
 this_script_name = os.path.basename(__file__).split('.')[0]
 num_epochs = 4
@@ -47,14 +60,3 @@ def experiment(balance_seed):
 for balance_seed in range(3):
 	logger = initialize_logger(this_script_name, balance_seed)
 	experiment(balance_seed)
-
-
-
-import gc
-def print_tensors():
-	for obj in gc.get_objects():
-	    try:
-	        if torch.is_tensor(obj) or (hasattr(obj, 'data') and torch.is_tensor(obj.data)):
-	            print(type(obj), obj.size())
-	    except:
-	        pass
