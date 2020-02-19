@@ -25,12 +25,37 @@ mode = 'dev'
 aug_mode = 'synonym'
 # aug_mode = None
 
+import gc
+from collections import Counter
+def get_tensors():
+	counts = Counter()
+	for obj in gc.get_objects():
+	    try:
+	        if torch.is_tensor(obj) or (hasattr(obj, 'data') and torch.is_tensor(obj.data)):
+	            # print(type(obj), obj.size())
+	            counts[tuple(obj.shape)] += 1
+	    except:
+	        pass
+	return counts
+
+tensors = get_tensors()
+for key, count in tensors.items():
+	print(key, count)
+print(sum(tensors.values()))
+print(torch.cuda.memory_allocated())
+
 logger = initialize_logger(this_script_name, seed)
 thing = BertAgent(device, logger, data_name, 25, num_epochs, 
 				  aug_mode, mode, batch_size, accumulation_steps,
 				  small_label=small_label, small_prop=small_prop,
 				  balance_seed=seed, undersample=False,
 				  pct_usage=pct_usage, verbose=False, geo=0.9)
+
+tensors = get_tensors()
+for key, count in tensors.items():
+	print(key, count)
+print(sum(tensors.values()))
+print(torch.cuda.memory_allocated())
 
 # batch_size = 64
 # num_epochs = 100
