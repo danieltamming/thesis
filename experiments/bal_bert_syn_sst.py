@@ -46,7 +46,12 @@ def experiment(balance_seed):
 		small_prop = round(small_prop, 2)
 		for small_label in [0, 1]:
 			for undersample in [False, True]:
-				print(get_tensors())
+
+				tensors = get_tensors()
+				for key, count in tensors.items():
+					print(key, count)
+				print(sum(tensors.values()))
+				
 				agent = BertAgent(device, logger, data_name, 25, num_epochs, 
 								  None, 'dev', batch_size, accumulation_steps,
 								  small_label=small_label, small_prop=small_prop, 
@@ -54,7 +59,12 @@ def experiment(balance_seed):
 				agent.run()
 				# del agent.model
 			for geo in np.arange(0.5, 1.0, 0.1):
-				print(get_tensors())
+
+				tensors = get_tensors()
+				for key, count in tensors.items():
+					print(key, count)
+				print(sum(tensors.values()))
+
 				geo = round(geo, 2)
 				agent = BertAgent(device, logger, data_name, 25, num_epochs, 
 								  aug_mode, 'dev', batch_size, accumulation_steps,
