@@ -1,4 +1,5 @@
 from tqdm import tqdm
+import numpy as np
 import torch
 
 class AverageMeter:
@@ -23,8 +24,11 @@ class AverageMeter:
 	
 
 def get_accuracy(pred, target):
-	_, pred = torch.max(pred, 1)
-	correct = (pred==target).sum().item()
+	assert isinstance(pred, np.ndarray)
+	# _, pred = torch.max(pred, 1)
+	pred = np.argmax(pred, 1)
+	# correct = (pred==target).sum().item()
+	correct = (pred==target).sum()
 	return float(correct)/target.shape[0]
 
 class EarlyStopper:

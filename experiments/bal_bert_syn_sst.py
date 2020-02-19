@@ -51,7 +51,8 @@ def experiment(balance_seed):
 				for key, count in tensors.items():
 					print(key, count)
 				print(sum(tensors.values()))
-				
+				print(torch.cuda.memory_allocated())
+
 				agent = BertAgent(device, logger, data_name, 25, num_epochs, 
 								  None, 'dev', batch_size, accumulation_steps,
 								  small_label=small_label, small_prop=small_prop, 
@@ -64,6 +65,7 @@ def experiment(balance_seed):
 				for key, count in tensors.items():
 					print(key, count)
 				print(sum(tensors.values()))
+				print(torch.cuda.memory_allocated())
 
 				geo = round(geo, 2)
 				agent = BertAgent(device, logger, data_name, 25, num_epochs, 

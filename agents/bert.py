@@ -179,7 +179,7 @@ class BertAgent:
 				x, attention_mask=attention_mask, labels=y)
 			current_loss = current_loss / self.accumulation_steps
 			current_loss.backward()
-			loss.update(current_loss.item())
+			loss.update(current_loss.detach().item())
 			# MAX_GRAD_NORM = 1.0
 			# nn.utils.clip_grad_norm_(self.model.parameters(),
 			# 						 MAX_GRAD_NORM)
@@ -187,13 +187,16 @@ class BertAgent:
 				self.optimizer.step()
 				self.scheduler.step()
 				self.optimizer.zero_grad()
-			accuracy = get_accuracy(output.data, y)
+
+			output = output.detach().cpu().numpy()
+			y = y.cpu().numpy()
+			accuracy = get_accuracy(output, y)
 			acc.update(accuracy, y.shape[0])
 
-			del current_loss
-			del output
-			del accuracy
-			del attention_mask
+			# del current_loss
+			# del output
+			# del accuracy
+			# del attention_mask
 		# if self.mode == 'crossval':
 		s = ('Training epoch {} | loss: {} - accuracy: ' 
 		'{}'.format(self.cur_epoch, 
@@ -201,8 +204,8 @@ class BertAgent:
 					round(acc.val, 5)))
 		print_and_log(self.logger, s)
 
-		del loss
-		del acc
+		# del loss
+		# del acc
 		# self.logger.info(s)
 		# print(s)
 
