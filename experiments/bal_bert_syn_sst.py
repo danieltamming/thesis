@@ -21,12 +21,15 @@ from utils.parsing import get_device
 
 import gc
 def print_tensors():
+	count = 0
 	for obj in gc.get_objects():
 	    try:
 	        if torch.is_tensor(obj) or (hasattr(obj, 'data') and torch.is_tensor(obj.data)):
-	            print(type(obj), obj.size())
+	            # print(type(obj), obj.size())
+	            count += 1
 	    except:
 	        pass
+	print(count)
 
 
 
@@ -48,6 +51,7 @@ def experiment(balance_seed):
 								  small_label=small_label, small_prop=small_prop, 
 								  balance_seed=balance_seed, undersample=undersample)
 				agent.run()
+				# del agent.model
 			for geo in np.arange(0.5, 1.0, 0.1):
 				print_tensors()
 				geo = round(geo, 2)
@@ -56,6 +60,7 @@ def experiment(balance_seed):
 								  small_label=small_label, small_prop=small_prop, 
 								  balance_seed=balance_seed, geo=geo)
 				agent.run()
+				# del agent.model
 
 for balance_seed in range(3):
 	logger = initialize_logger(this_script_name, balance_seed)

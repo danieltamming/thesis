@@ -190,6 +190,10 @@ class BertAgent:
 			accuracy = get_accuracy(output.data, y)
 			acc.update(accuracy, y.shape[0])
 
+			print(x.shape)
+			print(attention_mask.shape)
+			print(output.shape)
+
 			del current_loss
 			del output
 			del accuracy
