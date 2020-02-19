@@ -29,12 +29,14 @@ def experiment(balance_seed):
 		small_prop = round(small_prop, 2)
 		for small_label in [0, 1]:
 			for undersample in [False, True]:
+				print_tensors()
 				agent = BertAgent(device, logger, data_name, 25, num_epochs, 
 								  None, 'dev', batch_size, accumulation_steps,
 								  small_label=small_label, small_prop=small_prop, 
 								  balance_seed=balance_seed, undersample=undersample)
 				agent.run()
 			for geo in np.arange(0.5, 1.0, 0.1):
+				print_tensors()
 				geo = round(geo, 2)
 				agent = BertAgent(device, logger, data_name, 25, num_epochs, 
 								  aug_mode, 'dev', batch_size, accumulation_steps,
@@ -45,3 +47,14 @@ def experiment(balance_seed):
 for balance_seed in range(3):
 	logger = initialize_logger(this_script_name, balance_seed)
 	experiment(balance_seed)
+
+
+
+import gc
+def print_tensors():
+	for obj in gc.get_objects():
+	    try:
+	        if torch.is_tensor(obj) or (hasattr(obj, 'data') and torch.is_tensor(obj.data)):
+	            print(type(obj), obj.size())
+	    except:
+	        pass
