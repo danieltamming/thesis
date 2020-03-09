@@ -79,7 +79,7 @@ def experiment(balance_seed, small_label):
 	logger = initialize_logger(this_script_name, balance_seed, other=small_label)
 	for small_prop in [0.1, 0.5, 0.9]:
 		small_prop = round(small_prop, 2)
-		for lr in [10**i for i in range(-3, -7, -1)]:
+		for lr in [i*10**-4 for i in range(2, 10, 2)]:
 			for undersample in [False, True]:
 				agent = RnnAgent(device, logger, 'sst', 25, num_epochs, lr,
 								 None, 'dev', 128, 
