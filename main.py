@@ -77,7 +77,7 @@ this_script_name = os.path.basename(__file__).split('.')[0]
 num_epochs = 100
 def experiment(balance_seed, small_label):
 	logger = initialize_logger(this_script_name, balance_seed, other=small_label)
-	for small_prop in np.arange(0.1, 1.0, 0.1):
+	for small_prop in [0.1, 0.5, 0.9]:
 		small_prop = round(small_prop, 2)
 		for lr in [10**i for i in range(-3, -7, -1)]:
 			for undersample in [False, True]:
