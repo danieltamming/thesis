@@ -131,7 +131,7 @@ def get_sst(input_length, aug_mode, pct_usage=None,
 	else:
 		raise ValueError('Unrecognized augmentation.')
 
-def get_subj(input_length, aug_mode):
+def get_subj(input_length, aug_mode, seed=None):
 	script_path = os.path.dirname(os.path.realpath(__file__))
 	repo_path = os.path.join(script_path, os.pardir)
 	data_parent = os.path.join(repo_path, os.pardir, 'DownloadedData')

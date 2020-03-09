@@ -11,6 +11,9 @@ def is_training(line):
 def is_validating(line):
 	return line.split(' ', 1)[0].endswith('Validating')
 
+def get_loss(line):
+	return float(line.split('loss: ')[-1].split(' ', 1)[0])
+
 def get_acc(line):
 	return float(line.split()[-1])
 
@@ -85,8 +88,8 @@ def read_experiments(filepath, avg_across_labels):
 
 def plot_experiments():
 	avg_across_labels = True
-	# model = 'rnn'
-	model = 'bert'
+	model = 'rnn'
+	# model = 'bert'
 	# aug_mode = 'syn'
 	aug_mode = 'trans'
 	# data_name = 'sst'
@@ -143,10 +146,11 @@ def plot_experiments():
 
 if __name__ == "__main__":
 	# plot_experiments()
+	# exit()
 
 
 	experiments = {}
-	filepath = 'logs/main/all.log'
+	filepath = 'logs/archived/learning_rate_tests.log'
 	with open(filepath) as f:
 		line = f.readline()
 		if 'RUN START' in line:
@@ -161,6 +165,8 @@ if __name__ == "__main__":
 			accs = []
 			line = f.readline()
 			while is_training(line) or is_validating(line):
+				# if is_training(line):
+					# accs.append(get_acc(line))
 				if is_validating(line):
 					accs.append(get_acc(line))
 				line = f.readline()
@@ -168,7 +174,6 @@ if __name__ == "__main__":
 				experiments[tup] = np.array(accs)
 			else:
 				experiments[tup] = np.vstack([experiments[tup], np.array(accs)])
-	
 	averages = experiments
 
 	for small_prop in sorted(list(set(key[3] for key in averages))):
@@ -183,6 +188,7 @@ if __name__ == "__main__":
 			colors = ['tab:blue', 'tab:orange', 'tab:green', 'tab:red', 
 					  'tab:purple', 'tab:brown', 'tab:pink', 'tab:gray', 
 					  'tab:olive', 'tab:cyan']
+			print(small_prop_label_averages.keys())
 			for ((_, undersample, _, _, lr), vec), color in zip(sorted(small_prop_label_averages.items()), colors):
 			# for (geo, _, _, _), vec in sorted(small_prop_label_averages.items()):
 				if lr in [10**-5, 10**-6]:
@@ -198,6 +204,7 @@ if __name__ == "__main__":
 				# plot_mat(100*vec, True, label='geo {}'.format(geo), color='b', alpha=0.5)
 				# plt.legend()
 				# plt.show()
+				print(undersample)
 				if undersample:
 					label = 'under, lr {}'.format(lr)
 				else:

@@ -27,7 +27,7 @@ class DatasetManagerBase:
 			kwargs = {'pct_usage': pct_usage, 'small_label': small_label,
 					  'small_prop': small_prop, 'seed': balance_seed}
 		else:
-			kwargs = {}
+			kwargs = {'seed': balance_seed}
 		self.data_dict = data_func(self.input_length, self.aug_mode, **kwargs)
 
 		if model_type == 'rnn':
