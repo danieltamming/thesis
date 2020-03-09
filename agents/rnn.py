@@ -143,6 +143,9 @@ class RnnAgent:
 			current_loss.backward()
 			self.optimizer.step()
 			loss.update(current_loss.item())
+
+			output = output.detach().cpu().numpy()
+			y = y.cpu().numpy()
 			accuracy = get_accuracy(output, y)
 			acc.update(accuracy, y.shape[0])
 		# if self.mode == 'crossval':
@@ -166,6 +169,8 @@ class RnnAgent:
 				output = self.model(x)
 				current_loss = self.loss(output, y)
 				loss.update(current_loss.item())
+				output = output.detach().cpu().numpy()
+				y = y.cpu().numpy()
 				accuracy = get_accuracy(output, y)
 				acc.update(accuracy, y.shape[0])
 			s = ('Validating epoch {} | loss: {} - accuracy: ' 
