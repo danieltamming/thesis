@@ -19,13 +19,14 @@ from utils.parsing import get_device
 device = get_device()
 this_script_name = os.path.basename(__file__).split('.')[0]
 num_epochs = 100
+lr  = 0.001
 def experiment(balance_seed):
 	logger = initialize_logger(this_script_name, balance_seed)
 	for small_prop in np.arange(0.1, 1.0, 0.1):
 		small_prop = round(small_prop, 2)
 		for small_label in [0, 1]:
 			for undersample in [False, True]:
-				agent = RnnAgent(device, logger, 'subj', 25, num_epochs, 
+				agent = RnnAgent(device, logger, 'subj', 25, num_epochs, lr,
 								 None, 'dev', 128, 
 								 small_label=small_label, 
 								 small_prop=small_prop, 
@@ -34,7 +35,7 @@ def experiment(balance_seed):
 				agent.run()
 			for geo in np.arange(0.1, 0.5, 0.1):
 				geo = round(geo, 2)
-				agent = RnnAgent(device, logger, 'subj', 25, num_epochs, 
+				agent = RnnAgent(device, logger, 'subj', 25, num_epochs, lr,
 								 'trans', 'dev', 128, 
 								 small_label=small_label, 
 								 small_prop=small_prop, 

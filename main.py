@@ -6,7 +6,7 @@ from agents.rnn import RnnAgent
 from agents.bert import BertAgent
 from utils.logger import initialize_logger
 from utils.parsing import get_device
-
+'''
 device = get_device()
 this_script_name = os.path.basename(__file__).split('.')[0]
 num_epochs = 4
@@ -69,18 +69,28 @@ print(torch.cuda.memory_allocated())
 thing.run()
 
 exit()
+'''
 
 device = get_device()
 this_script_name = os.path.basename(__file__).split('.')[0]
-num_epochs = 10
-aug_mode = None
-batch_size = 4
-accumulation_steps = 4
-for balance_seed in range(5):
-	logger = initialize_logger(this_script_name, balance_seed)
-	thing = BertAgent(device, logger, 'sst', 25, num_epochs, 
-					  aug_mode, 'dev', batch_size, accumulation_steps,
-					  small_label=None, small_prop=None,
-					  balance_seed=balance_seed, undersample=False,
-					  pct_usage=1)
-	thing.run()
+num_epochs = 100
+def experiment(balance_seed, small_label):
+	logger = initialize_logger(this_script_name, balance_seed, other=small_label)
+	for small_prop in np.arange(0.1, 1.0, 0.1):
+		small_prop = round(small_prop, 2)
+		for lr in [10**i for i in range(-6, -3)]:
+			for undersample in [False, True]:
+				agent = RnnAgent(device, logger, 'sst', 25, num_epochs, lr,
+								 None, 'dev', 128, 
+								 small_label=small_label, 
+								 small_prop=small_prop, 
+								 balance_seed=balance_seed, 
+								 undersample=undersample)
+				agent.run()
+
+print('Number of cpus: {}'.format(mp.cpu_count()))
+pool = mp.Pool(mp.cpu_count())
+arguments = [(0, 0), (0, 1), (1, 0), (1, 1), (2, 0), 
+			 (2, 1), (3, 0), (3, 1), (4, 0), (4, 1)]
+pool.starmap(experiment, arguments)
+pool.close()

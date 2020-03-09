@@ -1,3 +1,5 @@
+from collections import Counter
+
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -43,34 +45,28 @@ def read_desc(line):
 		geo = float(line.split('geo is ')[1].split(maxsplit=1)[0].rstrip(','))
 		return (geo, None, small_label, small_prop)
 
-def plot_with_err_bars(mat, *args, **kwargs):
+def plot_mat(mat, err_bars, *args, **kwargs):
 	avg = mat.mean(0)
 	dev = mat.std(0)
 	plt.plot(avg, *args, **kwargs)
 	kwargs['alpha'] = kwargs['alpha']/5
 	del kwargs['label']
-	plt.fill_between(list(range(mat.shape[1])), 
-					 avg-dev, avg+dev, *args, **kwargs)
-	plt.plot(np.argmax(avg), avg.max(), color=kwargs['color'], marker='o')
+	if err_bars:
+		plt.fill_between(list(range(mat.shape[1])), 
+						 avg-dev, avg+dev, *args, **kwargs)
+	plt.plot(np.argmax(avg), avg.max(), kwargs['color'], marker='o')
 	# plt.hlines(np.max(avg), 0, 100, color=kwargs['color'])
 
-def plot_experiments():
+def read_experiments(filepath, avg_across_labels):
 	experiments = {}
-	model = 'rnn'
-	# model = 'bert'
-	# aug_mode = 'syn'
-	aug_mode = 'trans'
-	data_name = 'sst'
-	# data_name = 'subj'
-	filepath = 'logs/archived/bal_{}_{}_{}_pct.log'.format(model, aug_mode, data_name)
-	# filepath = 'logs/archived/bal_bert_trans_sst.log'
-	# filepath = 'logs/archived/bal_bert_trans_subj.log'
 	with open(filepath) as f:
 		line = f.readline()
 		if 'RUN START' in line:
 			line = f.readline()
 		while line:
 			tup = read_desc(line)
+			if avg_across_labels:
+				tup = (tup[0], tup[1], 'both', tup[3]) # ignore small_label
 			accs = []
 			line = f.readline()
 			while is_training(line) or is_validating(line):
@@ -81,16 +77,21 @@ def plot_experiments():
 				experiments[tup] = np.array(accs)
 			else:
 				experiments[tup] = np.vstack([experiments[tup], np.array(accs)])
+	return experiments
 
-	# diffs = []
-	# for key, tup in experiments.items():
-	# 	meds = 100*np.median(tup[:,25:], 1)
-	# 	diffs.append(max(meds.max()-meds.mean(), meds.mean()-meds.min()))
-	# plt.hist(diffs, bins=20)
-	# plt.show()
-	# exit()
+def plot_experiments():
+	avg_across_labels = True
+	model = 'rnn'
+	# model = 'bert'
+	# aug_mode = 'syn'
+	aug_mode = 'trans'
+	data_name = 'sst'
+	# data_name = 'subj'
+	filepath = 'logs/archived/bal_{}_{}_{}_pct.log'.format(model, aug_mode, data_name)
+	# filepath = 'logs/archived/bal_bert_trans_sst.log'
+	# filepath = 'logs/archived/bal_bert_trans_subj.log'
+	experiments = read_experiments(filepath, avg_across_labels)
 	
-	# averages = {tup: 100*(mat.mean(0), mat.std(0)) for tup, mat in experiments.items()}
 	averages = experiments
 
 	for small_prop in sorted(list(set(key[3] for key in averages))):
@@ -107,35 +108,33 @@ def plot_experiments():
 			del small_prop_label_averages[(-1, False, small_label, small_prop)]
 			del small_prop_label_averages[(-1, True, small_label, small_prop)]
 
-			plt.title('Rebalancing {} with {} after on {}% of label {}'
-					  ' is kept.'.format(
-							data_name, aug_mode, 
-							100*small_prop, small_label))
-			plt.ylabel('Validation Accuracy (%)')
-			plt.xlabel('Training Epoch')
-			# for (geo, _, _, _), vec in sorted(small_prop_label_averages.items()):
-			colors = ['b', 'g', 'r', 'c', 'm']
+			colors = ['tab:blue', 'tab:orange', 'tab:green', 'tab:red', 
+					  'tab:purple', 'tab:brown', 'tab:pink', 'tab:gray', 
+					  'tab:olive', 'tab:cyan']
 			for ((geo, _, _, _), vec), color in zip(sorted(small_prop_label_averages.items()), colors):
+			# for (geo, _, _, _), vec in sorted(small_prop_label_averages.items()):
 				if small_prop == 1.0:
 					continue
-				# if geo not in [0.5, 0.7, 0.9]:
-				# 	continue
+				if geo not in [0.5, 0.6, 0.7, 0.8, 0.9]:
+					continue
 				plt.title('Rebalancing {} with {} after on {}% of label {}'
 						  ' is kept.'.format(
 						  		data_name, aug_mode, 
 						  		100*small_prop, small_label))
 				plt.ylabel('Validation Accuracy (%)')
 				plt.xlabel('Training Epoch')
-				plot_with_err_bars(100*oversample_avg, label='oversampling', color='g', alpha=0.5)
-				plot_with_err_bars(100*undersample_avg, label='undersampling', color='r', alpha=0.5)
-				plot_with_err_bars(100*vec, label='geo {}'.format(geo), color='b', alpha=0.5)
+				# plot_mat(100*oversample_avg, True, label='oversampling', color='g', alpha=0.5)
+				# plot_mat(100*undersample_avg, True, label='undersampling', color='r', alpha=0.5)
+				# plot_mat(100*vec, True, label='geo {}'.format(geo), color='b', alpha=0.5)
+				# plt.legend()
+				# plt.show()
+
+				plot_mat(100*vec, False, label='geo {}'.format(geo), color=color, alpha=0.5)
+			if small_prop != 1.0:
+				plot_mat(100*oversample_avg, False, label='oversampling', color='g', alpha=0.5)
+				plot_mat(100*undersample_avg, False, label='undersampling', color='r', alpha=0.5)
 				plt.legend()
 				plt.show()
-
-				# plot_with_err_bars(100*vec, label='geo {}'.format(geo), color=color, alpha=0.5)
-			# if small_prop != 1.0:
-			# 	plt.legend()
-			# 	plt.show()
 
 if __name__ == "__main__":
 	plot_experiments()

@@ -19,7 +19,7 @@ from utils.logger import print_and_log
 
 class RnnAgent:
 	def __init__(self, device, logger, data_name, input_length, max_epochs, 
-				 aug_mode, mode, batch_size, small_label=None, 
+				 lr, aug_mode, mode, batch_size, small_label=None, 
 				 small_prop=None, balance_seed=None, undersample=False,
 				 pct_usage=None, geo=0.5, verbose=False):
 		assert not (undersample and aug_mode is not None), \
@@ -32,6 +32,7 @@ class RnnAgent:
 		self.data_name = data_name
 		self.input_length = input_length
 		self.max_epochs = max_epochs
+		self.lr = lr
 		self.aug_mode = aug_mode
 		self.mode = mode
 		self.batch_size = batch_size
@@ -73,16 +74,16 @@ class RnnAgent:
 					   else 'cpu'))
 
 		s = ('Model is RNN, dataset is {}, undersample is {}, aug mode is {}, geo is {},'
-			' pct_usage is {}, small_label is {}, small_prop is {}, balance_seed is {}').format(
+			' pct_usage is {}, small_label is {}, small_prop is {}, balance_seed is {}, lr is {}').format(
 				data_name, self.undersample, self.aug_mode, self.geo, self.pct_usage,
-				self.small_label, self.small_prop, self.balance_seed)
+				self.small_label, self.small_prop, self.balance_seed, self.lr)
 		print_and_log(self.logger, s)
 
 	def initialize_model(self):
 		embed_arr = torch.from_numpy(self.nlp.vocab.vectors.data)
 		self.model = Rnn(
 			embed_arr, self.num_labels).to(self.device)
-		self.optimizer = Adam(self.model.parameters())
+		self.optimizer = Adam(self.model.parameters(), lr=self.lr)
 		self.model.train()
 
 	def save_checkpoint(self):
