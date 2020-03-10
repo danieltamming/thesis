@@ -60,9 +60,9 @@ def is_english(s):
 	else:
 		return True
 
-def gen_trans_aug(example, en2de, de2en, beam, temperature):
+def gen_trans_aug(example, en2de, de2en, beam, temperature, device):
 	example_aug_list = []
-	en_bin = en2de.encode(example)
+	en_bin = en2de.encode(example).to(device)
 	de_bin = en2de.generate(en_bin, beam=beam, sampling=True, 
 							temperature=temperature)
 	de_str_list = [en2de.decode(res['tokens']) for res in de_bin]
@@ -93,8 +93,7 @@ def gen_save_trans(downloaded_dir, data_name, en2de, de2en, device):
 				label, example = line.split(maxsplit=1)
 				g.write(label+'\n')
 				g.write(example+'\n')
-				example = example.to(device)
-				example_aug_list = gen_trans_aug(example, en2de, de2en, 5, 0.8)
+				example_aug_list = gen_trans_aug(example, en2de, de2en, 5, 0.8, device)
 				safe = [s for s in example_aug_list if is_english(s)]
 				unsafe = [s for s in example_aug_list if not is_english(s)]
 				if len(safe) < 25:
