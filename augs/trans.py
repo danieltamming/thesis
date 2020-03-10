@@ -74,7 +74,7 @@ def gen_trans_aug(example, en2de, de2en, beam, temperature):
 	# return [s for s in example_aug_list if is_english(s)]
 	return example_aug_list
 
-def gen_save_trans(downloaded_dir, data_name, en2de, de2en):
+def gen_save_trans(downloaded_dir, data_name, en2de, de2en, device):
 	if data_name == 'sst':
 		read_type = 'r'
 	else:
@@ -93,6 +93,7 @@ def gen_save_trans(downloaded_dir, data_name, en2de, de2en):
 				label, example = line.split(maxsplit=1)
 				g.write(label+'\n')
 				g.write(example+'\n')
+				example = example.to(device)
 				example_aug_list = gen_trans_aug(example, en2de, de2en, 5, 0.8)
 				safe = [s for s in example_aug_list if is_english(s)]
 				unsafe = [s for s in example_aug_list if not is_english(s)]
@@ -118,4 +119,4 @@ if __name__ == '__main__':
 	downloaded_dir = '../DownloadedData/'
 	# for data_name in ['sst', 'subj', 'trec']:
 	for data_name in ['sst']:
-		gen_save_trans(downloaded_dir, data_name, en2de, de2en)
+		gen_save_trans(downloaded_dir, data_name, en2de, de2en, device)
