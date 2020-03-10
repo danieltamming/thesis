@@ -63,8 +63,11 @@ def read_no_aug(set_path, input_length, is_bytes):
 				line = line.decode('latin-1')
 			label, example = line.split(maxsplit=1)
 			label = int(label)
+			example = example.replace('-lrb-', '(').replace('-rrb-', ')').replace('\\/', ' / ')
 			if input_length is not None:
 				example = ' '.join(example.split()[:input_length])
+			else:
+				example = ' '.join(example.split())
 			set_data.append((label, example, None))
 	return set_data
 

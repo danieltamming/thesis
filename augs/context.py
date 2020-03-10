@@ -21,6 +21,7 @@ from transformers import (BertForMaskedLM, BertTokenizer,
 
 from utils.data import get_sst, get_subj, get_trec, partition_within_classes
 from utils.metrics import AverageMeter
+from utils.parsing import get_device
 
 def context_aug(seq, aug_dict, geo):
 	num_to_replace = min(np.random.geometric(geo)-1, len(aug_dict))
@@ -40,7 +41,7 @@ def context_aug(seq, aug_dict, geo):
 class TextDataset(Dataset):
 	def __init__(self, data, tokenizer, input_length):
 		self.examples = []
-		for (label, text, _) in data:
+		for label, text in data:
 			tokenized_text = tokenizer.tokenize(text)
 			ids_text = tokenizer.convert_tokens_to_ids(tokenized_text)
 			input_ids = tokenizer.build_inputs_with_special_tokens(
@@ -122,9 +123,9 @@ class BertAgent:
 		self.small_label = small_label
 		self.small_prop = small_prop
 
-		self.train_data, inf_data = self.get_data(
+		self.train_data, self.inf_data = self.get_data(
 			data_name, seed, pct_usage, small_label, small_prop)
-		if inf_data is None:
+		if self.inf_data is None:
 			self.inf_data = self.train_data
 		# CHANGE INPUT LENGTH. MAYBE 50?
 		self.input_length = 25
@@ -136,7 +137,7 @@ class BertAgent:
 		self.max_grad_norm = 1.0
 		self.tokenizer = BertTokenizer.from_pretrained(self.checkpoint)
 		self.model = BertForMaskedLM.from_pretrained(self.checkpoint)
-		self.device = (torch.device('cuda:0' if torch.cuda.is_available() 
+		self.device = (torch.device(get_device() if torch.cuda.is_available() 
 					   else 'cpu'))
 		self.model = self.model.to(self.device)
 
@@ -255,54 +256,45 @@ class BertAgent:
 		return loss_meter.val
 
 	def augment(self):
-		# self.dataset = TextDataset(self.inf_data, self.tokenizer, 
-		# 						   self.input_length)
-		# self.loader = DataLoader(self.dataset, self.batch_size, 
-		# 						 pin_memory=True, shuffle=False)
-		# self.model.eval()
-		# data = []
-		# for seq, cat in tqdm(self.dataset):
-		# 	aug = {}
-		# 	for i, masked_seq in mask_gen(seq, self.tokenizer):
-		# 		batch = torch.unsqueeze(masked_seq, 0)
-		# 		token_type_ids = cat*torch.ones(batch.shape[1], 
-		# 										dtype=torch.long)
-		# 		# token_type_ids = cat_to_token_type(cat, batch.shape[1])
-		# 		attention_mask = get_attention_mask(batch)
-		# 		batch = batch.to(self.device)
-		# 		attention_mask = attention_mask.to(self.device)
-		# 		token_type_ids = token_type_ids.to(self.device)
-		# 		prediction_scores = self.model(
-		# 			batch, attention_mask=attention_mask, 
-		# 			token_type_ids=token_type_ids)[0].data
-		# 		ith_preds = prediction_scores[0,i,:]
-		# 		top_10_ids = torch.topk(ith_preds, 10)[1].tolist()
-		# 		top_10_toks = self.tokenizer.convert_ids_to_tokens(top_10_ids)
-		# 		top_toks = [s for s in top_10_toks if s.isalpha()]
-		# 		top_ids = self.tokenizer.convert_tokens_to_ids(top_toks)
+		self.dataset = TextDataset(self.inf_data, self.tokenizer, 
+								   self.input_length)
+		self.loader = DataLoader(self.dataset, self.batch_size, 
+								 pin_memory=True, shuffle=False)
+		self.model.eval()
+		data = []
+		for seq, cat in tqdm(self.dataset):
+			aug = {}
+			for i, masked_seq in mask_gen(seq, self.tokenizer):
+				batch = torch.unsqueeze(masked_seq, 0)
+				token_type_ids = cat*torch.ones(batch.shape[1], 
+												dtype=torch.long)
+				# token_type_ids = cat_to_token_type(cat, batch.shape[1])
+				attention_mask = get_attention_mask(batch)
+				batch = batch.to(self.device)
+				attention_mask = attention_mask.to(self.device)
+				token_type_ids = token_type_ids.to(self.device)
+				prediction_scores = self.model(
+					batch, attention_mask=attention_mask, 
+					token_type_ids=token_type_ids)[0].data
+				ith_preds = prediction_scores[0,i,:]
+				top_10_ids = torch.topk(ith_preds, 10)[1].tolist()
+				top_10_toks = self.tokenizer.convert_ids_to_tokens(top_10_ids)
+				top_toks = [s for s in top_10_toks if s.isalpha()]
+				top_ids = self.tokenizer.convert_tokens_to_ids(top_toks)
 
-		# 		# changed to shift aug dict, since follwing line shifts seq by 1
-		# 		# aug[i] = top_10_ids
-		# 		# aug[i-1] = top_10_ids
-		# 		aug[i-1] = top_ids
-		# 	# remove all padding and other special token ids
-		# 	clean_seq = [eyedee for eyedee in seq.tolist() if eyedee 
-		# 				 not in self.tokenizer.all_special_ids]
-		# 	assert clean_seq == seq.tolist()[1:1+len(clean_seq)]
-		# 	# -----------------------------------
-		# 	# s = self.tokenizer.decode(clean_seq)
-		# 	# flag = False
-		# 	# for i in range(len(s)-3):
-		# 	# 	if all(s[i] == c for c in s[i+1:i+3]):
-		# 	# 		flag = True
-		# 	# 		print(s)
-		# 	# assert not flag
-		# 	# -----------------------------------
-		# 	# print(self.tokenizer.convert_ids_to_tokens(clean_seq))
-		# 	# for i, ids in aug.items():
-		# 	# 	print(i, self.tokenizer.convert_ids_to_tokens(ids))
-		# 	# exit()
-		# 	data.append((clean_seq, cat, aug))
+				# changed to shift aug dict, since follwing line shifts seq by 1
+				# aug[i] = top_10_ids
+				# aug[i-1] = top_10_ids
+				aug[i-1] = top_ids
+			# remove all padding and other special token ids
+			clean_seq = [eyedee for eyedee in seq.tolist() if eyedee 
+						 not in self.tokenizer.all_special_ids]
+			assert clean_seq == seq.tolist()[1:1+len(clean_seq)]
+			print(self.tokenizer.convert_ids_to_tokens(clean_seq))
+			for i, ids in aug.items():
+				print(i, self.tokenizer.convert_ids_to_tokens(ids))
+			# exit()
+			data.append((clean_seq, cat, aug))
 
 		context_aug_filepath = ('../DownloadedData/{}/context_aug'
 			'/{}-{}-{}-{}.pickle'.format(
@@ -310,8 +302,8 @@ class BertAgent:
 				self.small_prop, self.seed
 			)
 		)
-		seq = self.tokenizer.encode('hello there my name is daniel. What is your name?')
-		data = [(1, seq, {3:[0]})]
+		# seq = self.tokenizer.encode('hello there my name is daniel. What is your name?')
+		# data = [(1, seq, {3:[0]})]
 		with open(context_aug_filepath, 'wb') as f:
 			pickle.dump(data, f, protocol=pickle.HIGHEST_PROTOCOL)
 
@@ -323,10 +315,10 @@ if __name__ == "__main__":
 	seed = 0
 	pct_usage = None
 	small_label = 0
-	small_prop = 0.5
+	small_prop = 0.9
 	agent = BertAgent(data_name, seed, pct_usage, 
 				 small_label, small_prop)
-	# agent.train()
+	agent.train()
 	# agent.develop()
 	agent.augment()
 
@@ -334,8 +326,4 @@ if __name__ == "__main__":
 '''
 READY TO RUN TRAIN THEN AUGMENT AGAIN
 check for error with too many letters in a row
-
-
-NEED TO ADD SCHEDULER IN ORDER TO GET TRAINING
-
 '''
