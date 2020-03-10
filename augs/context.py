@@ -3,6 +3,7 @@ import sys
 import inspect
 import random
 import pickle
+from collections import Counter
 from itertools import cycle, islice
 
 current_dir = os.path.dirname(
@@ -179,9 +180,9 @@ class BertAgent:
 		if undersample:
 			raise NotImplementedError('Undersample not implemented')
 		else:
-			label_data = list(islice(cycle(label_data), num_orig))
-		print(len(other_data), len(label_data))
-		return other_data+label_data, label_data
+			label_data_duplicates = list(islice(cycle(label_data), num_orig))
+		print(len(other_data), len(label_data_duplicates))
+		return other_data+label_data_duplicates, other_data+label_data
 
 	def save_checkpoint(self):
 		if not os.path.exists(self.output_dir):
@@ -291,16 +292,16 @@ class BertAgent:
 			clean_seq = [eyedee for eyedee in seq.tolist() if eyedee 
 						 not in self.tokenizer.all_special_ids]
 			assert clean_seq == seq.tolist()[1:1+len(clean_seq)]
-			print(self.tokenizer.convert_ids_to_tokens(clean_seq))
-			for i, ids in aug.items():
-				print(i, self.tokenizer.convert_ids_to_tokens(ids))
+			# print(self.tokenizer.convert_ids_to_tokens(clean_seq))
+			# for i, ids in aug.items():
+			# 	print(i, self.tokenizer.convert_ids_to_tokens(ids))
 			# exit()
 			data.append((clean_seq, cat, aug))
 
 		context_aug_filepath = ('../DownloadedData/{}/context_aug'
 			'/{}-{}-{}-{}.pickle'.format(
 				self.data_name, self.pct_usage, self.small_label, 
-				self.small_prop, self.seed
+				int(100*self.small_prop), self.seed
 			)
 		)
 		# seq = self.tokenizer.encode('hello there my name is daniel. What is your name?')
@@ -311,18 +312,27 @@ class BertAgent:
 
 if __name__ == "__main__":
 	data_name = 'sst'
-	# data_name = 'subj'
-	# data_name = 'trec'
 	lr = 5e-5
-	seed = 0
 	pct_usage = None
 	small_label = 0
 	small_prop = 0.9
+	seed = 0
 	agent = BertAgent(lr, data_name, seed, pct_usage, 
-				 small_label, small_prop)
+				 	  small_label, small_prop)
 	agent.train()
-	# agent.develop()
 	agent.augment()
+	exit()
+
+	lr = 5e-5
+	for data_name in ['sst', 'subj']:
+		for small_label in [0, 1]:
+			for small_prop in [0.1, 0.3, 0.5, 0.7, 0.9]:
+				print(data_name, small_label, small_prop)
+				for seed in list(range(5)):
+					agent = BertAgent(lr, data_name, seed, pct_usage, 
+								 	  small_label, small_prop)
+					agent.train()
+					agent.augment()
 
 
 '''
