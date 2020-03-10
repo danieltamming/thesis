@@ -311,20 +311,20 @@ class BertAgent:
 
 
 if __name__ == "__main__":
-	data_name = 'sst'
-	lr = 5e-5
-	pct_usage = None
-	small_label = 0
-	small_prop = 0.9
-	seed = 0
-	agent = BertAgent(lr, data_name, seed, pct_usage, 
-				 	  small_label, small_prop)
-	agent.train()
-	agent.augment()
-	exit()
+	# data_name = 'sst'
+	# lr = 5e-5
+	# pct_usage = None
+	# small_label = 0
+	# small_prop = 0.9
+	# seed = 0
+	# agent = BertAgent(lr, data_name, seed, pct_usage, 
+	# 			 	  small_label, small_prop)
+	# agent.train()
+	# agent.augment()
+	# exit()
 
 	lr = 5e-5
-	for data_name in ['sst', 'subj']:
+	for data_name in ['sst']:
 		for small_label in [0, 1]:
 			for small_prop in [0.1, 0.3, 0.5, 0.7, 0.9]:
 				print(data_name, small_label, small_prop)
