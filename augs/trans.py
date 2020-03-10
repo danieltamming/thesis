@@ -1,4 +1,6 @@
 import os
+import sys
+import inspect
 import random
 import itertools
 import string
@@ -6,6 +8,12 @@ from collections import Counter
 
 from tqdm import tqdm
 import torch
+
+current_dir = os.path.dirname(
+	os.path.abspath(inspect.getfile(inspect.currentframe()))
+	)
+parent_dir = os.path.dirname(current_dir)
+sys.path.insert(0, parent_dir) 
 
 from utils.parsing import get_device
 
