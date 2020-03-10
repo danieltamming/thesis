@@ -7,6 +7,8 @@ from collections import Counter
 from tqdm import tqdm
 import torch
 
+from utils.parsing import get_device
+
 def trans_aug(example, aug_counter, geo):
 	# keep example with probability geo
 	if random.random() < geo or not aug_counter:
@@ -15,32 +17,32 @@ def trans_aug(example, aug_counter, geo):
 		i = random.randrange(sum(aug_counter.values()))
 		return next(itertools.islice(aug_counter.elements(), i, None))
 
-class Translator():
-	def __init__(self):
-		self.device = (torch.device('cuda:0' if torch.cuda.is_available() 
-					   else 'cpu'))
-		self.en2de = torch.hub.load(
-			'pytorch/fairseq', 'transformer.wmt19.en-de.single_model', 
-			tokenizer='moses', bpe='fastbpe').to(self.device)
-		self.de2en = torch.hub.load(
-			'pytorch/fairseq', 'transformer.wmt19.de-en.single_model',
-			tokenizer='moses', bpe='fastbpe').to(self.device)
-		# self.en2ru = torch.hub.load(
-		# 	'pytorch/fairseq', 'transformer.wmt19.en-ru.single_model', 
-		# 	tokenizer='moses', bpe='fastbpe').to(self.device)
-		# self.ru2en = torch.hub.load(
-		# 	'pytorch/fairseq', 'transformer.wmt19.ru-en.single_model',
-		# 	tokenizer='moses', bpe='fastbpe').to(self.device)
+# class Translator():
+# 	def __init__(self):
+# 		self.device = (torch.device(get_device() if torch.cuda.is_available() 
+# 					   else 'cpu'))
+# 		self.en2de = torch.hub.load(
+# 			'pytorch/fairseq', 'transformer.wmt19.en-de.single_model', 
+# 			tokenizer='moses', bpe='fastbpe').to(self.device)
+# 		self.de2en = torch.hub.load(
+# 			'pytorch/fairseq', 'transformer.wmt19.de-en.single_model',
+# 			tokenizer='moses', bpe='fastbpe').to(self.device)
+# 		# self.en2ru = torch.hub.load(
+# 		# 	'pytorch/fairseq', 'transformer.wmt19.en-ru.single_model', 
+# 		# 	tokenizer='moses', bpe='fastbpe').to(self.device)
+# 		# self.ru2en = torch.hub.load(
+# 		# 	'pytorch/fairseq', 'transformer.wmt19.ru-en.single_model',
+# 		# 	tokenizer='moses', bpe='fastbpe').to(self.device)
 
-	def aug(self, example, pivot):
-		if pivot == 'de':
-			return self.de2en.translate(
-				self.en2de.translate(example, sampling=True, temperature=0.8),
-				sampling=True, temperature=0.8)
-		# elif pivot == 'ru':
-		# 	return self.ru2en.translate(self.en2ru.translate(example))
-		else:
-			raise ValueError('Unrecognized pivot language.')
+# 	def aug(self, example, pivot):
+# 		if pivot == 'de':
+# 			return self.de2en.translate(
+# 				self.en2de.translate(example, sampling=True, temperature=0.8),
+# 				sampling=True, temperature=0.8)
+# 		# elif pivot == 'ru':
+# 		# 	return self.ru2en.translate(self.en2ru.translate(example))
+# 		else:
+# 			raise ValueError('Unrecognized pivot language.')
 
 def is_english(s):
 	try:
@@ -97,22 +99,13 @@ def gen_save_trans(downloaded_dir, data_name, en2de, de2en):
 				g.write('\n')
 
 if __name__ == '__main__':
-	device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
+	device = torch.device(get_device() if torch.cuda.is_available() else 'cpu')
 	en2de = torch.hub.load(
 		'pytorch/fairseq', 'transformer.wmt19.en-de.single_model', 
 		tokenizer='moses', bpe='fastbpe').to(device)
 	de2en = torch.hub.load(
 		'pytorch/fairseq', 'transformer.wmt19.de-en.single_model',
 		tokenizer='moses', bpe='fastbpe').to(device)
-
-	# example = 'hello my ( name ) is Daniel'
-	# for ex in gen_trans_aug(example, en2de, de2en, 5, 0.8):
-	# 	print(ex)
-	# print()
-	# example = 'hello my -lrb- name -rrb- is Daniel'
-	# for ex in gen_trans_aug(example, en2de, de2en, 5, 0.8):
-	# 	print(ex)
-	# exit()
 
 	downloaded_dir = '../DownloadedData/'
 	# for data_name in ['sst', 'subj', 'trec']:

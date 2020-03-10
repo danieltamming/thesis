@@ -115,8 +115,9 @@ def mask_gen(seq, tokenizer):
 		seq[i] = num
 
 class BertAgent:
-	def __init__(self, data_name, seed, pct_usage, 
+	def __init__(self, lr, data_name, seed, pct_usage, 
 				 small_label, small_prop):
+		self.lr = lr
 		self.data_name = data_name
 		self.seed = seed
 		self.pct_usage = pct_usage
@@ -203,7 +204,7 @@ class BertAgent:
 			 'weight_decay': 0.0}
 		]
 		# choosing AdamW defaults
-		self.optimizer = AdamW(optimizer_grouped_parameters)
+		self.optimizer = AdamW(optimizer_grouped_parameters, lr=self.lr)
 		total_steps = len(self.loader) * self.num_train_epochs
 		self.scheduler = get_linear_schedule_with_warmup(
 			self.optimizer, num_warmup_steps=0.1*total_steps, 
@@ -312,13 +313,14 @@ if __name__ == "__main__":
 	data_name = 'sst'
 	# data_name = 'subj'
 	# data_name = 'trec'
+	lr = 5e-5
 	seed = 0
 	pct_usage = None
 	small_label = 0
 	small_prop = 0.9
-	agent = BertAgent(data_name, seed, pct_usage, 
+	agent = BertAgent(lr, data_name, seed, pct_usage, 
 				 small_label, small_prop)
-	agent.train()
+	# agent.train()
 	# agent.develop()
 	agent.augment()
 
