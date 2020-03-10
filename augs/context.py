@@ -323,6 +323,7 @@ if __name__ == "__main__":
 	# agent.augment()
 	# exit()
 
+	pct_usage = None
 	lr = 5e-5
 	for data_name in ['sst']:
 		for small_label in [0, 1]:
