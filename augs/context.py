@@ -132,7 +132,7 @@ class BertAgent:
 		# CHANGE INPUT LENGTH. MAYBE 50?
 		self.input_length = 25
 		self.batch_size = 16
-		self.num_train_epochs = 4
+		self.num_train_epochs = 9
 		self.checkpoint = 'bert-base-uncased'
 		self.output_dir = 'bert-ckpt'
 		self.weight_decay = 0.0
