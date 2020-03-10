@@ -15,8 +15,6 @@ current_dir = os.path.dirname(
 parent_dir = os.path.dirname(current_dir)
 sys.path.insert(0, parent_dir) 
 
-from utils.parsing import get_device
-
 def trans_aug(example, aug_counter, geo):
 	# keep example with probability geo
 	if random.random() < geo or not aug_counter:
@@ -27,7 +25,7 @@ def trans_aug(example, aug_counter, geo):
 
 # class Translator():
 # 	def __init__(self):
-# 		self.device = (torch.device(get_device() if torch.cuda.is_available() 
+# 		self.device = (torch.device('cuda:0' if torch.cuda.is_available() 
 # 					   else 'cpu'))
 # 		self.en2de = torch.hub.load(
 # 			'pytorch/fairseq', 'transformer.wmt19.en-de.single_model', 
@@ -60,9 +58,9 @@ def is_english(s):
 	else:
 		return True
 
-def gen_trans_aug(example, en2de, de2en, beam, temperature, device):
+def gen_trans_aug(example, en2de, de2en, beam, temperature):
 	example_aug_list = []
-	en_bin = en2de.encode(example).to(device)
+	en_bin = en2de.encode(example)
 	de_bin = en2de.generate(en_bin, beam=beam, sampling=True, 
 							temperature=temperature)
 	de_str_list = [en2de.decode(res['tokens']) for res in de_bin]
@@ -74,7 +72,7 @@ def gen_trans_aug(example, en2de, de2en, beam, temperature, device):
 	# return [s for s in example_aug_list if is_english(s)]
 	return example_aug_list
 
-def gen_save_trans(downloaded_dir, data_name, en2de, de2en, device):
+def gen_save_trans(downloaded_dir, data_name, en2de, de2en):
 	if data_name == 'sst':
 		read_type = 'r'
 	else:
@@ -93,7 +91,7 @@ def gen_save_trans(downloaded_dir, data_name, en2de, de2en, device):
 				label, example = line.split(maxsplit=1)
 				g.write(label+'\n')
 				g.write(example+'\n')
-				example_aug_list = gen_trans_aug(example, en2de, de2en, 5, 0.8, device)
+				example_aug_list = gen_trans_aug(example, en2de, de2en, 5, 0.8)
 				safe = [s for s in example_aug_list if is_english(s)]
 				unsafe = [s for s in example_aug_list if not is_english(s)]
 				if len(safe) < 25:
@@ -107,7 +105,7 @@ def gen_save_trans(downloaded_dir, data_name, en2de, de2en, device):
 				g.write('\n')
 
 if __name__ == '__main__':
-	device = torch.device(get_device() if torch.cuda.is_available() else 'cpu')
+	device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 	en2de = torch.hub.load(
 		'pytorch/fairseq', 'transformer.wmt19.en-de.single_model', 
 		tokenizer='moses', bpe='fastbpe').to(device)
@@ -118,4 +116,4 @@ if __name__ == '__main__':
 	downloaded_dir = '../DownloadedData/'
 	# for data_name in ['sst', 'subj', 'trec']:
 	for data_name in ['sst']:
-		gen_save_trans(downloaded_dir, data_name, en2de, de2en, device)
+		gen_save_trans(downloaded_dir, data_name, en2de, de2en)

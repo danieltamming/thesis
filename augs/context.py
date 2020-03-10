@@ -320,7 +320,7 @@ if __name__ == "__main__":
 	small_prop = 0.9
 	agent = BertAgent(lr, data_name, seed, pct_usage, 
 				 small_label, small_prop)
-	# agent.train()
+	agent.train()
 	# agent.develop()
 	agent.augment()
 
