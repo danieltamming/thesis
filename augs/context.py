@@ -182,7 +182,8 @@ class BertAgent:
 		else:
 			label_data_duplicates = list(islice(cycle(label_data), num_orig))
 		print(len(other_data), len(label_data_duplicates))
-		return other_data+label_data_duplicates, other_data+label_data
+		print(len(other_data+label_data_duplicates), len(label_data))
+		return other_data+label_data_duplicates, label_data
 
 	def save_checkpoint(self):
 		if not os.path.exists(self.output_dir):
@@ -296,7 +297,7 @@ class BertAgent:
 			# for i, ids in aug.items():
 			# 	print(i, self.tokenizer.convert_ids_to_tokens(ids))
 			# exit()
-			data.append((clean_seq, cat, aug))
+			data.append((cat, clean_seq, aug))
 
 		context_aug_filepath = ('../DownloadedData/{}/context_aug'
 			'/{}-{}-{}-{}.pickle'.format(
@@ -326,8 +327,8 @@ if __name__ == "__main__":
 	pct_usage = None
 	lr = 5e-5
 	for data_name in ['sst']:
-		for small_label in [0, 1]:
-			for small_prop in [0.1, 0.3, 0.5, 0.7, 0.9]:
+		for small_label in [1]:
+			for small_prop in [0.5, 0.7, 0.9]:
 				print(data_name, small_label, small_prop)
 				for seed in list(range(5)):
 					agent = BertAgent(lr, data_name, seed, pct_usage, 

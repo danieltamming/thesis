@@ -51,7 +51,7 @@ def partition_within_classes(data, pct_in_A, make_A_balanced, seed=0):
 			B.extend(arr[A_label_size:])
 		return A, B
 
-def read_no_aug(set_path, input_length, is_bytes):
+def read_no_aug(set_path, input_length, is_bytes, ignore_label):
 	if is_bytes:
 		read_code = 'rb'
 	else:
@@ -68,7 +68,8 @@ def read_no_aug(set_path, input_length, is_bytes):
 				example = ' '.join(example.split()[:input_length])
 			else:
 				example = ' '.join(example.split())
-			set_data.append((label, example, None))
+			if label != ignore_label:
+				set_data.append((label, example, None))
 	return set_data
 
 def read_trans_aug(set_path):
@@ -97,10 +98,14 @@ def read_context_aug(aug_data_path, pct_usage, small_label,
 	Unlike trans aug, this only retrieves that train set
 	'''
 	filename = '{}-{}-{}-{}.pickle'.format(pct_usage, small_label, 
-											small_prop, seed)
+										   int(100*small_prop), seed)
 	filepath = os.path.join(aug_data_path, filename)
 	with open(filepath, 'rb') as f:
 		data = pickle.load(f)
+	assert isinstance(data[0][1], int), 'Change ordering.'
+	# remove reordering once context aug is reordered, (assertion will fail)
+	data = [(label, seq, aug) for seq, label, aug in data 
+			if label == small_label]
 	return data
 
 def get_sst(input_length, aug_mode, pct_usage=None, 
@@ -114,7 +119,7 @@ def get_sst(input_length, aug_mode, pct_usage=None,
 		for set_name in ['train', 'dev', 'test']:
 			set_path = os.path.join(data_path, set_name+'.txt')
 			data_dict[set_name] = read_no_aug(
-				set_path, input_length, False)
+				set_path, input_length, False, None)
 		return data_dict
 	elif aug_mode == 'trans':
 		aug_data_path = os.path.join(data_path,'trans_aug')
@@ -127,21 +132,26 @@ def get_sst(input_length, aug_mode, pct_usage=None,
 		for set_name in ['dev', 'test']:
 			set_path = os.path.join(data_path, set_name+'.txt')
 			data_dict[set_name] = read_no_aug(
-				set_path, input_length, False)
-		data_dict['train'] = read_context_aug(
+				set_path, input_length, False, None)
+		train_small_label = read_context_aug(
 			aug_data_path, pct_usage, small_label, small_prop, seed)
+		set_path = os.path.join(data_path, 'train.txt')
+		train_other_labels = read_no_aug(set_path, input_length, 
+										False, small_label)
+		data_dict['train'] = train_small_label + train_other_labels
 		return data_dict
 	else:
 		raise ValueError('Unrecognized augmentation.')
 
-def get_subj(input_length, aug_mode, seed=None):
+def get_subj(input_length, aug_mode, pct_usage=None, 
+			 small_label=None, small_prop=None, seed=None):
 	script_path = os.path.dirname(os.path.realpath(__file__))
 	repo_path = os.path.join(script_path, os.pardir)
 	data_parent = os.path.join(repo_path, os.pardir, 'DownloadedData')
 	data_path = os.path.join(data_parent, 'subj')
 	if aug_mode is None or aug_mode == 'synonym':
 		file_path = os.path.join(data_path,'subj.txt')
-		all_data = read_no_aug(file_path, input_length, True)
+		all_data = read_no_aug(file_path, input_length, True, None)
 		# let 10% of data be the development set
 		# dev_data, train_data = partition_within_classes(all_data, 0.1, False)
 		# return {'dev': dev_data, 'train': train_data}
@@ -149,13 +159,23 @@ def get_subj(input_length, aug_mode, seed=None):
 		aug_file_path = os.path.join(data_path, 'trans_aug/subj.txt')
 		all_data = read_trans_aug(aug_file_path)
 	elif aug_mode == 'context':
-		context_train_data = read_context_aug(
-			data_path+'/context_aug/train.pickle')
+		file_path = os.path.join(data_path,'subj.txt')
+		all_data = read_no_aug(file_path, input_length, True, None)
 	else:
 		raise ValueError('Unrecognized augmentation.')
 	dev_data, train_data = partition_within_classes(all_data, 0.1, False)
 	if aug_mode == 'context':
-		train_data = context_train_data
+		print('PLEASE TEST CONTEXT + SUBJ BEFORE USING')
+		exit()
+		train_other_labels = [tup for tup in train_data 
+							  if tup[0] != small_label]
+		aug_data_path = os.path.join(data_path, 'context_aug/')
+		train_small_label = read_context_aug(
+			aug_data_path, pct_usage, small_label, small_prop, seed)
+		train_data = train_other_labels + train_small_label
+		print(Counter([tup[0] for tup in train_small_label]))
+		print(Counter([tup[0] for tup in train_other_labels]))
+		exit()
 	return {'dev': dev_data, 'train': train_data}
 
 def get_trec(input_length, aug_mode):
@@ -168,7 +188,8 @@ def get_trec(input_length, aug_mode):
 	if aug_mode is None or aug_mode == 'synonym':
 		for set_name in ['train', 'test']:
 			set_path = os.path.join(data_path, set_name+'.txt')
-			data_dict[set_name] = read_no_aug(set_path, input_length, True)
+			data_dict[set_name] = read_no_aug(set_path, input_length, 
+											  True, None)
 	elif aug_mode == 'trans':
 		aug_data_path = os.path.join(data_path, 'trans_aug')
 		for set_name in ['train', 'test']:

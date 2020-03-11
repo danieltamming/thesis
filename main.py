@@ -60,17 +60,27 @@ for key, count in tensors.items():
 print(sum(tensors.values()))
 print(torch.cuda.memory_allocated())
 
-# batch_size = 64
-# num_epochs = 100
-# thing = RnnAgent(device, logger, 'sst', 25, num_epochs, 
-# 				  aug_mode, mode, batch_size,
-# 				  small_label=small_label, small_prop=small_prop,
-# 				  balance_seed=seed, undersample=False,
-# 				  pct_usage=pct_usage, verbose=True)
-thing.run()
+
+'''
+device = get_device()
+this_script_name = os.path.basename(__file__).split('.')[0]
+num_epochs = 100
+lr = 0.001
+small_label = 0
+balance_seed = 0
+small_prop = 0.1
+geo = 0.2
+logger = initialize_logger(this_script_name, balance_seed, other=small_label)
+agent = RnnAgent(device, logger, 'sst', 25, num_epochs, lr,
+				 'context', 'dev', 128, 
+				 small_label=small_label, 
+				 small_prop=small_prop, 
+				 balance_seed=balance_seed,
+				 geo=geo)
+agent.run()
 
 exit()
-'''
+
 
 device = get_device()
 this_script_name = os.path.basename(__file__).split('.')[0]

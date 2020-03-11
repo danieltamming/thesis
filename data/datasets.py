@@ -100,7 +100,8 @@ class BertDataset(DatasetBase):
 
 		self.tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
 
-		if small_label is not None and small_prop is not None:
+		if (small_label is not None and small_prop is not None and 
+				aug_mode != 'context'):
 			self.data = self._im_re_balance(data, balance_seed, undersample)
 		elif pct_usage is not None:
 			self.data, _ = partition_within_classes(
@@ -138,7 +139,8 @@ class RnnDataset(DatasetBase):
 			self.tokenizer = BertTokenizer.from_pretrained(
 				'bert-base-uncased')
 
-		if small_label is not None and small_prop is not None:
+		if (small_label is not None and small_prop is not None and 
+				aug_mode != 'context'):
 			self.data = self._im_re_balance(data, balance_seed, undersample)
 		elif pct_usage is not None:
 			self.data, _ = partition_within_classes(
