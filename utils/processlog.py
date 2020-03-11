@@ -119,12 +119,12 @@ def plot_experiments():
 			colors = ['tab:blue', 'tab:orange', 'tab:green', 'tab:red', 
 					  'tab:purple', 'tab:brown', 'tab:pink', 'tab:gray', 
 					  'tab:olive', 'tab:cyan']
-			colors = ['b', 'c', 'y', 'm']
+			# colors = ['b', 'c', 'y', 'm']
 			for ((geo, _, _, _), vec), color in zip(sorted(small_prop_label_averages.items()), colors):
 			# for (geo, _, _, _), vec in sorted(small_prop_label_averages.items()):
 				if small_prop == 1.0:
 					continue
-				# if geo not in [0.5, 0.6, 0.7, 0.8, 0.9]:
+				# if geo not in [0.7, 0.8, 0.9]:
 				# 	continue
 				plt.title('Rebalancing {} with {} after on {}% of label {}'
 						  ' is kept.'.format(
