@@ -23,21 +23,19 @@ lr  = 0.001
 
 def experiment(balance_seed):
 	logger = initialize_logger(this_script_name, balance_seed)
-	for small_prop in np.arange(0.1, 1.0, 0.1):
+	# for small_prop in np.arange(0.6, 1.0, 0.1):
+	for small_prop in [0.8]:
 		small_prop = round(small_prop, 2)
 		for small_label in [0, 1]:
-			for undersample in [False, True]:
-				agent = RnnAgent(device, logger, 'subj', 25, num_epochs, lr,
-								 None, 'dev', 128, 
-								 small_label=small_label, 
-								 small_prop=small_prop, 
-								 balance_seed=balance_seed, 
-								 undersample=undersample)
-				agent.run()
-			if small_prop == 0.9:
-				iterator = np.arange(0.2, 0.6, 0.1)
-			else:
-				iterator = np.arange(0.2, 0.5, 0.1)
+			# for undersample in [False, True]:
+			# 	agent = RnnAgent(device, logger, 'subj', 25, num_epochs, lr,
+			# 					 None, 'dev', 128, 
+			# 					 small_label=small_label, 
+			# 					 small_prop=small_prop, 
+			# 					 balance_seed=balance_seed, 
+			# 					 undersample=undersample)
+			# 	agent.run()
+			iterator = np.arange(0.5, 1.0, 0.1)
 			for geo in iterator:
 				geo = round(geo, 2)
 				agent = RnnAgent(device, logger, 'subj', 25, num_epochs, lr,

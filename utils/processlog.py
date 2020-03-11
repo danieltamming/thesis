@@ -96,8 +96,8 @@ def plot_experiments():
 	data_name = 'subj'
 	filepath = 'logs/archived/bal_{}_{}_{}_pct.log'.format(model, aug_mode, data_name)
 	# filepath = 'logs/archived/bal_bert_trans_sst.log'
-	# filepath = 'logs/archived/bal_bert_trans_subj.log'
-
+	filepath = 'logs/archived/bal_rnn_trans_subj_fine.log'
+	err_bars = False
 	experiments = read_experiments(filepath, avg_across_labels)
 	
 	averages = experiments
@@ -119,6 +119,7 @@ def plot_experiments():
 			colors = ['tab:blue', 'tab:orange', 'tab:green', 'tab:red', 
 					  'tab:purple', 'tab:brown', 'tab:pink', 'tab:gray', 
 					  'tab:olive', 'tab:cyan']
+			colors = ['b', 'c', 'y', 'm']
 			for ((geo, _, _, _), vec), color in zip(sorted(small_prop_label_averages.items()), colors):
 			# for (geo, _, _, _), vec in sorted(small_prop_label_averages.items()):
 				if small_prop == 1.0:
@@ -137,16 +138,16 @@ def plot_experiments():
 				# plt.legend()
 				# plt.show()
 
-				plot_mat(100*vec, False, label='geo {}'.format(geo), color=color, alpha=0.5)
+				plot_mat(100*vec, err_bars, label='geo {}'.format(geo), color=color, alpha=0.5)
 			if small_prop != 1.0:
-				# plot_mat(100*oversample_avg, False, label='oversampling', color='g', alpha=0.5)
-				# plot_mat(100*undersample_avg, False, label='undersampling', color='r', alpha=0.5)
+				plot_mat(100*oversample_avg, err_bars, label='oversampling', color='g', alpha=0.5)
+				plot_mat(100*undersample_avg, err_bars, label='undersampling', color='r', alpha=0.5)
 				plt.legend()
 				plt.show()
 
 if __name__ == "__main__":
-	# plot_experiments()
-	# exit()
+	plot_experiments()
+	exit()
 
 
 	experiments = {}
