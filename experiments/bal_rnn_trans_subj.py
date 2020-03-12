@@ -23,8 +23,7 @@ lr  = 0.001
 
 def experiment(balance_seed):
 	logger = initialize_logger(this_script_name, balance_seed)
-	# for small_prop in np.arange(0.6, 1.0, 0.1):
-	for small_prop in [0.5, 0.7, 0.9]:
+	for small_prop in [0.1, 0.2, 0.3, 0.4]:
 		small_prop = round(small_prop, 2)
 		for small_label in [0, 1]:
 			# for undersample in [False, True]:
