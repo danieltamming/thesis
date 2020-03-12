@@ -327,8 +327,8 @@ if __name__ == "__main__":
 	pct_usage = None
 	lr = 5e-5
 	for data_name in ['sst']:
-		for small_label in [1]:
-			for small_prop in [0.5, 0.7, 0.9]:
+		for small_label in [0, 1]:
+			for small_prop in [0.2, 0.4, 0.6, 0.8]:
 				print(data_name, small_label, small_prop)
 				for seed in list(range(5)):
 					agent = BertAgent(lr, data_name, seed, pct_usage, 
