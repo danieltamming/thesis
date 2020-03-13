@@ -90,8 +90,8 @@ def plot_experiments():
 	avg_across_labels = True
 	model = 'rnn'
 	# model = 'bert'
-	# aug_mode = 'syn'
-	aug_mode = 'trans'
+	aug_mode = 'syn'
+	# aug_mode = 'trans'
 	# data_name = 'sst'
 	data_name = 'subj'
 	filepath = 'logs/archived/bal_{}_{}_{}_pct.log'.format(model, aug_mode, data_name)
