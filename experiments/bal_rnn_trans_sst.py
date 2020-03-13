@@ -33,7 +33,7 @@ def experiment(balance_seed):
 								 balance_seed=balance_seed, 
 								 undersample=undersample)
 				agent.run()
-			for geo in np.arange(0.1, 0.5, 0.1):
+			for geo in np.arange(0.3, 1.0, 0.1):
 				geo = round(geo, 2)
 				agent = RnnAgent(device, logger, 'sst', 25, num_epochs, lr,
 								 'trans', 'dev', 128, 
@@ -45,5 +45,5 @@ def experiment(balance_seed):
 
 print('Number of cpus: {}'.format(mp.cpu_count()))
 pool = mp.Pool(mp.cpu_count())
-pool.map(experiment, list(range(5)))
+pool.map(experiment, list(range(30)))
 pool.close()

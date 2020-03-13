@@ -90,13 +90,13 @@ def plot_experiments():
 	avg_across_labels = True
 	model = 'rnn'
 	# model = 'bert'
-	aug_mode = 'syn'
-	# aug_mode = 'trans'
-	# data_name = 'sst'
-	data_name = 'subj'
+	# aug_mode = 'syn'
+	aug_mode = 'trans'
+	data_name = 'sst'
+	# data_name = 'subj'
 	filepath = 'logs/archived/bal_{}_{}_{}_pct.log'.format(model, aug_mode, data_name)
 	# filepath = 'logs/archived/bal_bert_trans_sst.log'
-	filepath = 'logs/archived/bal_rnn_trans_subj_fine.log'
+	# filepath = 'logs/archived/bal_rnn_trans_subj_fine.log'
 	err_bars = False
 	experiments = read_experiments(filepath, avg_across_labels)
 	
