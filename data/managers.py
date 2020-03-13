@@ -3,6 +3,7 @@ import random
 
 import numpy as np
 from torch.utils.data import DataLoader
+from transformers import BertTokenizer
 
 from utils.data import get_sst, get_subj, get_trec, partition_within_classes
 from data.datasets import BertDataset, RnnDataset
@@ -22,14 +23,18 @@ class DatasetManagerBase:
 		self.small_prop = small_prop
 		self.balance_seed = balance_seed
 		self.undersample = undersample
-
+		if model_type == 'bert' or aug_mode == 'context':
+			self.tokenizer = BertTokenizer.from_pretrained(
+				'bert-base-uncased')
+		else:
+			self.tokenizer = None
 		if aug_mode == 'context':
 			kwargs = {'pct_usage': pct_usage, 'small_label': small_label,
-					  'small_prop': small_prop, 'seed': balance_seed}
+					  'small_prop': small_prop, 'seed': balance_seed,
+					  'tokenizer': self.tokenizer}
 		else:
-			kwargs = {'seed': balance_seed}
+			kwargs = {'seed': balance_seed, 'tokenizer': self.tokenizer}
 		self.data_dict = data_func(self.input_length, self.aug_mode, **kwargs)
-
 		if model_type == 'rnn':
 			assert nlp is not None
 			self.nlp = nlp
@@ -60,7 +65,7 @@ class DatasetManagerBase:
 		args = [self.data_dict[split_key], self.input_length, aug_mode]
 		kwargs = {'pct_usage': pct_usage, 'geo': geo, 'small_label': small_label, 
 				  'small_prop': small_prop, 'balance_seed': self.balance_seed,
-				  'undersample': self.undersample}
+				  'undersample': self.undersample, 'tokenizer': self.tokenizer}
 		if self.model_type == 'bert':
 			return BertDataset(*args, **kwargs)
 		elif self.model_type == 'rnn':

@@ -288,7 +288,13 @@ class BertAgent:
 				# changed to shift aug dict, since follwing line shifts seq by 1
 				# aug[i] = top_10_ids
 				# aug[i-1] = top_10_ids
-				aug[i-1] = top_ids
+				if len(top_ids) > 0:
+					aug[i-1] = top_ids
+				else:
+					print('---------------------------')
+					print(seq)
+					print(i)
+					print(top_toks)
 			# remove all padding and other special token ids
 			clean_seq = [eyedee for eyedee in seq.tolist() if eyedee 
 						 not in self.tokenizer.all_special_ids]

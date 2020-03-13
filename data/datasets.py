@@ -35,13 +35,8 @@ class DatasetBase(Dataset):
 
 		if self.aug_mode == 'context':
 			example = self.tokenizer.decode(example, skip_special_tokens=True)
-		
-		# print('---------------')
-		# print(example)
-		# example = self.tokenizer.decode(
-		# 	example_ids, skip_special_tokens=True)
-		# print(example)
-		# print('---------------')
+
+		# print(label, example)
 
 		return self.to_ids_func(example), label
 
@@ -88,7 +83,7 @@ class DatasetBase(Dataset):
 class BertDataset(DatasetBase):
 	def __init__(self, data, input_length, aug_mode, pct_usage=None, geo=None,
 				 small_label=None, small_prop=None, balance_seed=None,
-				 undersample=False):
+				 undersample=False, tokenizer=None):
 		super().__init__(self._to_tokens)
 		self.input_length = input_length
 		self.aug_mode = aug_mode
@@ -98,7 +93,8 @@ class BertDataset(DatasetBase):
 		self.small_prop = small_prop
 		self.undersample = undersample
 
-		self.tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
+		# self.tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
+		self.tokenizer = tokenizer
 
 		if (small_label is not None and small_prop is not None and 
 				aug_mode != 'context'):
@@ -124,7 +120,7 @@ class BertDataset(DatasetBase):
 class RnnDataset(DatasetBase):
 	def __init__(self, nlp, data, input_length, aug_mode, pct_usage=None, geo=None, 
 				 small_label=None, small_prop=None, balance_seed=None,
-				 undersample=False):
+				 undersample=False, tokenizer=None):
 		super().__init__(self._to_rows)
 		self.input_length = input_length
 		self.nlp = nlp
@@ -135,9 +131,10 @@ class RnnDataset(DatasetBase):
 		self.small_prop = small_prop
 		self.undersample = undersample
 
-		if aug_mode == 'context':
-			self.tokenizer = BertTokenizer.from_pretrained(
-				'bert-base-uncased')
+		# if aug_mode == 'context':
+		# 	self.tokenizer = BertTokenizer.from_pretrained(
+		# 		'bert-base-uncased')
+		self.tokenizer = tokenizer
 
 		if (small_label is not None and small_prop is not None and 
 				aug_mode != 'context'):

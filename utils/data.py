@@ -102,14 +102,12 @@ def read_context_aug(aug_data_path, pct_usage, small_label,
 	filepath = os.path.join(aug_data_path, filename)
 	with open(filepath, 'rb') as f:
 		data = pickle.load(f)
-	assert isinstance(data[0][1], int), 'Change ordering.'
-	# remove reordering once context aug is reordered, (assertion will fail)
-	data = [(label, seq, aug) for seq, label, aug in data 
+	data = [(label, seq, aug) for label, seq, aug in data 
 			if label == small_label]
 	return data
 
 def get_sst(input_length, aug_mode, pct_usage=None, 
-			small_label=None, small_prop=None, seed=None):
+			small_label=None, small_prop=None, seed=None, tokenizer=None):
 	script_path = os.path.dirname(os.path.realpath(__file__))
 	repo_path = os.path.join(script_path, os.pardir)
 	data_parent = os.path.join(repo_path, os.pardir, 'DownloadedData')
@@ -138,13 +136,19 @@ def get_sst(input_length, aug_mode, pct_usage=None,
 		set_path = os.path.join(data_path, 'train.txt')
 		train_other_labels = read_no_aug(set_path, input_length, 
 										False, small_label)
+		# seq = data[0][1]
+		# print(seq)
+		# print()
+		train_other_labels = [(label, tokenizer.encode(
+									seq, add_special_tokens=False), aug) 
+							  for label, seq, aug in train_other_labels]
 		data_dict['train'] = train_small_label + train_other_labels
 		return data_dict
 	else:
 		raise ValueError('Unrecognized augmentation.')
 
 def get_subj(input_length, aug_mode, pct_usage=None, 
-			 small_label=None, small_prop=None, seed=None):
+			 small_label=None, small_prop=None, seed=None, tokenizer=None):
 	script_path = os.path.dirname(os.path.realpath(__file__))
 	repo_path = os.path.join(script_path, os.pardir)
 	data_parent = os.path.join(repo_path, os.pardir, 'DownloadedData')
