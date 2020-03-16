@@ -130,7 +130,7 @@ class BertAgent:
 		if self.inf_data is None:
 			self.inf_data = self.train_data
 		# CHANGE INPUT LENGTH. MAYBE 50?
-		self.input_length = 25
+		self.input_length = 50
 		self.batch_size = 16
 		self.num_train_epochs = 9
 		self.checkpoint = 'bert-base-uncased'
@@ -334,7 +334,7 @@ if __name__ == "__main__":
 	lr = 5e-5
 	for data_name in ['sst']:
 		for small_label in [0, 1]:
-			for small_prop in [0.2, 0.4, 0.6, 0.8]:
+			for small_prop in [0.5]:
 				print(data_name, small_label, small_prop)
 				for seed in list(range(5)):
 					agent = BertAgent(lr, data_name, seed, pct_usage, 

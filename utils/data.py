@@ -136,9 +136,6 @@ def get_sst(input_length, aug_mode, pct_usage=None,
 		set_path = os.path.join(data_path, 'train.txt')
 		train_other_labels = read_no_aug(set_path, input_length, 
 										False, small_label)
-		# seq = data[0][1]
-		# print(seq)
-		# print()
 		train_other_labels = [(label, tokenizer.encode(
 									seq, add_special_tokens=False), aug) 
 							  for label, seq, aug in train_other_labels]
