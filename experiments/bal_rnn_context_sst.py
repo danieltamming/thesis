@@ -22,9 +22,11 @@ num_epochs = 100
 lr  = 0.001
 def experiment(balance_seed):
 	logger = initialize_logger(this_script_name, balance_seed)
-	for small_prop in np.arange(0.1, 1.0, 0.1):
+	# for small_prop in np.arange(0.1, 1.0, 0.1):
+	for small_prop in [0.5]:
 		small_prop = round(small_prop, 2)
-		for small_label in [0, 1]:
+		# for small_label in [0, 1]:
+		for small_label in [1]:
 			for undersample in [False, True]:
 				agent = RnnAgent(device, logger, 'sst', 25, num_epochs, lr,
 								 None, 'dev', 128, 

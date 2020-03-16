@@ -60,6 +60,7 @@ class DatasetBase(Dataset):
 		return other_data + label_data
 
 	def _re_balance(self, data, balance_seed):
+		random.seed(balance_seed)
 		other_data = [tup for tup in data if tup[0] != self.small_label]
 		label_data = [tup for tup in data if tup[0] == self.small_label]
 
