@@ -3,6 +3,7 @@ import sys
 import inspect
 import random
 import pickle
+import multiprocessing as mp
 from collections import Counter
 from itertools import cycle, islice
 
@@ -316,31 +317,24 @@ class BertAgent:
 		with open(context_aug_filepath, 'wb') as f:
 			pickle.dump(data, f, protocol=pickle.HIGHEST_PROTOCOL)
 
-
-if __name__ == "__main__":
-	# data_name = 'sst'
-	# lr = 5e-5
-	# pct_usage = None
-	# small_label = 0
-	# small_prop = 0.9
-	# seed = 0
-	# agent = BertAgent(lr, data_name, seed, pct_usage, 
-	# 			 	  small_label, small_prop)
-	# agent.train()
-	# agent.augment()
-	# exit()
-
+def create_files(seed):
 	pct_usage = None
 	lr = 5e-5
 	for data_name in ['sst']:
 		for small_label in [0, 1]:
 			for small_prop in np.arange(0.1, 1.0, 0.1):
 				print(data_name, small_label, small_prop)
-				for seed in list(range(5)):
-					agent = BertAgent(lr, data_name, seed, pct_usage, 
-								 	  small_label, small_prop)
-					agent.train()
-					agent.augment()
+				agent = BertAgent(lr, data_name, seed, pct_usage, 
+							 	  small_label, small_prop)
+				agent.train()
+				agent.augment()
+
+if __name__ == "__main__":
+	print('Number of cpus: {}'.format(mp.cpu_count()))
+	pool = mp.Pool(mp.cpu_count())
+	pool.map(create_files, list(range(5)))
+	pool.close()
+
 
 
 '''
