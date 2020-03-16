@@ -27,7 +27,12 @@ class DatasetBase(Dataset):
 		elif self.aug_mode == 'trans':
 			example = trans_aug(example, aug_dict, self.geo)
 		elif self.aug_mode == 'context':
+			pre_example = example
 			example = context_aug(example, aug_dict, self.geo)
+			if pre_example != example:
+				print('Augmented')
+			else:
+				print('Original')
 			# wasting time here when model is bert by 
 			# converting to string then back to ids
 		elif self.aug_mode is not None:
@@ -37,6 +42,7 @@ class DatasetBase(Dataset):
 			example = self.tokenizer.decode(example, skip_special_tokens=True)
 
 		print(label, example)
+		print()
 
 		return self.to_ids_func(example), label
 

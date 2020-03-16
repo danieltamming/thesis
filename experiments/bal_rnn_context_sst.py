@@ -33,8 +33,7 @@ def experiment(balance_seed):
 								 balance_seed=balance_seed, 
 								 undersample=undersample)
 				agent.run()
-			# for geo in np.arange(0.3, 1.0, 0.1):
-			for geo in [1.0]:
+			for geo in np.arange(0.3, 1.0, 0.1):
 				geo = round(geo, 2)
 				agent = RnnAgent(device, logger, 'sst', 25, num_epochs, lr,
 								 'context', 'dev', 128, 
