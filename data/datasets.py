@@ -69,6 +69,24 @@ class DatasetBase(Dataset):
 		print(len(other_data), len(label_data))
 		return other_data + label_data
 
+	def _re_balance(self, data, balance_seed):
+		other_data = [tup for tup in data if tup[0] != self.small_label]
+		label_data = [tup for tup in data if tup[0] == self.small_label]
+
+		if len(other_data) == 3610:
+			num_orig = 3310
+		elif len(other_data) == 3310:
+			num_orig = 3310
+		elif len(other_data) == 4500:
+			num_orig = 4500
+		else:
+			raise ValueError('Unanticipated length of other_data.')
+
+		print(len(other_data), len(label_data))
+		label_data = list(islice(cycle(label_data), num_orig))
+		print(len(other_data), len(label_data))
+		return other_data + label_data
+
 	def _undersample(self, other_data, num_keep):
 		label_dict = {}
 		for tup in other_data:
@@ -102,9 +120,11 @@ class BertDataset(DatasetBase):
 		# self.tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
 		self.tokenizer = tokenizer
 
-		if (small_label is not None and small_prop is not None and 
-				aug_mode != 'context'):
-			self.data = self._im_re_balance(data, balance_seed, undersample)
+		if small_label is not None and small_prop is not None:
+			if aug_mode == 'context':
+				self.data = self._re_balance(data, balance_seed)
+			else:
+				self.data = self._im_re_balance(data, balance_seed, undersample)
 		elif pct_usage is not None:
 			self.data, _ = partition_within_classes(
 				data, pct_usage, True, seed=balance_seed)
@@ -142,9 +162,11 @@ class RnnDataset(DatasetBase):
 		# 		'bert-base-uncased')
 		self.tokenizer = tokenizer
 
-		if (small_label is not None and small_prop is not None and 
-				aug_mode != 'context'):
-			self.data = self._im_re_balance(data, balance_seed, undersample)
+		if small_label is not None and small_prop is not None:
+			if aug_mode == 'context':
+				self.data = self._re_balance(data, balance_seed)
+			else:
+				self.data = self._im_re_balance(data, balance_seed, undersample)
 		elif pct_usage is not None:
 			self.data, _ = partition_within_classes(
 				data, pct_usage, True, seed=balance_seed)
