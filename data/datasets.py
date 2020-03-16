@@ -36,7 +36,7 @@ class DatasetBase(Dataset):
 		if self.aug_mode == 'context':
 			example = self.tokenizer.decode(example, skip_special_tokens=True)
 
-		# print(label, example)
+		print(label, example)
 
 		return self.to_ids_func(example), label
 
