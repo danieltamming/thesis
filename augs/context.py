@@ -336,7 +336,8 @@ if __name__ == "__main__":
 		for small_label in [0, 1]:
 			for small_prop in [0.5]:
 				print(data_name, small_label, small_prop)
-				for seed in list(range(5)):
+				# for seed in list(range(5)):
+				for seed in [0]:
 					agent = BertAgent(lr, data_name, seed, pct_usage, 
 								 	  small_label, small_prop)
 					agent.train()
