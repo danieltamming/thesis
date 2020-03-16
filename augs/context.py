@@ -130,7 +130,7 @@ class BertAgent:
 		if self.inf_data is None:
 			self.inf_data = self.train_data
 		# CHANGE INPUT LENGTH. MAYBE 50?
-		self.input_length = 50
+		self.input_length = 80
 		self.batch_size = 16
 		self.num_train_epochs = 9
 		self.checkpoint = 'bert-base-uncased'
