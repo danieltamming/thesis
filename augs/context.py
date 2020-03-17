@@ -322,7 +322,11 @@ def create_files(seed):
 	lr = 5e-5
 	for data_name in ['sst']:
 		for small_label in [0, 1]:
-			for small_prop in np.arange(0.1, 1.0, 0.1):
+			if small_label == 0:
+				iterator = np.arange(0.3, 1.0, 0.1)
+			else:
+				iterator = np.arange(0.1, 1.0, 0.1)
+			for small_prop in iterator:
 				print(data_name, small_label, small_prop)
 				agent = BertAgent(lr, data_name, seed, pct_usage, 
 							 	  small_label, small_prop)
@@ -332,7 +336,7 @@ def create_files(seed):
 if __name__ == "__main__":
 	print('Number of cpus: {}'.format(mp.cpu_count()))
 	pool = mp.Pool(mp.cpu_count())
-	pool.map(create_files, list(range(5)))
+	pool.map(create_files, list(range(4)))
 	pool.close()
 
 
