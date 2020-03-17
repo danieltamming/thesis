@@ -80,6 +80,8 @@ def read_experiments(filepath, avg_across_labels):
 				if is_validating(line):
 					accs.append(get_acc(line))
 				line = f.readline()
+			# if len(accs) != 100:
+			# 	continue
 			if tup not in experiments:
 				experiments[tup] = np.array(accs)
 			else:
@@ -90,15 +92,16 @@ def plot_experiments():
 	avg_across_labels = True
 	model = 'rnn'
 	# model = 'bert'
-	# aug_mode = 'syn'
+	aug_mode = 'syn'
 	# aug_mode = 'trans'
-	aug_mode = 'context'
+	# aug_mode = 'context'
 	data_name = 'sst'
 	# data_name = 'subj'
 	filepath = 'logs/archived/bal_{}_{}_{}_pct.log'.format(model, aug_mode, data_name)
 	# filepath = 'logs/archived/bal_bert_trans_sst.log'
 	# filepath = 'logs/archived/bal_rnn_trans_sst_fine.log'
-	filepath = 'logs/archived/context-test.log'
+	# filepath = 'logs/archived/context-test.log'
+	filepath = 'logs/archived/all.log'
 	err_bars = False
 	experiments = read_experiments(filepath, avg_across_labels)
 	
