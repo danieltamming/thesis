@@ -321,8 +321,9 @@ def create_files(seed):
 	pct_usage = None
 	lr = 5e-5
 	for data_name in ['sst']:
-		for small_label in [0]:
-			for small_prop in np.arange(0.6, 1.0, 0.1):
+		for small_label in [1]:
+			for small_prop in np.arange(0.1, 1.0, 0.1):
+				small_prop = round(small_prop, 1)
 				print(data_name, small_label, small_prop)
 				agent = BertAgent(lr, data_name, seed, pct_usage, 
 							 	  small_label, small_prop)
