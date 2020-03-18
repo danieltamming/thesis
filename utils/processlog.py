@@ -101,7 +101,7 @@ def plot_experiments():
 	# filepath = 'logs/archived/bal_bert_trans_sst.log'
 	# filepath = 'logs/archived/bal_rnn_trans_sst_fine.log'
 	# filepath = 'logs/archived/context-test.log'
-	filepath = 'logs/archived/all.log'
+	filepath = 'logs/archived/bal_rnn_context_sst.log'
 	err_bars = False
 	experiments = read_experiments(filepath, avg_across_labels)
 	
