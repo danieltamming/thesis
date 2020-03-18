@@ -1,0 +1,5 @@
+Model is RNN, dataset is sst, undersample is False, aug mode is None, geo is 0.5, pct_usage is None, small_label is 0, small_prop is 0.1, balance_seed is 6, lr is 0.001
+Training epoch 0 | loss: 0.64142 - accuracy: 0.64422
+Validating epoch 0 | loss: 0.54374 - accuracy: 0.77408
+Training epoch 1 | loss: 0.5006 - accuracy: 0.80665
+Validating epoch 1 | loss: 0.55578 - accuracy: 0.75344
