@@ -43,8 +43,7 @@ def experiment(balance_seed):
 								 geo=geo)
 				agent.run()
 
-# print('Number of cpus: {}'.format(mp.cpu_count()))
-# pool = mp.Pool(mp.cpu_count())
-# pool.map(experiment, list(range(20)))
-# pool.close()
-experiment(0)
+print('Number of cpus: {}'.format(mp.cpu_count()))
+pool = mp.Pool(mp.cpu_count())
+pool.map(experiment, list(range(20)))
+pool.close()
