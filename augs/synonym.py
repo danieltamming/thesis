@@ -4,7 +4,9 @@ import inspect
 import random
 from collections import Counter
 import string
+import pickle
 
+from tqdm import tqdm
 import numpy as np
 
 import nltk
@@ -63,15 +65,37 @@ def syn_aug(example, geo, min_reputation=2):
 			new_seq.append(word)
 	return ' '.join(new_seq)
 
-def create_files(data_name, data_func):
-	data_dir = os.path.join('../DownloadedData/', data_name)
-	syn_aug_dir = os.path.join(data_dir, 'syn_aug')
-	print(syn_aug_dir)
+def create_sst_aug():
+	input_length = 10**3
+	syn_aug_dir = '../DownloadedData/sst/syn_aug'
+	if not os.path.exists(syn_aug_dir):
+		os.mkdir(syn_aug_dir)
+	data_dict = get_sst(input_length, None)
+	for split, data in data_dict.items():
+		data_aug = []
+		for label, example, _ in tqdm(data):
+			aug = get_synonym_dict(example.split(), 2)
+			data_aug.append((label, example, aug))
 
+		syn_aug_filepath = os.path.join(syn_aug_dir, split+'.pickle')
+		with open(syn_aug_filepath, 'wb') as f:
+			pickle.dump(data_aug, f, protocol=pickle.HIGHEST_PROTOCOL)
 
+def create_subj_aug():
+	input_length = 10**3
+	syn_aug_dir = '../DownloadedData/subj/syn_aug'
+	if not os.path.exists(syn_aug_dir):
+		os.mkdir(syn_aug_dir)
+	data = get_subj(input_length, None, gen_splits=False)
+	data_aug = []
+	for label, example, _ in tqdm(data):
+		aug = get_synonym_dict(example.split(), 2)
+		data_aug.append((label, example, aug))
 
-		# with open(syn_aug_filepath, 'wb') as f:
-		# 	pickle.dump(data, f, protocol=pickle.HIGHEST_PROTOCOL)
+	syn_aug_filepath = os.path.join(syn_aug_dir, 'subj.pickle')
+	with open(syn_aug_filepath, 'wb') as f:
+		pickle.dump(data_aug, f, protocol=pickle.HIGHEST_PROTOCOL)
 
 if __name__ == "__main__":
-	create_files('sst', get_sst)
+	create_sst_aug()
+	create_subj_aug()

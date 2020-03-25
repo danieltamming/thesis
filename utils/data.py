@@ -144,8 +144,8 @@ def get_sst(input_length, aug_mode, pct_usage=None,
 	else:
 		raise ValueError('Unrecognized augmentation.')
 
-def get_subj(input_length, aug_mode, pct_usage=None, 
-			 small_label=None, small_prop=None, seed=None, tokenizer=None):
+def get_subj(input_length, aug_mode, pct_usage=None, small_label=None, 
+			 small_prop=None, seed=None, tokenizer=None, gen_splits=True):
 	script_path = os.path.dirname(os.path.realpath(__file__))
 	repo_path = os.path.join(script_path, os.pardir)
 	data_parent = os.path.join(repo_path, os.pardir, 'DownloadedData')
@@ -164,6 +164,8 @@ def get_subj(input_length, aug_mode, pct_usage=None,
 		all_data = read_no_aug(file_path, input_length, True, None)
 	else:
 		raise ValueError('Unrecognized augmentation.')
+	if not gen_splits:
+		return all_data
 	dev_data, train_data = partition_within_classes(all_data, 0.1, False)
 	if aug_mode == 'context':
 		print('PLEASE TEST CONTEXT + SUBJ BEFORE USING')
