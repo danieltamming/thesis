@@ -322,7 +322,11 @@ def create_files(seed):
 	lr = 5e-5
 	for data_name in ['sst']:
 		for small_label in [0, 1]:
-			for small_prop in [0.5, 0.7, 0.9]:
+			if small_label == 0:
+				L = [0.9]
+			else:
+				L = [0.3, 0.5, 0.7, 0.9]
+			for small_prop in L:
 			# for small_prop in [0.3, 0.5, 0.7, 0.9]:
 				small_prop = round(small_prop, 1)
 				print(data_name, small_label, small_prop)
@@ -334,7 +338,7 @@ def create_files(seed):
 if __name__ == "__main__":
 	print('Number of cpus: {}'.format(mp.cpu_count()))
 	pool = mp.Pool(mp.cpu_count())
-	pool.map(create_files, [6, 7, 8, 9])
+	pool.map(create_files, [6, 7, 9])
 	pool.close()
 
 
@@ -343,3 +347,4 @@ if __name__ == "__main__":
 READY TO RUN TRAIN THEN AUGMENT AGAIN
 check for error with too many letters in a row
 '''
+

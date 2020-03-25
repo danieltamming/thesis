@@ -1,3 +1,6 @@
+import sys
+import os
+import inspect
 import random
 from collections import Counter
 import string
@@ -6,6 +9,14 @@ import numpy as np
 
 import nltk
 from nltk.corpus import wordnet as wn
+
+current_dir = os.path.dirname(
+	os.path.abspath(inspect.getfile(inspect.currentframe()))
+	)
+parent_dir = os.path.dirname(current_dir)
+sys.path.insert(0, parent_dir) 
+
+from utils.data import get_sst, get_subj, get_trec
 
 def get_wordnet_pos(tag):
 	tag_dict = {'J': wn.ADJ, 'N': wn.NOUN, 'V': wn.VERB, 'R':wn.ADV}
@@ -51,3 +62,16 @@ def syn_aug(example, geo, min_reputation=2):
 		else:
 			new_seq.append(word)
 	return ' '.join(new_seq)
+
+def create_files(data_name, data_func):
+	data_dir = os.path.join('../DownloadedData/', data_name)
+	syn_aug_dir = os.path.join(data_dir, 'syn_aug')
+	print(syn_aug_dir)
+
+
+
+		# with open(syn_aug_filepath, 'wb') as f:
+		# 	pickle.dump(data, f, protocol=pickle.HIGHEST_PROTOCOL)
+
+if __name__ == "__main__":
+	create_files('sst', get_sst)
