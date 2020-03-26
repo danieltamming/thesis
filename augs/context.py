@@ -321,7 +321,7 @@ def create_files(seed):
 	pct_usage = None
 	lr = 5e-5
 	for data_name in ['sst']:
-		for small_label in [1]:
+		for small_label in [0]:
 			for small_prop in [0.3]:
 			# for small_prop in [0.3, 0.5, 0.7, 0.9]:
 				small_prop = round(small_prop, 1)
@@ -336,7 +336,7 @@ if __name__ == "__main__":
 	# pool = mp.Pool(mp.cpu_count())
 	# pool.map(create_files, [8])
 	# pool.close()
-	create_files(8)
+	create_files(9)
 
 '''
 READY TO RUN TRAIN THEN AUGMENT AGAIN
