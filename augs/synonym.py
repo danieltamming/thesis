@@ -97,5 +97,6 @@ def create_subj_aug():
 		pickle.dump(data_aug, f, protocol=pickle.HIGHEST_PROTOCOL)
 
 if __name__ == "__main__":
-	create_sst_aug()
-	create_subj_aug()
+	# create_sst_aug()
+	# create_subj_aug()
+	pass
