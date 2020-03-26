@@ -336,11 +336,12 @@ def create_files(seed):
 				agent.augment()
 
 if __name__ == "__main__":
-	print('Number of cpus: {}'.format(mp.cpu_count()))
-	pool = mp.Pool(mp.cpu_count())
-	pool.map(create_files, [6, 9])
-	pool.close()
-
+	# print('Number of cpus: {}'.format(mp.cpu_count()))
+	# pool = mp.Pool(mp.cpu_count())
+	# pool.map(create_files, [6, 9])
+	# pool.close()
+	create_files(6)
+	create_files(9)
 
 
 '''
