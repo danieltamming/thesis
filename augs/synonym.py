@@ -44,7 +44,7 @@ def get_synonym_dict(seq, min_reputation):
 			idx_to_syns[i] = synonyms
 	return idx_to_syns
 
-def syn_aug(example, geo, min_reputation=2):
+def syn_aug_old(example, geo, min_reputation=2):
 	# shift so minimum value of geometric distribution is 0
 	num_want_replace = np.random.geometric(geo) - 1
 	if num_want_replace == 0:
@@ -64,6 +64,25 @@ def syn_aug(example, geo, min_reputation=2):
 		else:
 			new_seq.append(word)
 	return ' '.join(new_seq)
+
+def syn_aug(example, aug_dict, geo):
+	# shift so minimum value of geometric distribution is 0
+	num_want_replace = np.random.geometric(geo) - 1
+	if num_want_replace == 0:
+		return example
+	seq = example.split()
+	num_to_replace = min(num_want_replace, len(aug_dict))
+	if num_want_replace == 0:
+		return example
+	idxs = random.sample(aug_dict.keys(), num_to_replace)
+	new_seq = []
+	for i, word in enumerate(seq):
+		if i in idxs:
+			syn_idx = min(np.random.geometric(geo), len(aug_dict[i])) - 1
+			new_seq.extend(aug_dict[i][syn_idx])
+		else:
+			new_seq.append(word)
+	return new_seq
 
 def create_sst_aug():
 	input_length = 10**3
