@@ -23,7 +23,7 @@ class DatasetBase(Dataset):
 		if self.small_label is not None and self.small_label != label:
 			pass
 		elif self.aug_mode == 'synonym':
-			example = syn_aug(example, self.geo)
+			example = syn_aug(example, aug_dict, self.geo)
 		elif self.aug_mode == 'trans':
 			example = trans_aug(example, aug_dict, self.geo)
 		elif self.aug_mode == 'context':

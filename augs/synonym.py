@@ -82,7 +82,7 @@ def syn_aug(example, aug_dict, geo):
 			new_seq.extend(aug_dict[i][syn_idx])
 		else:
 			new_seq.append(word)
-	return new_seq
+	return ' '.join(new_seq)
 
 def create_sst_aug():
 	input_length = 10**3

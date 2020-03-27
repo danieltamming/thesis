@@ -72,7 +72,7 @@ small_prop = 0.1
 geo = 0.2
 logger = initialize_logger(this_script_name, balance_seed, other=small_label)
 agent = RnnAgent(device, logger, 'sst', 25, num_epochs, lr,
-				 'context', 'dev', 128, 
+				 'synonym', 'dev', 128, 
 				 small_label=small_label, 
 				 small_prop=small_prop, 
 				 balance_seed=balance_seed,

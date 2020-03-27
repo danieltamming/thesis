@@ -113,11 +113,18 @@ def get_sst(input_length, aug_mode, pct_usage=None,
 	data_parent = os.path.join(repo_path, os.pardir, 'DownloadedData')
 	data_path = os.path.join(data_parent,'sst')
 	data_dict = {}
-	if aug_mode is None or aug_mode == 'synonym':
+	if aug_mode is None:
 		for set_name in ['train', 'dev', 'test']:
 			set_path = os.path.join(data_path, set_name+'.txt')
 			data_dict[set_name] = read_no_aug(
 				set_path, input_length, False, None)
+		return data_dict
+	elif aug_mode == 'synonym':
+		aug_data_path = os.path.join(data_path, 'syn_aug')
+		for set_name in ['train', 'dev', 'test']:
+			set_path = os.path.join(aug_data_path, set_name+'.pickle')
+			with open(set_path, 'rb') as f:
+				data_dict[set_name] = pickle.load(f)
 		return data_dict
 	elif aug_mode == 'trans':
 		aug_data_path = os.path.join(data_path,'trans_aug')
@@ -150,12 +157,16 @@ def get_subj(input_length, aug_mode, pct_usage=None, small_label=None,
 	repo_path = os.path.join(script_path, os.pardir)
 	data_parent = os.path.join(repo_path, os.pardir, 'DownloadedData')
 	data_path = os.path.join(data_parent, 'subj')
-	if aug_mode is None or aug_mode == 'synonym':
+	if aug_mode is None:
 		file_path = os.path.join(data_path,'subj.txt')
 		all_data = read_no_aug(file_path, input_length, True, None)
 		# let 10% of data be the development set
 		# dev_data, train_data = partition_within_classes(all_data, 0.1, False)
 		# return {'dev': dev_data, 'train': train_data}
+	elif aug_mode == 'synonym':
+		aug_file_path = os.path.join(data_path, 'syn_aug/subj.pickle')
+		with open(aug_file_path, 'rb') as f:
+			all_data = pickle.load(f)
 	elif aug_mode == 'trans':
 		aug_file_path = os.path.join(data_path, 'trans_aug/subj.txt')
 		all_data = read_trans_aug(aug_file_path)
