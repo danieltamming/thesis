@@ -322,10 +322,7 @@ def create_files(seed):
 	lr = 5e-5
 	for data_name in ['sst']:
 		for small_label in [0, 1]:
-			if small_label == 0:
-				L = [0.7, 0.9]
-			else:
-				L = [0.3, 0.5, 0.7, 0.9]
+			L = [0.3, 0.5, 0.7, 0.9]
 			for small_prop in L:
 				small_prop = round(small_prop, 1)
 				print(data_name, small_label, small_prop)
@@ -337,7 +334,7 @@ def create_files(seed):
 if __name__ == "__main__":
 	print('Number of cpus: {}'.format(mp.cpu_count()))
 	pool = mp.Pool(mp.cpu_count())
-	pool.map(create_files, [10, 11, 13])
+	pool.map(create_files, [14, 15, 16])
 	pool.close()
 	# create_files(5)
 
