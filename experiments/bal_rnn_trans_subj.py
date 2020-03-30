@@ -26,14 +26,14 @@ def experiment(balance_seed):
 	for small_prop in [0.1, 0.2, 0.3, 0.4]:
 		small_prop = round(small_prop, 2)
 		for small_label in [0, 1]:
-			# for undersample in [False, True]:
-			# 	agent = RnnAgent(device, logger, 'subj', 25, num_epochs, lr,
-			# 					 None, 'dev', 128, 
-			# 					 small_label=small_label, 
-			# 					 small_prop=small_prop, 
-			# 					 balance_seed=balance_seed, 
-			# 					 undersample=undersample)
-			# 	agent.run()
+			for undersample in [False, True]:
+				agent = RnnAgent(device, logger, 'subj', 25, num_epochs, lr,
+								 None, 'dev', 128, 
+								 small_label=small_label, 
+								 small_prop=small_prop, 
+								 balance_seed=balance_seed, 
+								 undersample=undersample)
+				agent.run()
 			iterator = np.arange(0.5, 1.0, 0.1)
 			for geo in iterator:
 				geo = round(geo, 2)

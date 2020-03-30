@@ -82,6 +82,9 @@ def read_experiments(filepath, avg_across_labels):
 				line = f.readline()
 			# if len(accs) != 100:
 			# 	continue
+			if len(accs) != 100:
+				continue
+
 			if tup not in experiments:
 				experiments[tup] = np.array(accs)
 			else:
@@ -102,7 +105,9 @@ def plot_experiments():
 	# filepath = 'logs/archived/bal_rnn_trans_subj_fine.log'
 	# filepath = 'logs/archived/context-test.log'
 	# filepath = 'logs/archived/bal_rnn_context_sst.log'
-	filepath = 'logs/archived/lower_learning_rate.log'
+	# filepath = 'logs/archived/lower_learning_rate.log'
+	# filepath = 'logs/bal_rnn_syn_sst/all.log'
+	filepath = 'logs/archived/bal_rnn_context_odds_10seeds.log'
 	err_bars = False
 	experiments = read_experiments(filepath, avg_across_labels)
 	
@@ -122,9 +127,9 @@ def plot_experiments():
 			del small_prop_label_averages[(-1, False, small_label, small_prop)]
 			del small_prop_label_averages[(-1, True, small_label, small_prop)]
 
-			colors = ['tab:blue', 'tab:orange', 'tab:green', 'tab:red', 
+			colors = ['tab:blue', 'tab:orange', 'tab:cyan', 'tab:red', 
 					  'tab:purple', 'tab:brown', 'tab:pink', 'tab:gray', 
-					  'tab:olive', 'tab:cyan']
+					  'tab:olive', 'tab:green']
 			# colors = ['b', 'c', 'y', 'm']
 			for ((geo, _, _, _), vec), color in zip(sorted(small_prop_label_averages.items()), colors):
 			# for (geo, _, _, _), vec in sorted(small_prop_label_averages.items()):
