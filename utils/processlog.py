@@ -97,7 +97,7 @@ def plot_experiments():
 	# aug_mode = 'context'
 	data_name = 'sst'
 	# data_name = 'subj'
-	filepath = 'logs/archived/bal_{}_{}_{}_pct.log'.format(model, aug_mode, data_name)
+	filepath = 'logs/archived/bal_{}_{}_{}.log'.format(model, aug_mode, data_name)
 	# filepath = 'logs/archived/bal_bert_trans_sst.log'
 	# filepath = 'logs/archived/bal_rnn_trans_subj_fine.log'
 	# filepath = 'logs/archived/context-test.log'
