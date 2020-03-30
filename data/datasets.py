@@ -53,7 +53,12 @@ class DatasetBase(Dataset):
 		label_data = random.sample(label_data, num_keep)
 		print(len(other_data), len(label_data))
 		if undersample:
+			# now ensuring that dataset size remains the same
+			# regardless of under/over sample or augmenting
+			other_num_orig = len(other_data)
 			other_data = self._undersample(other_data, num_keep)
+			other_data = list(islice(cycle(other_data), other_num_orig))
+			label_data = list(islice(cycle(label_data), num_orig))
 		else:
 			label_data = list(islice(cycle(label_data), num_orig))
 		print(len(other_data), len(label_data))
