@@ -29,7 +29,8 @@ class BertAgent:
 		assert sum([mode == 'test-aug', mode == 'save', pct_usage is not None, 
 					small_label is not None]) == 1, \
 			   'Either saving, balancing, or trying on specific percentage' 
-
+		assert sum([mode == 'test', data_name == 'subj']) == 1, \
+			   'Must use crosstest on subj'
 		self.logger = logger
 		self.data_name = data_name
 		self.input_length = input_length
@@ -99,16 +100,16 @@ class BertAgent:
 	def run(self):
 		if self.mode == 'crosstest':
 			raise NotImplementedError('Crosstest not implemented.')
-		elif self.mode == 'dev':
-			self.train_loader, self.val_loader = self.mngr.get_dev_ldrs()
+		elif self.mode in['dev', 'test']:
+			self.train_loader, self.val_loader = self.mngr.get_dev_ldrs('dev')
 			self.initialize_model()
 			self.train()
 			# self.validate()
-		elif self.mode == 'save':
-			self.train_loader, self.val_loader = self.mngr.get_dev_ldrs()
-			self.initialize_model()
-			self.train()
-			self.save_checkpoint()
+		# elif self.mode == 'save':
+		# 	self.train_loader, self.val_loader = self.mngr.get_dev_ldrs()
+		# 	self.initialize_model()
+		# 	self.train()
+		# 	self.save_checkpoint()
 		elif self.mode == 'test-aug':
 			ckpt_dir = 'checkpoints/bert-' + self.data_name
 			self.model = BertForSequenceClassification.from_pretrained(
