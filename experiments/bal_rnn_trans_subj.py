@@ -50,4 +50,4 @@ try:
 	pool.map(experiment, list(range(30)))
 finally:
 	pool.close()
-	ppol.join()
+	pool.join()

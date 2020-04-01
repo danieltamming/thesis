@@ -123,7 +123,7 @@ class BertDataset(DatasetBase):
 				self.data = self._im_re_balance(data, balance_seed, undersample)
 		elif pct_usage is not None:
 			self.data, _ = partition_within_classes(
-				data, pct_usage, True, seed=balance_seed)
+				data, pct_usage, False, seed=balance_seed)
 		else:
 			self.data = data
 
@@ -165,7 +165,7 @@ class RnnDataset(DatasetBase):
 				self.data = self._im_re_balance(data, balance_seed, undersample)
 		elif pct_usage is not None:
 			self.data, _ = partition_within_classes(
-				data, pct_usage, True, seed=balance_seed)
+				data, pct_usage, False, seed=balance_seed)
 		else:
 			self.data = data
 

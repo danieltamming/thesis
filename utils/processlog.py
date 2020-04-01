@@ -92,8 +92,8 @@ def plot_experiments():
 	avg_across_labels = True
 	model = 'rnn'
 	# model = 'bert'
-	aug_mode = 'syn'
-	# aug_mode = 'trans'
+	# aug_mode = 'syn'
+	aug_mode = 'trans'
 	# aug_mode = 'context'
 	data_name = 'sst'
 	# data_name = 'subj'

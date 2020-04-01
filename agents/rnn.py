@@ -77,12 +77,13 @@ class RnnAgent:
 		self.device = (torch.device(device if torch.cuda.is_available() 
 					   else 'cpu'))
 
-		s = ('Model is RNN, dataset is {}, undersample is {}, aug mode is {}, geo is {},'
-			' pct_usage is {}, small_label is {}, small_prop is {}, balance_seed is {}, lr is {}'
+		s = ('Model is RNN, dataset is {}, undersample is {},'
+			' aug mode is {}, geo is {}, pct_usage is {}, small_label is {},'
+			' small_prop is {}, balance_seed is {}, lr is {},'
 			' max_epochs is {}, split_num is {}').format(
-				data_name, self.undersample, self.aug_mode, self.geo, self.pct_usage,
-				self.small_label, self.small_prop, self.balance_seed, self.lr,
-				self.max_epochs, self.split_num)
+				data_name, self.undersample, self.aug_mode, self.geo, 
+				self.pct_usage, self.small_label, self.small_prop, 
+				self.balance_seed, self.lr, self.max_epochs, self.split_num)
 		print_and_log(self.logger, s)
 
 	def initialize_model(self):
@@ -100,7 +101,8 @@ class RnnAgent:
 		if self.mode == 'crosstest':
 			raise NotImplementedError('Using test with split num for now.')
 		elif self.mode in ['dev', 'test']:
-			self.train_loader, self.val_loader = self.mngr.get_dev_ldrs(self.mode)
+			(self.train_loader, 
+				self.val_loader) = self.mngr.get_dev_ldrs(self.mode)
 			self.initialize_model()
 			self.train()
 			# self.validate()
