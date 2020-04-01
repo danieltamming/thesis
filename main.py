@@ -8,20 +8,22 @@ from agents.bert import BertAgent
 from utils.logger import initialize_logger
 from utils.parsing import get_device
 
-# device = get_device()
-# this_script_name = os.path.basename(__file__).split('.')[0]
-# num_epochs = 100
-# lr = 0.001
-# pct_usage = 0.5
-# balance_seed = 0
-# geo = 0.5
-# logger = initialize_logger(this_script_name, balance_seed, other=pct_usage)
-# agent = RnnAgent(device, logger, 'sst', 25, num_epochs, lr,
-# 				 'synonym', 'test', 128, 
-# 				 pct_usage=pct_usage, 
-# 				 balance_seed=balance_seed,
-# 				 geo=geo)
-# agent.run()
+# USE SPLIT_NUM PARAMETER FOR CROSSTEST
+
+device = get_device()
+this_script_name = os.path.basename(__file__).split('.')[0]
+num_epochs = 100
+lr = 0.001
+pct_usage = 0.5
+balance_seed = 0
+geo = 0.5
+logger = initialize_logger(this_script_name, balance_seed, other=pct_usage)
+agent = RnnAgent(device, logger, 'sst', 25, num_epochs, lr,
+				 'synonym', 'test', 128, 
+				 pct_usage=pct_usage, 
+				 balance_seed=balance_seed,
+				 geo=geo)
+agent.run()
 
 # device = get_device()
 # this_script_name = os.path.basename(__file__).split('.')[0]

@@ -333,10 +333,13 @@ def create_files(seed):
 
 if __name__ == "__main__":
 	print('Number of cpus: {}'.format(mp.cpu_count()))
-	pool = mp.Pool(mp.cpu_count())
-	pool.map(create_files, [5, 6, 7])
-	pool.close()
 	# create_files(5)
+	try:
+		pool = mp.Pool(mp.cpu_count())
+		pool.map(create_files, [5, 6, 7])
+	finally:
+		pool.close()
+		ppol.join()
 
 '''
 READY TO RUN TRAIN THEN AUGMENT AGAIN

@@ -12,7 +12,7 @@ class DatasetManagerBase:
 	def __init__(self, data_func, model_type, input_length, 
 				 aug_mode, pct_usage, geo, batch_size, nlp=None,
 				 small_label=None, small_prop=None, balance_seed=None,
-				 undersample=False):
+				 undersample=False, split_num=0):
 		self.model_type = model_type
 		self.input_length = input_length
 		self.aug_mode = aug_mode
@@ -31,9 +31,10 @@ class DatasetManagerBase:
 		if aug_mode == 'context':
 			kwargs = {'pct_usage': pct_usage, 'small_label': small_label,
 					  'small_prop': small_prop, 'seed': balance_seed,
-					  'tokenizer': self.tokenizer}
+					  'tokenizer': self.tokenizer, 'split_num':split_num}
 		else:
-			kwargs = {'seed': balance_seed, 'tokenizer': self.tokenizer}
+			kwargs = {'seed': balance_seed, 'tokenizer': self.tokenizer,
+					  'split_num': split_num}
 		self.data_dict = data_func(self.input_length, self.aug_mode, **kwargs)
 		if model_type == 'rnn':
 			assert nlp is not None

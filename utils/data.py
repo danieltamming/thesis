@@ -5,7 +5,8 @@ from collections import Counter
 
 import numpy as np
 
-def partition_within_classes(data, pct_in_A, make_A_balanced, seed=0):
+def partition_within_classes(data, pct_in_A, make_A_balanced, 
+							 seed=0, split_num=0):
 	'''
 	Partitions data into A and B, where A pct_in_A of the dataset and B is
 	the rest. A will have perfectly even distribution among classes. 
@@ -13,6 +14,7 @@ def partition_within_classes(data, pct_in_A, make_A_balanced, seed=0):
 
 	TODO: SET SEED AND USE RANDOM. CURRENTLY DETERMINISTIC BUT WIHTOUT SEED
 	'''
+
 	random.seed(seed)
 	random.shuffle(data)
 	if pct_in_A == 1:
@@ -46,9 +48,15 @@ def partition_within_classes(data, pct_in_A, make_A_balanced, seed=0):
 				label_dict[label] = [tup]
 		A, B = [], []
 		for arr in label_dict.values():
-			A_label_size = int(pct_in_A*len(arr))
-			A.extend(arr[:A_label_size])
-			B.extend(arr[A_label_size:])
+			# A_label_size = int(pct_in_A*len(arr))
+			# A.extend(arr[:A_label_size])
+			# B.extend(arr[A_label_size:])
+			A_label_count = int(pct_in_A*len(arr))
+			A_start_idx = split_num*A_label_count
+			A_end_idx = (split_num+1)*A_label_count
+			A.extend(arr[A_start_idx:A_end_idx])
+			B.extend(arr[:A_start_idx])
+			B.extend(arr[A_end_idx:])
 		return A, B
 
 def read_no_aug(set_path, input_length, is_bytes, ignore_label):
@@ -107,7 +115,8 @@ def read_context_aug(aug_data_path, pct_usage, small_label,
 	return data
 
 def get_sst(input_length, aug_mode, pct_usage=None, 
-			small_label=None, small_prop=None, seed=None, tokenizer=None):
+			small_label=None, small_prop=None, seed=None, tokenizer=None,
+			split_num=0):
 	script_path = os.path.dirname(os.path.realpath(__file__))
 	repo_path = os.path.join(script_path, os.pardir)
 	data_parent = os.path.join(repo_path, os.pardir, 'DownloadedData')
@@ -152,7 +161,8 @@ def get_sst(input_length, aug_mode, pct_usage=None,
 		raise ValueError('Unrecognized augmentation.')
 
 def get_subj(input_length, aug_mode, pct_usage=None, small_label=None, 
-			 small_prop=None, seed=None, tokenizer=None, gen_splits=True):
+			 small_prop=None, seed=0, tokenizer=None, gen_splits=True,
+			 split_num=0):
 	script_path = os.path.dirname(os.path.realpath(__file__))
 	repo_path = os.path.join(script_path, os.pardir)
 	data_parent = os.path.join(repo_path, os.pardir, 'DownloadedData')
@@ -177,7 +187,8 @@ def get_subj(input_length, aug_mode, pct_usage=None, small_label=None,
 		raise ValueError('Unrecognized augmentation.')
 	if not gen_splits:
 		return all_data
-	dev_data, train_data = partition_within_classes(all_data, 0.1, False)
+	dev_data, train_data = partition_within_classes(
+		all_data, 0.1, False, seed=seed, split_num=split_num)
 	if aug_mode == 'context':
 		print('PLEASE TEST CONTEXT + SUBJ BEFORE USING')
 		exit()

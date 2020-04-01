@@ -45,6 +45,9 @@ def experiment(balance_seed):
 				agent.run()
 
 print('Number of cpus: {}'.format(mp.cpu_count()))
-pool = mp.Pool(mp.cpu_count())
-pool.map(experiment, list(range(30)))
-pool.close()
+try:
+	pool = mp.Pool(mp.cpu_count())
+	pool.map(experiment, list(range(30)))
+finally:
+	pool.close()
+	ppol.join()

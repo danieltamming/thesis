@@ -21,15 +21,15 @@ class RnnAgent:
 	def __init__(self, device, logger, data_name, input_length, max_epochs, 
 				 lr, aug_mode, mode, batch_size, small_label=None, 
 				 small_prop=None, balance_seed=None, undersample=False,
-				 pct_usage=None, geo=0.5, verbose=False):
+				 pct_usage=None, geo=0.5, split_num=0, verbose=False):
 		assert not (undersample and aug_mode is not None), \
 			   'Cant undersample and augment'
 		assert sum([mode == 'save', 
 					pct_usage is not None, 
 					small_label is not None]) == 1, \
 			   'Either saving, balancing, or trying on specific percentage'
-		assert sum([mode == 'test', data_name == 'subj']) < 2, \
-			   'Must use crosstest on subj'
+		# assert sum([mode == 'test', data_name == 'subj']) < 2, \
+		# 	   'Must use crosstest on subj'
 		self.logger = logger
 		self.data_name = data_name
 		self.input_length = input_length
@@ -44,6 +44,7 @@ class RnnAgent:
 		self.undersample = undersample
 		self.pct_usage = pct_usage
 		self.geo = geo
+		self.split_num = split_num
 		self.verbose = verbose
 
 		self.loss = CrossEntropyLoss()
@@ -59,7 +60,8 @@ class RnnAgent:
 		mngr_kwargs = {'nlp': self.nlp, 'small_label': self.small_label, 
 					   'small_prop': self.small_prop, 
 					   'balance_seed': self.balance_seed, 
-					   'undersample': undersample}
+					   'undersample': self.undersample,
+					   'split_num': self.split_num}
 		if data_name == 'sst':
 			self.num_labels = 2
 			self.mngr = SSTDatasetManager(*mngr_args, **mngr_kwargs)
@@ -94,9 +96,9 @@ class RnnAgent:
 
 	def run(self):
 		if self.mode == 'crosstest':
-			raise NotImplementedError('Crosstest not implemented.')
+			raise NotImplementedError('Using test with split num for now.')
 		elif self.mode in ['dev', 'test']:
-			self.train_loader, self.val_loader = self.mngr.get_dev_ldrs('dev')
+			self.train_loader, self.val_loader = self.mngr.get_dev_ldrs(self.mode)
 			self.initialize_model()
 			self.train()
 			# self.validate()
