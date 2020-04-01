@@ -21,50 +21,26 @@ this_script_name = os.path.basename(__file__).split('.')[0]
 num_epochs = 100
 lr  = 0.001
 
-# augment map from small_prop to its corresponding optimal geo, num_epochs
-pct_geo_map = {
-	0.1: (5, 0.6), 
-	0.2: 0.6, 
-	0.3: 0.7, 
-	0.4: 0.7, 
-	0.5: 0.7, 
-	0.6: 0.7, 
-	0.7: 0.8, 
-	0.8: 0.8, 
-	0.9: 0.9
+param_map = {
+	0.1: {'aug': (0.6, 1), 'under': 20, 'over': 1},
+	0.2: {'aug': (0.6, 10), 'under': 40, 'over': 7}, 
+	0.3: {'aug': (0.7, 7), 'under': 23, 'over': 14}, 
+	0.4: {'aug': (0.7, 14), 'under': 63, 'over': 22}, 
+	0.5: {'aug': (0.7, 18), 'under': 52, 'over': 40}, 
+	0.6: {'aug': (0.7, 44), 'under': 69, 'over': 49}, 
+	0.7: {'aug': (0.8, 79), 'under': 92, 'over': 61}, 
+	0.8: {'aug': (0.7, 99), 'under': 40, 'over': 99}, 
+	0.9: {'aug': (0.8, 91), 'under': 83, 'over': 81} 
 }
-pct_over_map = {
-	0.1: 3, 
-	0.2: , 
-	0.3: , 
-	0.4: , 
-	0.5: , 
-	0.6: , 
-	0.7: , 
-	0.8: , 
-	0.9: 
-}
-# undersample map from small_prop to its optimal num_epochs
-pct_under_map = {
-	0.1: 86, 
-	0.2: , 
-	0.3: , 
-	0.4: , 
-	0.5: , 
-	0.6: , 
-	0.7: , 
-	0.8: , 
-	0.9: 
-}
-
 
 def experiment(balance_seed):
 	logger = initialize_logger(this_script_name, balance_seed)
 	for small_prop in np.arange(0.1, 1.0, 0.1):
 		small_prop = round(small_prop, 2)
+		param_prop_map = param_map[small_prop]
 		for small_label in [0, 1]:
-			geo, num_epochs = pct_geo_map[small_prop]
-			agent = RnnAgent(device, logger, 'sst', 25, num_epochs, lr,
+			geo, num_epochs = param_prop_map['aug']
+			agent = RnnAgent(device, logger, 'sst', 25, num_epochs+1, lr,
 							 'synonym', 'test', 128, 
 							 small_label=small_label, 
 							 small_prop=small_prop, 
@@ -73,10 +49,10 @@ def experiment(balance_seed):
 			agent.run()
 			for undersample in [False, True]:
 				if undersample:
-					num_epochs = pct_under_map[small_prop]
+					num_epochs = param_prop_map['under']
 				else:
-					num_epochs = pct_over_map[small_prop]
-				agent = RnnAgent(device, logger, 'sst', 25, num_epochs, lr, 
+					num_epochs = param_prop_map['over']
+				agent = RnnAgent(device, logger, 'sst', 25, num_epochs+1, lr, 
 								 None, 'test', 128, 
 								 small_label=small_label, 
 								 small_prop=small_prop, 

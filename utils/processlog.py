@@ -126,8 +126,8 @@ def plot_experiments():
 			# for (geo, _, _, _), vec in sorted(small_prop_label_averages.items()):
 				if small_prop == 1.0:
 					continue
-				# if geo not in [0.7, 0.8, 0.9]:
-				# 	continue
+				if geo not in [0.6, 0.7, 0.8, 0.9]:
+					continue
 				plt.title('Rebalancing {} with {} after on {}% of label {}'
 						  ' is kept.'.format(
 						  		data_name, aug_mode, 

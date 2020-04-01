@@ -78,9 +78,11 @@ class RnnAgent:
 					   else 'cpu'))
 
 		s = ('Model is RNN, dataset is {}, undersample is {}, aug mode is {}, geo is {},'
-			' pct_usage is {}, small_label is {}, small_prop is {}, balance_seed is {}, lr is {}').format(
+			' pct_usage is {}, small_label is {}, small_prop is {}, balance_seed is {}, lr is {}'
+			' max_epochs is {}, split_num is {}').format(
 				data_name, self.undersample, self.aug_mode, self.geo, self.pct_usage,
-				self.small_label, self.small_prop, self.balance_seed, self.lr)
+				self.small_label, self.small_prop, self.balance_seed, self.lr,
+				self.max_epochs, self.split_num)
 		print_and_log(self.logger, s)
 
 	def initialize_model(self):
