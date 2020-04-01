@@ -335,7 +335,7 @@ def create_files(seed):
 if __name__ == "__main__":
 	print('Number of cpus: {}'.format(mp.cpu_count()))
 	pool = mp.Pool(mp.cpu_count())
-	pool.map(create_files, [5, 6, 7])
+	pool.map(create_files, [8, 9, 10])
 	pool.close()
 	# create_files(5)
 

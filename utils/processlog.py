@@ -98,11 +98,6 @@ def plot_experiments():
 	data_name = 'sst'
 	# data_name = 'subj'
 	filepath = 'logs/archived/older/bal_{}_{}_{}_pct.log'.format(model, aug_mode, data_name)
-	# filepath = 'logs/archived/bal_bert_trans_sst.log'
-	# filepath = 'logs/archived/bal_rnn_trans_subj_fine.log'
-	# filepath = 'logs/archived/context-test.log'
-	# filepath = 'logs/archived/bal_rnn_context_sst.log'
-	# filepath = 'logs/archived/lower_learning_rate.log'
 	filepath = 'logs/archived/bal_rnn_context_odds_10seeds.log'
 	err_bars = False
 	experiments = read_experiments(filepath, avg_across_labels)
