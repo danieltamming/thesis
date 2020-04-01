@@ -41,7 +41,7 @@ def experiment(balance_seed):
 		for small_label in [0, 1]:
 			for undersample in [False, True]:
 				agent = RnnAgent(device, logger, 'sst', 25, num_epochs, lr, 
-								 None, 'dev', 128, 
+								 None, 'test', 128, 
 								 small_label=small_label, 
 								 small_prop=small_prop, 
 								 balance_seed=balance_seed, 
@@ -49,13 +49,14 @@ def experiment(balance_seed):
 				agent.run()
 			geo = pct_geo_map[small_prop]
 			agent = RnnAgent(device, logger, 'sst', 25, num_epochs, lr,
-							 'synonym', 'dev', 128, 
+							 'synonym', 'test', 128, 
 							 small_label=small_label, 
 							 small_prop=small_prop, 
 							 balance_seed=balance_seed, 
 							 geo=geo)
 			agent.run()
 
+# experiment(0)
 print('Number of cpus: {}'.format(mp.cpu_count()))
 pool = mp.Pool(mp.cpu_count())
 pool.map(experiment, list(range(30)))

@@ -28,7 +28,7 @@ class RnnAgent:
 					pct_usage is not None, 
 					small_label is not None]) == 1, \
 			   'Either saving, balancing, or trying on specific percentage'
-		assert sum([mode == 'test', data_name == 'subj']) == 1, \
+		assert sum([mode == 'test', data_name == 'subj']) < 2, \
 			   'Must use crosstest on subj'
 		self.logger = logger
 		self.data_name = data_name
