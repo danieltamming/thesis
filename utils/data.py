@@ -57,8 +57,8 @@ def partition_within_classes(data, pct_in_A, make_A_balanced,
 			A.extend(arr[A_start_idx:A_end_idx])
 			B.extend(arr[:A_start_idx])
 			B.extend(arr[A_end_idx:])
-		# print(len([1 for tup in A if tup[0] == 0]), 
-		# 	  len([1 for tup in A if tup[0] == 1]))
+		print(len([1 for tup in A if tup[0] == 0]), 
+			  len([1 for tup in A if tup[0] == 1]))
 		return A, B
 
 def read_no_aug(set_path, input_length, is_bytes, ignore_label):
@@ -203,7 +203,8 @@ def get_subj(input_length, aug_mode, pct_usage=None, small_label=None,
 		print(Counter([tup[0] for tup in train_small_label]))
 		print(Counter([tup[0] for tup in train_other_labels]))
 		exit()
-	return {'dev': dev_data, 'train': train_data}
+	# since subj uses crosstest we'll refer to dev set as test and dev
+	return {'test': dev_data, 'dev': dev_data, 'train': train_data}
 
 def get_trec(input_length, aug_mode):
 	script_path = os.path.dirname(os.path.realpath(__file__))

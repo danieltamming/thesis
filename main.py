@@ -12,25 +12,40 @@ from utils.parsing import get_device
 
 device = get_device()
 this_script_name = os.path.basename(__file__).split('.')[0]
-num_epochs = 100
+num_epochs = 4
 lr = 0.001
+accumulation_steps = 1
 pct_usage = 0.5
 balance_seed = 0
-# geo = 0.5
+geo = 0.5
+batch_size = 16
+split_num = 9
 logger = initialize_logger(this_script_name, balance_seed, other=pct_usage)
-for geo in [0.3, 0.5, 0.7]:
-	agent = RnnAgent(device, logger, 'sst', 25, num_epochs, lr,
-					 'trans', 'dev', 128, 
+agent = BertAgent(device, logger, 'subj', 25, num_epochs,
+				 'trans', 'test', batch_size, accumulation_steps,
+				 pct_usage=pct_usage, 
+				 balance_seed=balance_seed,
+				 split_num=split_num,
+				 verbose=True
+				 )
+agent.run()
+exit()
+
+for split_num in range(10):
+	agent = BertAgent(device, logger, 'subj', 25, num_epochs,
+					 'trans', 'test', batch_size, accumulation_steps,
 					 pct_usage=pct_usage, 
 					 balance_seed=balance_seed,
-					 geo=geo)
+					 geo=geo,
+					 split_num=split_num)
 	agent.run()
 
-agent = RnnAgent(device, logger, 'sst', 25, num_epochs, lr,
-				 None, 'dev', 128, 
-				 pct_usage=pct_usage, 
-				 balance_seed=balance_seed)
-agent.run()
+	agent = BertAgent(device, logger, 'subj', 25, num_epochs,
+					 None, 'test', batch_size, accumulation_steps,
+					 pct_usage=pct_usage, 
+					 balance_seed=balance_seed,
+					 split_num=split_num)
+	agent.run()
 
 # device = get_device()
 # this_script_name = os.path.basename(__file__).split('.')[0]

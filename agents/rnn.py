@@ -105,6 +105,8 @@ class RnnAgent:
 				self.val_loader) = self.mngr.get_dev_ldrs(self.mode)
 			self.initialize_model()
 			self.train()
+			if self.mode == 'test':
+				acc,_ = self.validate()
 			# self.validate()
 		# elif self.mode == 'save':
 		# 	self.train_loader, self.val_loader = self.mngr.get_dev_ldrs()
@@ -122,7 +124,8 @@ class RnnAgent:
 			iterator = tqdm(range(self.max_epochs))
 		for self.cur_epoch in iterator:
 			self.train_one_epoch()
-			acc,_ = self.validate()
+			if self.mode != 'test':
+				acc,_ = self.validate()
 
 			if start_time is not None:
 				print('{} s/it'.format(round(time.time()-start_time,3)))

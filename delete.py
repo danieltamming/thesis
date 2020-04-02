@@ -1,15 +1,16 @@
 import numpy as np
 import spacy
 from transformers import BertTokenizer
+from collections import Counter
 
 from utils.data import get_subj, get_sst
 
-for split_num in range(12):
-	data_dict = get_subj(25, 'synonym', split_num=split_num)
-# data_dict = get_sst(25, 'synonym')
-# print(data_dict.keys())
-	for key, data in data_dict.items():
-		print(key)
-		print(len([1 for tup in data if tup[0] == 0]), 
-			  len([1 for tup in data if tup[0] == 1]))
-	print(100*'-')
+for seed in [0]:
+	counts = Counter()
+	for split_num in range(10):
+		test = get_subj(25, None, seed=seed, split_num=split_num)['test']
+		counts.update([tup[1] for tup in test])
+
+	all_data = get_subj(25, None, seed=seed, gen_splits=False)
+	other_counts = Counter([tup[1] for tup in all_data])
+	assert other_counts == counts

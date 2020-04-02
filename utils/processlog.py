@@ -117,6 +117,7 @@ def plot_imbalance_experiments():
 	# data_name = 'subj'
 	filepath = 'logs/archived/older/bal_{}_{}_{}_pct.log'.format(model, aug_mode, data_name)
 	# filepath = 'logs/archived/bal_rnn_context_odds_10seeds.log'
+	filepath = 'logs/archived/older/bal_bert_trans_subj_pct.log'
 	err_bars = False
 	experiments = read_experiments(filepath, avg_across_labels)
 	
@@ -144,8 +145,8 @@ def plot_imbalance_experiments():
 			# for (geo, _, _, _), vec in sorted(small_prop_label_averages.items()):
 				if small_prop == 1.0:
 					continue
-				if geo not in [0.6, 0.7, 0.8, 0.9]:
-					continue
+				# if geo not in [0.6, 0.7, 0.8, 0.9]:
+				# 	continue
 				plt.title('Rebalancing {} with {} after on {}% of label {}'
 						  ' is kept.'.format(
 						  		data_name, aug_mode, 
@@ -166,24 +167,24 @@ def plot_imbalance_experiments():
 				plt.show()
 
 if __name__ == "__main__":
-	# plot_imbalance_experiments()
-	# exit()
-	filepath = 'logs/main/seed_0_other_0.5_num_3.log'
-	experiments = {}
-	with open(filepath) as f:
-		line = f.readline()
-		if 'RUN START' in line:
-			line = f.readline()
-		while line:
-			tup = read_pct_desc(line)
-			accs = []
-			line = f.readline()
-			while is_training(line) or is_validating(line):
-				if is_validating(line):
-					accs.append(get_acc(line))
-				line = f.readline()
-			experiments[tup] = np.array(accs)
-	for tup, vec in experiments.items():
-		if tup[0] not in [0.3, 0.7]:
-			sns.lineplot(x=list(range(len(vec))), y=vec, label=tup[0])
-	plt.show()
+	plot_imbalance_experiments()
+	exit()
+	# filepath = 'logs/main/seed_0_other_0.5_num_3.log'
+	# experiments = {}
+	# with open(filepath) as f:
+	# 	line = f.readline()
+	# 	if 'RUN START' in line:
+	# 		line = f.readline()
+	# 	while line:
+	# 		tup = read_pct_desc(line)
+	# 		accs = []
+	# 		line = f.readline()
+	# 		while is_training(line) or is_validating(line):
+	# 			if is_validating(line):
+	# 				accs.append(get_acc(line))
+	# 			line = f.readline()
+	# 		experiments[tup] = np.array(accs)
+	# for tup, vec in experiments.items():
+	# 	if tup[0] not in [0.3, 0.7]:
+	# 		sns.lineplot(x=list(range(len(vec))), y=vec, label=tup[0])
+	# plt.show()

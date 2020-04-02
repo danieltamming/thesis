@@ -23,14 +23,13 @@ class BertAgent:
 	def __init__(self, device, logger, data_name, input_length, max_epochs, 
 				 aug_mode, mode, batch_size, accumulation_steps, 
 				 small_label=None, small_prop=None, balance_seed=None, 
-				 undersample=False, pct_usage=None, geo=0.5, verbose=False):
+				 undersample=False, pct_usage=None, geo=0.5, split_num=0,
+				 verbose=False):
 		assert not (undersample and aug_mode is not None), \
 			   'Cant undersample and augment'
 		assert sum([mode == 'test-aug', mode == 'save', pct_usage is not None, 
 					small_label is not None]) == 1, \
 			   'Either saving, balancing, or trying on specific percentage' 
-		assert sum([mode == 'test', data_name == 'subj']) < 2, \
-			   'Must use crosstest on subj'
 		self.logger = logger
 		self.data_name = data_name
 		self.input_length = input_length
@@ -45,6 +44,7 @@ class BertAgent:
 		self.undersample = undersample
 		self.pct_usage = pct_usage
 		self.geo = geo
+		self.split_num = split_num
 		self.verbose = verbose
 
 		mngr_args = ['bert', self.input_length, self.aug_mode,
@@ -52,7 +52,8 @@ class BertAgent:
 		mngr_kwargs = {'small_label': self.small_label, 
 				  'small_prop': self.small_prop,
 				  'balance_seed': self.balance_seed, 
-				  'undersample': undersample}
+				  'undersample': undersample,
+				  'split_num': self.split_num}
 		if data_name == 'sst':
 			self.num_labels = 2
 			self.mngr = SSTDatasetManager(*mngr_args, **mngr_kwargs)
@@ -67,10 +68,13 @@ class BertAgent:
 
 		self.device = (torch.device(device if torch.cuda.is_available() 
 					   else 'cpu'))
-		s = ('Model is Bert, dataset is {}, undersample is {}, aug mode is {}, geo is {},'
-			' pct_usage is {}, small_label is {}, small_prop is {}, balance_seed is {}').format(
-				data_name, self.undersample, self.aug_mode, self.geo, self.pct_usage, 
-				self.small_label, self.small_prop, self.balance_seed)
+		s = ('Model is Bert, dataset is {}, undersample is {},'
+			 ' aug mode is {}, geo is {}, pct_usage is {}, small_label is {},'
+			 ' small_prop is {}, balance_seed is {}, max_epochs is {},'
+			 ' split_num is {}').format(
+				data_name, self.undersample, self.aug_mode, self.geo, 
+				self.pct_usage, self.small_label, self.small_prop, 
+				self.balance_seed, self.max_epochs, self.split_num)
 		print_and_log(self.logger, s)
 
 	def initialize_model(self):
@@ -100,10 +104,12 @@ class BertAgent:
 	def run(self):
 		if self.mode == 'crosstest':
 			raise NotImplementedError('Crosstest not implemented.')
-		elif self.mode in['dev', 'test']:
+		elif self.mode in ['dev', 'test']:
 			self.train_loader, self.val_loader = self.mngr.get_dev_ldrs('dev')
 			self.initialize_model()
 			self.train()
+			if self.mode == 'test':
+				acc, _ = self.validate()
 			# self.validate()
 		# elif self.mode == 'save':
 		# 	self.train_loader, self.val_loader = self.mngr.get_dev_ldrs()
@@ -151,7 +157,8 @@ class BertAgent:
 			iterator = tqdm(range(self.max_epochs))
 		for self.cur_epoch in iterator:
 			self.train_one_epoch()
-			acc,_ = self.validate()
+			if self.mode != 'test':
+				acc,_ = self.validate()
 
 			if start_time is not None:
 				print('{} s/it'.format(round(time.time()-start_time,3)))
