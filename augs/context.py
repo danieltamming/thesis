@@ -336,7 +336,7 @@ if __name__ == "__main__":
 	# create_files(5)
 	try:
 		pool = mp.Pool(mp.cpu_count())
-		pool.map(create_files, [5, 6, 7])
+		pool.map(create_files, [8, 9])
 	finally:
 		pool.close()
 		ppol.join()

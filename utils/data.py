@@ -57,6 +57,8 @@ def partition_within_classes(data, pct_in_A, make_A_balanced,
 			A.extend(arr[A_start_idx:A_end_idx])
 			B.extend(arr[:A_start_idx])
 			B.extend(arr[A_end_idx:])
+		# print(len([1 for tup in A if tup[0] == 0]), 
+		# 	  len([1 for tup in A if tup[0] == 1]))
 		return A, B
 
 def read_no_aug(set_path, input_length, is_bytes, ignore_label):
