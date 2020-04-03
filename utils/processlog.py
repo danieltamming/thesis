@@ -161,7 +161,7 @@ def get_num_epochs(line):
 
 def plot_imbalance_tests():
 	# filepath = 'logs/archived/test_bal_rnn_syn_sst_20.log'
-	filepath = 'logs/archived/all.log'
+	filepath = 'logs/archived/test_bal_rnn_trans_sst_20.log'
 	methods = ['Augmentation', 'Oversample', 'Undersample']
 	df = pd.DataFrame(index=range(10, 100, 10))
 	for col_name in methods:
@@ -185,7 +185,9 @@ def plot_imbalance_tests():
 			num_epochs = get_num_epochs(line)
 			for _ in range(num_epochs):
 				line = f.readline()
-				line = f.readline()
+				# line = f.readline()
+			line = f.readline()
+			# print(line)
 			assert is_validating(line)
 			df.loc[100*small_prop, mode].append(get_acc(line))
 			line = f.readline()

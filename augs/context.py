@@ -322,7 +322,8 @@ def create_files(seed):
 	lr = 5e-5
 	for data_name in ['sst']:
 		for small_label in [0, 1]:
-			L = [0.2, 0.4, 0.6, 0.8]
+			# L = [0.2, 0.4, 0.6, 0.8]
+			L = [0.1]
 			for small_prop in L:
 				small_prop = round(small_prop, 1)
 				print(data_name, small_label, small_prop)
@@ -332,14 +333,15 @@ def create_files(seed):
 				agent.augment()
 
 if __name__ == "__main__":
-	print('Number of cpus: {}'.format(mp.cpu_count()))
-	# create_files(5)
-	try:
-		pool = mp.Pool(mp.cpu_count())
-		pool.map(create_files, [8, 9])
-	finally:
-		pool.close()
-		pool.join()
+	create_files(8)
+
+	# print('Number of cpus: {}'.format(mp.cpu_count()))
+	# try:
+	# 	pool = mp.Pool(mp.cpu_count())
+	# 	pool.map(create_files, [8, 9])
+	# finally:
+	# 	pool.close()
+	# 	pool.join()
 
 '''
 READY TO RUN TRAIN THEN AUGMENT AGAIN
