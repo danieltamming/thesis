@@ -339,7 +339,7 @@ if __name__ == "__main__":
 		pool.map(create_files, [8, 9])
 	finally:
 		pool.close()
-		ppol.join()
+		pool.join()
 
 '''
 READY TO RUN TRAIN THEN AUGMENT AGAIN

@@ -1,6 +1,7 @@
 from collections import Counter
 
 import numpy as np
+import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 
@@ -127,9 +128,6 @@ def plot_imbalance_experiments():
 		small_prop_averages = {key: avg for key, avg in averages.items()
 							   if key[3] == small_prop}
 		for small_label in sorted(list(set([key[2] for key in averages]))):
-			# if small_label == 1:
-			# 	continue
-			# print(averages.keys())
 			small_prop_label_averages = {key: avg for key, avg in small_prop_averages.items() 
 										 if key[2] == small_label}
 			oversample_avg = small_prop_label_averages[(-1, False, small_label, small_prop)]
@@ -140,24 +138,15 @@ def plot_imbalance_experiments():
 			colors = ['tab:blue', 'tab:orange', 'tab:cyan', 'tab:red', 
 					  'tab:purple', 'tab:brown', 'tab:pink', 'tab:gray', 
 					  'tab:olive', 'tab:green']
-			# colors = ['b', 'c', 'y', 'm']
 			for ((geo, _, _, _), vec), color in zip(sorted(small_prop_label_averages.items()), colors):
-			# for (geo, _, _, _), vec in sorted(small_prop_label_averages.items()):
 				if small_prop == 1.0:
 					continue
-				# if geo not in [0.6, 0.7, 0.8, 0.9]:
-				# 	continue
 				plt.title('Rebalancing {} with {} after on {}% of label {}'
 						  ' is kept.'.format(
 						  		data_name, aug_mode, 
 						  		100*small_prop, small_label))
 				plt.ylabel('Validation Accuracy (%)')
 				plt.xlabel('Training Epoch')
-				# plot_mat(100*oversample_avg, True, label='oversampling', color='g', alpha=0.5)
-				# plot_mat(100*undersample_avg, True, label='undersampling', color='r', alpha=0.5)
-				# plot_mat(100*vec, True, label='geo {}'.format(geo), color='b', alpha=0.5)
-				# plt.legend()
-				# plt.show()
 
 				plot_mat(100*vec, err_bars, label='geo {}'.format(geo), color=color, alpha=0.5)
 			if small_prop != 1.0:
@@ -166,8 +155,73 @@ def plot_imbalance_experiments():
 				plt.legend()
 				plt.show()
 
+def get_num_epochs(line):
+	num_epochs = line.split('max_epochs is ')[1].split(',', 1)[0]
+	return int(num_epochs)
+
+def plot_imbalance_tests():
+	# filepath = 'logs/archived/test_bal_rnn_syn_sst_20.log'
+	filepath = 'logs/archived/all.log'
+	methods = ['Augmentation', 'Oversample', 'Undersample']
+	df = pd.DataFrame(index=range(10, 100, 10))
+	for col_name in methods:
+		df[col_name] = [[] for _ in range(len(df))]
+	with open(filepath) as f:
+		line = f.readline()
+		if 'RUN START' in line:
+			line = f.readline()
+		while line:
+			small_prop = get_small_prop(line)
+			undersample = get_undersample(line)
+			aug_mode = get_aug_mode(line)
+			geo = get_geo(line)
+			if aug_mode == 'None':
+				if undersample:
+					mode = 'Undersample'
+				else:
+					mode = 'Oversample'
+			else:
+				mode = 'Augmentation'
+			num_epochs = get_num_epochs(line)
+			for _ in range(num_epochs):
+				line = f.readline()
+				line = f.readline()
+			assert is_validating(line)
+			df.loc[100*small_prop, mode].append(get_acc(line))
+			line = f.readline()
+	for col_name in methods:
+		df[col_name+'_mean'] = df[col_name].apply(np.mean)
+		df[col_name+'_std'] = df[col_name].apply(np.std)
+	df = df.drop(columns=methods)
+	for m in methods:
+		sns.lineplot(x=df.index, y=m+'_mean', data=df, label=m)
+		plt.fill_between(
+			df.index, 
+			df[m+'_mean'] - df[m+'_std'], 
+			df[m+'_mean'] + df[m+'_std'],
+			alpha=0.1
+		)
+		# plt.errorbar(x=df.index, y=df[m+'_mean'], yerr=df[m+'_std'])
+	# sns.lineplot(
+	# 	x=df.index, y='Augmentation_mean', data=df, label='Augmentation')
+	# plt.fill_between(
+	# 	df.index, 
+	# 	df.Augmentation_mean - df.Augmentation_std, 
+	# 	df.Augmentation_mean + df.Augmentation_std,
+	# 	alpha=0.25
+	# )
+	# sns.lineplot(x=df.index, y='Undersample_mean', data=df, label='Undersample')
+	# sns.lineplot(x=df.index, y='Oversample_mean', data=df, label='Oversample')
+	plt.xlabel('Percentage of Minority Label Examples Left In Training Set')
+	plt.ylabel('Accuracy (%)')
+	plt.legend()
+	plt.show()
+	return df
+
+
 if __name__ == "__main__":
-	plot_imbalance_experiments()
+	# plot_imbalance_experiments()
+	plot_imbalance_tests()
 	exit()
 	# filepath = 'logs/main/seed_0_other_0.5_num_3.log'
 	# experiments = {}
