@@ -333,7 +333,7 @@ def create_files(seed):
 				agent.augment()
 
 if __name__ == "__main__":
-	create_files(8)
+	create_files(9)
 
 	# print('Number of cpus: {}'.format(mp.cpu_count()))
 	# try:
