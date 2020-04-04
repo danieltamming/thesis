@@ -49,14 +49,12 @@ def experiment(balance_seed, split_num):
 								 geo=geo)
 				agent.run()
 
-# try:
-# 	split_num_list = list(range(10))
-# 	seed_list = list(range(3))
-# 	params = list(itertools.product(seed_list, split_num_list))
-# 	pool = mp.Pool(mp.cpu_count())
-# 	pool.starmap(experiment, params)
-# finally:
-# 	pool.close()
-# 	pool.join()
-
-experiment(0, 0)
+try:
+	split_num_list = list(range(10))
+	seed_list = list(range(3))
+	params = list(itertools.product(seed_list, split_num_list))
+	pool = mp.Pool(mp.cpu_count())
+	pool.starmap(experiment, params)
+finally:
+	pool.close()
+	pool.join()
