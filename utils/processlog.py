@@ -119,6 +119,7 @@ def plot_imbalance_experiments():
 	filepath = 'logs/archived/older/bal_{}_{}_{}_pct.log'.format(model, aug_mode, data_name)
 	# filepath = 'logs/archived/bal_rnn_context_odds_10seeds.log'
 	filepath = 'logs/archived/older/bal_bert_trans_subj_pct.log'
+	filepath = 'logs/archived/older/bal_rnn_trans_subj_fine.log'
 	err_bars = False
 	experiments = read_experiments(filepath, avg_across_labels)
 	
@@ -222,8 +223,8 @@ def plot_imbalance_tests():
 
 
 if __name__ == "__main__":
-	# plot_imbalance_experiments()
-	plot_imbalance_tests()
+	plot_imbalance_experiments()
+	# plot_imbalance_tests()
 	exit()
 	# filepath = 'logs/main/seed_0_other_0.5_num_3.log'
 	# experiments = {}
