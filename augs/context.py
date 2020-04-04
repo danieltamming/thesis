@@ -321,7 +321,7 @@ def create_files(seed):
 	pct_usage = None
 	lr = 5e-5
 	for data_name in ['sst']:
-		for small_label in [0, 1]:
+		for small_label in [1]:
 			# L = [0.2, 0.4, 0.6, 0.8]
 			L = [0.1]
 			for small_prop in L:
@@ -333,7 +333,7 @@ def create_files(seed):
 				agent.augment()
 
 if __name__ == "__main__":
-	create_files(9)
+	create_files(8)
 
 	# print('Number of cpus: {}'.format(mp.cpu_count()))
 	# try:
