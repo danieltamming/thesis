@@ -1,0 +1,17 @@
+Model is RNN, dataset is subj, undersample is False, aug mode is None, geo is 0.5, pct_usage is None, small_label is 0, small_prop is 0.1, balance_seed is 27, lr is 0.001, max_epochs is 100, split_num is 0
+Training epoch 0 | loss: 0.5413 - accuracy: 0.79178
+Validating epoch 0 | loss: 0.4252 - accuracy: 0.885
+Training epoch 1 | loss: 0.39682 - accuracy: 0.915
+Validating epoch 1 | loss: 0.41464 - accuracy: 0.895
+Training epoch 2 | loss: 0.37624 - accuracy: 0.936
+Validating epoch 2 | loss: 0.42805 - accuracy: 0.883
+Training epoch 3 | loss: 0.36212 - accuracy: 0.951
+Validating epoch 3 | loss: 0.42648 - accuracy: 0.886
+Training epoch 4 | loss: 0.36527 - accuracy: 0.94833
+Validating epoch 4 | loss: 0.43782 - accuracy: 0.875
+Training epoch 5 | loss: 0.35675 - accuracy: 0.95756
+Validating epoch 5 | loss: 0.41239 - accuracy: 0.898
+Training epoch 6 | loss: 0.34825 - accuracy: 0.96378
+Validating epoch 6 | loss: 0.44599 - accuracy: 0.866
+Training epoch 7 | loss: 0.34693 - accuracy: 0.96578
+Validating epoch 7 | loss: 0.4675 - accuracy: 0.846
