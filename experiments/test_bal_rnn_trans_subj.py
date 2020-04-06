@@ -22,15 +22,15 @@ num_epochs = 100
 lr  = 0.001
 
 param_map = {
-	0.1: {'aug': (, ), 'under': , 'over': },
-	0.2: {'aug': (, ), 'under': , 'over': }, 
-	0.3: {'aug': (, ), 'under': , 'over': }, 
-	0.4: {'aug': (, ), 'under': , 'over': }, 
-	0.5: {'aug': (, ), 'under': , 'over': }, 
-	0.6: {'aug': (, ), 'under': , 'over': }, 
-	0.7: {'aug': (, ), 'under': , 'over': }, 
-	0.8: {'aug': (, ), 'under': , 'over': }, 
-	0.9: {'aug': (, ), 'under': , 'over': } 
+	0.1: {'aug': (0.3, 68), 'under': 45, 'over': 4},
+	0.2: {'aug': (0.4, 51), 'under': 23, 'over': 6}, 
+	0.3: {'aug': (0.6, 55), 'under': 87, 'over': 74}, 
+	0.4: {'aug': (0.7, 90), 'under': 91, 'over': 95}, 
+	0.5: {'aug': (0.8, 89), 'under': 98, 'over': 99}, 
+	0.6: {'aug': (0.9, 62), 'under': 83, 'over': 75}, 
+	0.7: {'aug': (0.9, 90), 'under': 99, 'over': 99}, 
+	0.8: {'aug': (0.9, 80), 'under': 39, 'over': 90}, 
+	0.9: {'aug': (0.9, 95), 'under': 98, 'over': 87} 
 }
 
 def experiment(balance_seed, split_num):
@@ -42,7 +42,7 @@ def experiment(balance_seed, split_num):
 			geo, num_epochs = param_prop_map['aug']
 			geo = round(geo, 2)
 			agent = RnnAgent(device, logger, 'subj', 25, num_epochs+1, lr,
-							 'synonym', 'test', 128, 
+							 'trans', 'test', 128, 
 							 small_label=small_label, 
 							 small_prop=small_prop, 
 							 balance_seed=balance_seed,
@@ -62,7 +62,6 @@ def experiment(balance_seed, split_num):
 								 split_num=split_num, 
 								 undersample=undersample)
 				agent.run()
-
 
 # try:
 # 	split_num_list = list(range(10))

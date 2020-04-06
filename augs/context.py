@@ -118,19 +118,19 @@ def mask_gen(seq, tokenizer):
 
 class BertAgent:
 	def __init__(self, lr, data_name, seed, pct_usage, 
-				 small_label, small_prop):
+				 small_label, small_prop, split_num=0):
 		self.lr = lr
 		self.data_name = data_name
 		self.seed = seed
 		self.pct_usage = pct_usage
 		self.small_label = small_label
 		self.small_prop = small_prop
+		self.split_num = split_num
 
 		self.train_data, self.inf_data = self.get_data(
 			data_name, seed, pct_usage, small_label, small_prop)
 		if self.inf_data is None:
 			self.inf_data = self.train_data
-		# CHANGE INPUT LENGTH. MAYBE 50?
 		self.input_length = 80
 		self.batch_size = 16
 		self.num_train_epochs = 9
@@ -153,7 +153,9 @@ class BertAgent:
 		if data_name == 'sst':
 			data = get_sst(None, None)['train']
 		elif data_name == 'subj':
-			data = get_subj(None, None)['train']
+			data = get_subj(None, None, 
+						    seed=self.seed, 
+						    split_num=self.split_num)['train']
 		elif data_name == 'trec':
 			data = get_trec(None, None)['train']
 		else:
@@ -183,7 +185,7 @@ class BertAgent:
 		else:
 			label_data_duplicates = list(islice(cycle(label_data), num_orig))
 		print(len(other_data), len(label_data_duplicates))
-		print(len(other_data+label_data_duplicates), len(label_data))
+		# print(len(other_data+label_data_duplicates), len(label_data))
 		return other_data+label_data_duplicates, label_data
 
 	def save_checkpoint(self):
@@ -307,9 +309,9 @@ class BertAgent:
 			data.append((cat, clean_seq, aug))
 
 		context_aug_filepath = ('../DownloadedData/{}/context_aug'
-			'/{}-{}-{}-{}.pickle'.format(
+			'/{}-{}-{}-{}-{}.pickle'.format(
 				self.data_name, self.pct_usage, self.small_label, 
-				int(100*self.small_prop), self.seed
+				int(100*self.small_prop), self.seed, self.split_num
 			)
 		)
 		# seq = self.tokenizer.encode('hello there my name is daniel. What is your name?')
@@ -317,23 +319,38 @@ class BertAgent:
 		with open(context_aug_filepath, 'wb') as f:
 			pickle.dump(data, f, protocol=pickle.HIGHEST_PROTOCOL)
 
-def create_files(seed):
+def create_sst_files(seed):
 	pct_usage = None
 	lr = 5e-5
-	for data_name in ['sst']:
-		for small_label in [1]:
-			# L = [0.2, 0.4, 0.6, 0.8]
-			L = [0.1]
-			for small_prop in L:
-				small_prop = round(small_prop, 1)
-				print(data_name, small_label, small_prop)
-				agent = BertAgent(lr, data_name, seed, pct_usage, 
-							 	  small_label, small_prop)
-				agent.train()
-				agent.augment()
+	data_name = 'sst'
+	for small_label in [0, 1]:
+		L = [0.2, 0.4, 0.6, 0.8]
+		for small_prop in L:
+			small_prop = round(small_prop, 1)
+			print(data_name, small_label, small_prop)
+			agent = BertAgent(lr, data_name, seed, pct_usage, 
+						 	  small_label, small_prop)
+			agent.train()
+			agent.augment()
+
+def create_subj_files(split_num):
+	pct_usage = None
+	lr = 5e-5
+	seed = 0
+	data_name = 'subj'
+	for small_label in [0, 1]:
+		L = np.arange(0.1, 1.0, 0.1)
+		for small_prop in L:
+			small_prop = round(small_prop, 1)
+			print(data_name, small_label, small_prop)
+			agent = BertAgent(lr, data_name, seed, pct_usage, 
+						 	  small_label, small_prop, split_num=split_num)
+			agent.train()
+			agent.augment()
+			exit()
 
 if __name__ == "__main__":
-	create_files(8)
+	create_subj_files(0)
 
 	# print('Number of cpus: {}'.format(mp.cpu_count()))
 	# try:

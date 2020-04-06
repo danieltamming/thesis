@@ -183,6 +183,7 @@ def get_subj(input_length, aug_mode, pct_usage=None, small_label=None,
 		aug_file_path = os.path.join(data_path, 'trans_aug/subj.txt')
 		all_data = read_trans_aug(aug_file_path)
 	elif aug_mode == 'context':
+		raise NotImplementedError()
 		file_path = os.path.join(data_path,'subj.txt')
 		all_data = read_no_aug(file_path, input_length, True, None)
 	else:
