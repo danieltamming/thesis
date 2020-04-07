@@ -11,8 +11,32 @@ from augs.trans import trans_aug
 from augs.context import context_aug
 
 class DatasetBase(Dataset):
-	def __init__(self, to_ids_func):
+	def __init__(self, to_ids_func, data, input_length, aug_mode, pct_usage,
+				 geo, small_label, small_prop, balance_seed, undersample, 
+				 tokenizer, keep_inf_data):
 		self.to_ids_func = to_ids_func
+		self.input_length = input_length
+		self.aug_mode = aug_mode
+		self.pct_usage = pct_usage
+		self.geo = geo
+		self.small_label = small_label
+		self.small_prop = small_prop
+		self.balance_seed = balance_seed
+		self.undersample = undersample
+		self.tokenizer = tokenizer
+		self.keep_inf_data = keep_inf_data
+
+		if small_label is not None and small_prop is not None:
+			if aug_mode == 'context':
+				self.data = self._re_balance(data, balance_seed)
+			else:
+				self.data = self._im_re_balance(data, balance_seed, 
+												undersample)
+		elif pct_usage is not None:
+			self.data, _ = partition_within_classes(
+				data, pct_usage, False, seed=balance_seed)
+		else:
+			self.data = data	
 
 	def __len__(self):
 		return len(self.data)
@@ -52,6 +76,8 @@ class DatasetBase(Dataset):
 		num_keep = int(self.small_prop*num_orig)
 		label_data = random.sample(label_data, num_keep)
 		print(len(other_data), len(label_data))
+		if self.keep_inf_data:
+			self.inf_data = label_data
 		if undersample:
 			# now ensuring that dataset size remains the same
 			# regardless of under/over sample or augmenting
@@ -103,33 +129,10 @@ class DatasetBase(Dataset):
 class BertDataset(DatasetBase):
 	def __init__(self, data, input_length, aug_mode, pct_usage=None, geo=None,
 				 small_label=None, small_prop=None, balance_seed=None,
-				 undersample=False, tokenizer=None):
-		super().__init__(self._to_tokens)
-		self.input_length = input_length
-		self.aug_mode = aug_mode
-		self.pct_usage = pct_usage
-		self.geo = geo
-		self.small_label = small_label
-		self.small_prop = small_prop
-		self.undersample = undersample
-
-		# self.tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
-		self.tokenizer = tokenizer
-
-		if small_label is not None and small_prop is not None:
-			if aug_mode == 'context':
-				self.data = self._re_balance(data, balance_seed)
-			else:
-				self.data = self._im_re_balance(data, balance_seed, undersample)
-		elif pct_usage is not None:
-			self.data, _ = partition_within_classes(
-				data, pct_usage, False, seed=balance_seed)
-		else:
-			self.data = data
-
-		##############################################
-		# TEST ABOVE LOGIC IN HERE AND RNNDATASET
-		##############################################
+				 undersample=False, tokenizer=None, keep_inf_data=False):
+		super().__init__(self._to_tokens, data, input_length, aug_mode, 
+						 pct_usage, geo, small_label, small_prop, 
+						 balance_seed, undersample, tokenizer, keep_inf_data)
 
 	def _to_tokens(self, example):
 		tknzd = self.tokenizer.encode(
@@ -140,34 +143,14 @@ class BertDataset(DatasetBase):
 
 
 class RnnDataset(DatasetBase):
-	def __init__(self, nlp, data, input_length, aug_mode, pct_usage=None, geo=None, 
-				 small_label=None, small_prop=None, balance_seed=None,
-				 undersample=False, tokenizer=None):
-		super().__init__(self._to_rows)
-		self.input_length = input_length
+	def __init__(self, nlp, data, input_length, aug_mode, pct_usage=None, 
+				 geo=None, small_label=None, small_prop=None, 
+				 balance_seed=None, undersample=False, tokenizer=None):
+		super().__init__(self._to_rows, data, input_length, aug_mode, 
+						 pct_usage, geo, small_label, small_prop, 
+						 balance_seed, undersample, tokenizer, False)
 		self.nlp = nlp
 		self.key2row = nlp.vocab.vectors.key2row
-		self.aug_mode = aug_mode
-		self.geo = geo
-		self.small_label = small_label
-		self.small_prop = small_prop
-		self.undersample = undersample
-
-		# if aug_mode == 'context':
-		# 	self.tokenizer = BertTokenizer.from_pretrained(
-		# 		'bert-base-uncased')
-		self.tokenizer = tokenizer
-
-		if small_label is not None and small_prop is not None:
-			if aug_mode == 'context':
-				self.data = self._re_balance(data, balance_seed)
-			else:
-				self.data = self._im_re_balance(data, balance_seed, undersample)
-		elif pct_usage is not None:
-			self.data, _ = partition_within_classes(
-				data, pct_usage, False, seed=balance_seed)
-		else:
-			self.data = data
 
 	def _to_rows(self, example):
 		# also ensures length == self.INPUT_LENGTH

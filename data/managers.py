@@ -23,6 +23,7 @@ class DatasetManagerBase:
 		self.small_prop = small_prop
 		self.balance_seed = balance_seed
 		self.undersample = undersample
+		self.split_num = split_num
 		if model_type == 'bert' or aug_mode == 'context':
 			self.tokenizer = BertTokenizer.from_pretrained(
 				'bert-base-uncased')
@@ -46,6 +47,12 @@ class DatasetManagerBase:
 		train_loader = DataLoader(
 			train_dataset, self.batch_size, pin_memory=True, shuffle=True)
 		val_dataset = self.get_dataset(val_type)
+
+		# import pickle
+		# with open('test_split_{}.pickle'.format(self.split_num), 'wb') as f:
+		# 	pickle.dump(val_dataset.data, f, protocol=pickle.HIGHEST_PROTOCOL)		
+		# exit()
+		
 		val_loader = DataLoader(
 			val_dataset, self.batch_size, pin_memory=True)
 		return train_loader, val_loader
@@ -75,6 +82,24 @@ class DatasetManagerBase:
 		else:
 			raise ValueError('Unrecognized model type.')
 
+	def get_train_inf_data(self):
+		'''
+		Used for BERT contextual augmentation file creation
+		'''
+		args = [self.data_dict['train'], self.input_length, None]
+		kwargs = {'pct_usage': self.pct_usage, 
+				  'geo': self.geo, 
+				  'small_label': self.small_label, 
+				  'small_prop': self.small_prop, 'balance_seed': self.balance_seed,
+				  'undersample': self.undersample, 'tokenizer': self.tokenizer}		
+		dataset = BertDataset(
+			self.data_dict['train'], self.input_length, None,
+			pct_usage=self.pct_usage, small_label=self.small_label,
+			small_prop=self.small_prop, balance_seed=self.balance_seed, 
+			keep_inf_data=True)
+		train_data = [(label, seq) for label, seq, _ in dataset.data]
+		inf_data = [(label, seq) for label, seq, _ in dataset.inf_data]
+		return train_data, inf_data
 
 class SSTDatasetManager(DatasetManagerBase):
 	def __init__(self, *args, **kwargs):
