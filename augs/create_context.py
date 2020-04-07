@@ -117,10 +117,7 @@ class BertAgent:
 		self.lr = lr
 		self.input_length = 80
 		self.batch_size = 16
-		# self.num_train_epochs = 9
-		########################################3
-		self.num_train_epochs = 1
-		#########################################
+		self.num_train_epochs = 9
 		self.checkpoint = 'bert-base-uncased'
 		self.output_dir = 'bert-ckpt'
 		self.weight_decay = 0.0
