@@ -117,7 +117,10 @@ class BertAgent:
 		self.lr = lr
 		self.input_length = 80
 		self.batch_size = 16
-		self.num_train_epochs = 9
+		# self.num_train_epochs = 9
+		########################################3
+		self.num_train_epochs = 1
+		#########################################
 		self.checkpoint = 'bert-base-uncased'
 		self.output_dir = 'bert-ckpt'
 		self.weight_decay = 0.0
@@ -279,7 +282,8 @@ def create_subj_files(split_num):
 			agent.augment()
 
 if __name__ == "__main__":
-	create_subj_files(0)
+	# create_subj_files(0)
+
 	# pct_usage = None
 	# lr = 5e-5
 	# seed = 0
@@ -291,10 +295,10 @@ if __name__ == "__main__":
 	# 	agent = BertAgent(lr, data_name, seed, pct_usage, 
 	# 				 	  small_label, small_prop, split_num=split_num)	
 
-	# print('Number of cpus: {}'.format(mp.cpu_count()))
-	# try:
-	# 	pool = mp.Pool(mp.cpu_count())
-	# 	pool.map(create_files, [8, 9])
-	# finally:
-	# 	pool.close()
-	# 	pool.join()
+	print('Number of cpus: {}'.format(mp.cpu_count()))
+	try:
+		pool = mp.Pool(mp.cpu_count())
+		pool.map(create_files, [0, 1])
+	finally:
+		pool.close()
+		pool.join()
