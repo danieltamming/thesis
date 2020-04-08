@@ -60,11 +60,11 @@ def experiment(balance_seed):
 								 undersample=undersample)
 				agent.run()
 
-experiment(0)
-# print('Number of cpus: {}'.format(mp.cpu_count()))
-# try:
-# 	pool = mp.Pool(mp.cpu_count())
-# 	pool.map(experiment, list(range(10)))
-# finally:
-# 	pool.close()
-# 	pool.join()
+# experiment(0)
+print('Number of cpus: {}'.format(mp.cpu_count()))
+try:
+	pool = mp.Pool(mp.cpu_count())
+	pool.map(experiment, list(range(10)))
+finally:
+	pool.close()
+	pool.join()
