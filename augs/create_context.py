@@ -270,7 +270,7 @@ def create_subj_files(split_num):
 	data_name = 'subj'
 	# for small_label in [0, 1]:
 	for small_label in [0]:
-		L = np.arange(0.1, 1.0, 0.1)
+		L = np.arange(0.4, 1.0, 0.1)
 		for small_prop in L:
 			small_prop = round(small_prop, 1)
 			print(data_name, small_label, small_prop)
