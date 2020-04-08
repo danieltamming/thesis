@@ -35,7 +35,7 @@ param_map = {
 }
 
 def experiment(balance_seed, split_num):
-	logger = initialize_logger(this_script_name, balance_seed, other=split_num)
+	# logger = initialize_logger(this_script_name, balance_seed, other=split_num)
 	# for small_prop in np.arange(0.1, 1.0, 0.1):
 	# 	small_prop = round(small_prop, 2)
 	# 	param_prop_map = param_map[small_prop]
@@ -67,11 +67,21 @@ def experiment(balance_seed, split_num):
 
 try:
 	split_num_list = list(range(10))
-	seed_list = list(range(2))
-	# seed_list = [3]
+	seed_list = [3]
 	params = list(itertools.product(seed_list, split_num_list))
+	missing = [(0, 0), (1, 0), (0, 1), (1, 1), (1, 2), (1, 3)]
+	params = missing + params
 	pool = mp.Pool(mp.cpu_count())
 	pool.starmap(experiment, params)
 finally:
 	pool.close()
 	pool.join()
+
+
+split_num_list = list(range(10))
+seed_list = [3]
+params = list(itertools.product(seed_list, split_num_list))
+missing = [(0, 0), (1, 0), (0, 1), (1, 1), (1, 2), (1, 3)]
+
+print(missing + params)
+print(len(missing+params))
