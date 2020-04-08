@@ -21,16 +21,6 @@ this_script_name = os.path.basename(__file__).split('.')[0]
 num_epochs = 100
 lr  = 0.001
 
-0.1: 0.3
-0.2: 0.3
-0.3: 0.3
-0.4: 0.3
-0.5: 0.4
-0.6: 0.4
-0.7: 0.7
-0.8: 0.5
-0.9: 0.9
-
 param_map = {
 	0.1: {'aug': (0.3, 3), 'under': 1, 'over': 2},
 	0.2: {'aug': (0.3, 4), 'under': 45, 'over': 3}, 
