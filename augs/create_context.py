@@ -268,7 +268,8 @@ def create_subj_files(split_num):
 	lr = 5e-5
 	seed = 0
 	data_name = 'subj'
-	for small_label in [0, 1]:
+	# for small_label in [0, 1]:
+	for small_label in [0]:
 		L = np.arange(0.1, 1.0, 0.1)
 		for small_prop in L:
 			small_prop = round(small_prop, 1)
@@ -295,7 +296,7 @@ if __name__ == "__main__":
 	# print('Number of cpus: {}'.format(mp.cpu_count()))
 	try:
 		pool = mp.Pool(mp.cpu_count())
-		pool.map(create_subj_files, [2, 3, 4])
+		pool.map(create_subj_files, [5, 6, 7])
 	finally:
 		pool.close()
 		pool.join()
