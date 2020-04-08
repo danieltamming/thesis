@@ -114,8 +114,8 @@ def plot_imbalance_experiments():
 	aug_mode = 'syn'
 	# aug_mode = 'trans'
 	# aug_mode = 'context'
-	data_name = 'sst'
-	# data_name = 'subj'
+	# data_name = 'sst'
+	data_name = 'subj'
 	filepath = 'logs/archived/bal_{}_{}_{}.log'.format(model, aug_mode, data_name)
 	# filepath = 'logs/archived/bal_rnn_context_odds_10seeds.log'
 	# filepath = 'logs/archived/older/bal_bert_trans_subj_pct.log'

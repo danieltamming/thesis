@@ -148,7 +148,7 @@ def get_sst(input_length, aug_mode, pct_usage=None,
 		for set_name in ['dev', 'test']:
 			set_path = os.path.join(data_path, set_name+'.txt')
 			data_dict[set_name] = read_no_aug(
-				set_path, input_length, False, None)
+				set_path, input_length, False, small_label)
 		train_small_label = read_context_aug(
 			aug_data_path, pct_usage, small_label, small_prop, seed)
 		set_path = os.path.join(data_path, 'train.txt')
@@ -183,7 +183,6 @@ def get_subj(input_length, aug_mode, pct_usage=None, small_label=None,
 		aug_file_path = os.path.join(data_path, 'trans_aug/subj.txt')
 		all_data = read_trans_aug(aug_file_path)
 	elif aug_mode == 'context':
-		raise NotImplementedError()
 		file_path = os.path.join(data_path,'subj.txt')
 		all_data = read_no_aug(file_path, input_length, True, None)
 	else:
@@ -194,7 +193,6 @@ def get_subj(input_length, aug_mode, pct_usage=None, small_label=None,
 		all_data, 0.1, False, seed=seed, split_num=split_num)
 	if aug_mode == 'context':
 		print('PLEASE TEST CONTEXT + SUBJ BEFORE USING')
-		exit()
 		train_other_labels = [tup for tup in train_data 
 							  if tup[0] != small_label]
 		aug_data_path = os.path.join(data_path, 'context_aug/')

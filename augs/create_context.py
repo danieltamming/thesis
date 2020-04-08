@@ -292,10 +292,10 @@ if __name__ == "__main__":
 	# 	agent = BertAgent(lr, data_name, seed, pct_usage, 
 	# 				 	  small_label, small_prop, split_num=split_num)	
 
-	print('Number of cpus: {}'.format(mp.cpu_count()))
+	# print('Number of cpus: {}'.format(mp.cpu_count()))
 	try:
 		pool = mp.Pool(mp.cpu_count())
-		pool.map(create_subj_files, [0, 1])
+		pool.map(create_subj_files, [2, 3, 4])
 	finally:
 		pool.close()
 		pool.join()

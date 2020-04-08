@@ -22,15 +22,15 @@ num_epochs = 100
 lr  = 0.001
 
 param_map = {
-	0.1: {'aug': (, ), 'under': , 'over': },
-	0.2: {'aug': (, ), 'under': , 'over': }, 
-	0.3: {'aug': (, ), 'under': , 'over': }, 
-	0.4: {'aug': (, ), 'under': , 'over': }, 
-	0.5: {'aug': (, ), 'under': , 'over': }, 
-	0.6: {'aug': (, ), 'under': , 'over': }, 
-	0.7: {'aug': (, ), 'under': , 'over': }, 
-	0.8: {'aug': (, ), 'under': , 'over': }, 
-	0.9: {'aug': (, ), 'under': , 'over': } 
+	0.1: {'aug': (0.4, 2), 'under': 53, 'over': 3},
+	0.2: {'aug': (0.4, 31), 'under': 74, 'over': 5}, 
+	0.3: {'aug': (0.4, 96), 'under': 31, 'over': 40}, 
+	0.4: {'aug': (0.5, 95), 'under': 90, 'over': 57}, 
+	0.5: {'aug': (0.5, 93), 'under': 99, 'over': 38}, 
+	0.6: {'aug': (0.6, 85), 'under': 95, 'over': 78}, 
+	0.7: {'aug': (0.7, 97), 'under': 99, 'over': 92}, 
+	0.8: {'aug': (0.7, 89), 'under': 81, 'over': 77}, 
+	0.9: {'aug': (0.7, 98), 'under': 82, 'over': 94} 
 }
 
 def experiment(balance_seed, split_num):
