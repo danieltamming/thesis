@@ -1,4 +1,5 @@
 import numpy as np
+import random
 
 def context_aug(seq, aug_dict, geo):
 	num_to_replace = min(np.random.geometric(geo)-1, len(aug_dict))
