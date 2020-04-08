@@ -64,7 +64,7 @@ def experiment(balance_seed):
 print('Number of cpus: {}'.format(mp.cpu_count()))
 try:
 	pool = mp.Pool(mp.cpu_count())
-	pool.map(experiment, list(range(20, 25)))
+	pool.map(experiment, list(range(25, 30)))
 finally:
 	pool.close()
 	pool.join()
