@@ -112,11 +112,11 @@ def plot_imbalance_experiments():
 	model = 'rnn'
 	# model = 'bert'
 	# aug_mode = 'syn'
-	aug_mode = 'trans'
-	# aug_mode = 'context'
-	# data_name = 'sst'
-	data_name = 'subj'
-	filepath = 'logs/archived/bal_{}_{}_{}.log'.format(model, aug_mode, data_name)
+	# aug_mode = 'trans'
+	aug_mode = 'context'
+	data_name = 'sst'
+	# data_name = 'subj'
+	filepath = 'logs/archived/valids/bal_{}_{}_{}.log'.format(model, aug_mode, data_name)
 	# filepath = 'logs/archived/bal_rnn_context_odds_10seeds.log'
 	# filepath = 'logs/archived/older/bal_bert_trans_subj_pct.log'
 	# filepath = 'logs/archived/older/bal_rnn_trans_subj_fine.log'
@@ -223,8 +223,8 @@ def plot_imbalance_tests():
 
 
 if __name__ == "__main__":
-	plot_imbalance_experiments()
-	# plot_imbalance_tests()
+	# plot_imbalance_experiments()
+	plot_imbalance_tests()
 	exit()
 	# filepath = 'logs/main/seed_0_other_0.5_num_3.log'
 	# experiments = {}
@@ -245,3 +245,13 @@ if __name__ == "__main__":
 	# 	if tup[0] not in [0.3, 0.7]:
 	# 		sns.lineplot(x=list(range(len(vec))), y=vec, label=tup[0])
 	# plt.show()
+
+# 0.4, 78
+# 0.2, 79
+# 0.3, 80
+# 0.5, 80.5
+# 0.3, 81
+# 0.4, 81
+# 0.7, 81.5
+# 0.8, 81.5
+# 0.9, 81.5
