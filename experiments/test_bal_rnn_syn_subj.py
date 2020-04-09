@@ -67,10 +67,10 @@ def experiment(balance_seed, split_num):
 
 
 try:
-	split_num_list = list(range(10))
-	seed_list = [3]
-	params = list(itertools.product(seed_list, split_num_list))
-	missing = [(0, 0), (1, 0), (0, 1), (1, 1), (1, 2), (1, 3)]
+	# split_num_list = list(range(10))
+	# seed_list = [3]
+	# params = list(itertools.product(seed_list, split_num_list))
+	missing = [(0,2), (0,3)]
 	params = missing + params
 	pool = mp.Pool(mp.cpu_count())
 	pool.starmap(experiment, params)
