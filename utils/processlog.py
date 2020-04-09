@@ -112,10 +112,10 @@ def plot_imbalance_experiments():
 	model = 'rnn'
 	# model = 'bert'
 	# aug_mode = 'syn'
-	# aug_mode = 'trans'
-	aug_mode = 'context'
-	data_name = 'sst'
-	# data_name = 'subj'
+	aug_mode = 'trans'
+	# aug_mode = 'context'
+	# data_name = 'sst'
+	data_name = 'subj'
 	filepath = 'logs/archived/bal_{}_{}_{}.log'.format(model, aug_mode, data_name)
 	# filepath = 'logs/archived/bal_rnn_context_odds_10seeds.log'
 	# filepath = 'logs/archived/older/bal_bert_trans_subj_pct.log'
@@ -161,8 +161,7 @@ def get_num_epochs(line):
 	return int(num_epochs)
 
 def plot_imbalance_tests():
-	# filepath = 'logs/archived/test_bal_rnn_syn_sst_20.log'
-	filepath = 'logs/archived/test_bal_rnn_trans_sst_20.log'
+	filepath = 'logs/archived/test_bal_rnn_context_sst.log'
 	methods = ['Augmentation', 'Oversample', 'Undersample']
 	df = pd.DataFrame(index=range(10, 100, 10))
 	for col_name in methods:
@@ -186,7 +185,8 @@ def plot_imbalance_tests():
 			num_epochs = get_num_epochs(line)
 			for _ in range(num_epochs):
 				line = f.readline()
-				# line = f.readline()
+				if is_validating(line):
+					line = f.readline()
 			line = f.readline()
 			# print(line)
 			assert is_validating(line)
