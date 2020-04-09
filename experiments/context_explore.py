@@ -26,6 +26,8 @@ param_map = {
 	0.5: {'aug': (0.4, 40), 'under': 12, 'over': 34} 
 }
 
+mode = 'test'
+
 def experiment(balance_seed):
 	logger = initialize_logger(this_script_name, balance_seed)
 	for small_prop in [0.1, 0.5]:
@@ -34,7 +36,7 @@ def experiment(balance_seed):
 		for small_label in [0, 1]:
 			geo, num_epochs = param_prop_map['aug']
 			agent = RnnAgent(device, logger, 'sst', 25, num_epochs+1, lr,
-							 'context', 'test', 128, 
+							 'context', mode, 128, 
 							 small_label=small_label, 
 							 small_prop=small_prop, 
 							 balance_seed=balance_seed, 
@@ -46,7 +48,7 @@ def experiment(balance_seed):
 				else:
 					num_epochs = param_prop_map['over']
 				agent = RnnAgent(device, logger, 'sst', 25, num_epochs+1, lr, 
-								 None, 'test', 128, 
+								 None, mode, 128, 
 								 small_label=small_label, 
 								 small_prop=small_prop, 
 								 balance_seed=balance_seed, 

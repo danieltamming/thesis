@@ -1,5 +1,6 @@
 import os
 import random
+from collections import Counter
 
 import numpy as np
 from torch.utils.data import DataLoader
@@ -37,6 +38,11 @@ class DatasetManagerBase:
 			kwargs = {'seed': balance_seed, 'tokenizer': self.tokenizer,
 					  'split_num': split_num}
 		self.data_dict = data_func(self.input_length, self.aug_mode, **kwargs)
+
+		# for split, data in self.data_dict.items():
+		# 	print(split, Counter([label for label, _, _ in data]))
+		# exit()
+
 		if model_type == 'rnn':
 			assert nlp is not None
 			self.nlp = nlp
@@ -48,6 +54,8 @@ class DatasetManagerBase:
 			train_dataset, self.batch_size, pin_memory=True, shuffle=True)
 		val_dataset = self.get_dataset(val_type)
 
+		print('train', Counter([label for label, _, _ in train_dataset.data]))
+		print('valid', Counter([label for label, _, _ in val_dataset.data]))
 		# import pickle
 		# with open('test_split_{}.pickle'.format(self.split_num), 'wb') as f:
 		# 	pickle.dump(val_dataset.data, f, protocol=pickle.HIGHEST_PROTOCOL)		

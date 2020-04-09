@@ -148,7 +148,12 @@ def get_sst(input_length, aug_mode, pct_usage=None,
 		for set_name in ['dev', 'test']:
 			set_path = os.path.join(data_path, set_name+'.txt')
 			data_dict[set_name] = read_no_aug(
-				set_path, input_length, False, small_label)
+				set_path, input_length, False, None)
+
+		# for split, data in data_dict.items():
+		# 	print(split, Counter([label for label, _, _ in data]))
+		# print(50*'-')
+
 		train_small_label = read_context_aug(
 			aug_data_path, pct_usage, small_label, small_prop, seed)
 		set_path = os.path.join(data_path, 'train.txt')
@@ -158,6 +163,10 @@ def get_sst(input_length, aug_mode, pct_usage=None,
 									seq, add_special_tokens=False), aug) 
 							  for label, seq, aug in train_other_labels]
 		data_dict['train'] = train_small_label + train_other_labels
+
+		# for split, data in data_dict.items():
+		# 	print(split, Counter([label for label, _, _ in data]))
+			
 		return data_dict
 	else:
 		raise ValueError('Unrecognized augmentation.')
@@ -193,8 +202,12 @@ def get_subj(input_length, aug_mode, pct_usage=None, small_label=None,
 		all_data, 0.1, False, seed=seed, split_num=split_num)
 	if aug_mode == 'context':
 		print('PLEASE TEST CONTEXT + SUBJ BEFORE USING')
-		train_other_labels = [tup for tup in train_data 
-							  if tup[0] != small_label]
+		train_other_labels = [(label, tokenizer.encode(
+									seq, add_special_tokens=False), aug) 
+							  for label, seq, aug in train_data
+							  if label != small_label]
+		# train_other_labels = [tup for tup in train_data 
+							  # if tup[0] != small_label]
 		aug_data_path = os.path.join(data_path, 'context_aug/')
 		train_small_label = read_context_aug(
 			aug_data_path, pct_usage, small_label, small_prop, seed)
