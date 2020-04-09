@@ -71,7 +71,7 @@ try:
 	# seed_list = [3]
 	# params = list(itertools.product(seed_list, split_num_list))
 	missing = [(0,2), (0,3)]
-	params = missing + params
+	params = missing
 	pool = mp.Pool(mp.cpu_count())
 	pool.starmap(experiment, params)
 finally:
