@@ -296,7 +296,7 @@ if __name__ == "__main__":
 	# print('Number of cpus: {}'.format(mp.cpu_count()))
 	try:
 		pool = mp.Pool(mp.cpu_count())
-		pool.map(create_subj_files, [0, 1, 2, 3])
+		pool.map(create_subj_files, [4, 5])
 	finally:
 		pool.close()
 		pool.join()
