@@ -269,8 +269,8 @@ def create_subj_files(split_num):
 	seed = 0
 	data_name = 'subj'
 	# for small_label in [0, 1]:
-	for small_label in [1]:
-		L = np.arange(0.1, 1.0, 0.1)
+	for small_label in [0]:
+		L = [0.7, 0.8, 0.9]
 		for small_prop in L:
 			small_prop = round(small_prop, 1)
 			print(data_name, small_label, small_prop)
@@ -280,23 +280,10 @@ def create_subj_files(split_num):
 			agent.augment()
 
 if __name__ == "__main__":
-	# create_subj_files(0)
-
-	# pct_usage = None
-	# lr = 5e-5
-	# seed = 0
-	# data_name = 'subj'
-	# small_label = 0
-	# small_prop = 0.5
-	# for split_num in range(10):
-	# 	small_prop = round(small_prop, 1)
-	# 	agent = BertAgent(lr, data_name, seed, pct_usage, 
-	# 				 	  small_label, small_prop, split_num=split_num)	
-
-	# print('Number of cpus: {}'.format(mp.cpu_count()))
-	try:
-		pool = mp.Pool(mp.cpu_count())
-		pool.map(create_subj_files, [4, 5])
-	finally:
-		pool.close()
-		pool.join()
+	# try:
+	# 	pool = mp.Pool(mp.cpu_count())
+	# 	pool.map(create_subj_files, [4, 5])
+	# finally:
+	# 	pool.close()
+	# 	pool.join()
+	create_subj_files(0)
