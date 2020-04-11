@@ -269,8 +269,8 @@ def create_subj_files(split_num):
 	seed = 0
 	data_name = 'subj'
 	# for small_label in [0, 1]:
-	for small_label in [1]:
-		L = np.arange(0.2, 1.0, 0.1)
+	for small_label in [0]:
+		L = np.arange(0.1, 0.4, 0.1)
 		for small_prop in L:
 			small_prop = round(small_prop, 1)
 			print(data_name, small_label, small_prop)
@@ -282,7 +282,7 @@ def create_subj_files(split_num):
 if __name__ == "__main__":
 	try:
 		pool = mp.Pool(mp.cpu_count())
-		pool.map(create_subj_files, [4, 5])
+		pool.map(create_subj_files, [8, 9])
 	finally:
 		pool.close()
 		pool.join()
