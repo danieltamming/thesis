@@ -280,10 +280,10 @@ def create_subj_files(split_num):
 			agent.augment()
 
 if __name__ == "__main__":
-	# try:
-	# 	pool = mp.Pool(mp.cpu_count())
-	# 	pool.map(create_subj_files, [6, 7, 8])
-	# finally:
-	# 	pool.close()
-	# 	pool.join()
-	create_subj_files(3)
+	try:
+		pool = mp.Pool(mp.cpu_count())
+		pool.map(create_subj_files, [4, 5])
+	finally:
+		pool.close()
+		pool.join()
+	# create_subj_files(3)
