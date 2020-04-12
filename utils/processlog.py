@@ -161,7 +161,7 @@ def get_num_epochs(line):
 	return int(num_epochs)
 
 def plot_imbalance_tests():
-	filepath = 'logs/archived/tests/test_bal_rnn_trans_sst.log'
+	filepath = 'logs/archived/tests/test_bal_rnn_trans_subj.log'
 	methods = ['Augmentation', 'Oversample', 'Undersample']
 	df = pd.DataFrame(index=range(10, 100, 10))
 	for col_name in methods:
@@ -223,8 +223,8 @@ def plot_imbalance_tests():
 
 
 if __name__ == "__main__":
-	plot_imbalance_experiments()
-	# plot_imbalance_tests()
+	# plot_imbalance_experiments()
+	plot_imbalance_tests()
 	exit()
 	# filepath = 'logs/main/seed_0_other_0.5_num_3.log'
 	# experiments = {}
