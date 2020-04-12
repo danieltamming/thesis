@@ -269,9 +269,8 @@ def create_subj_files(split_num):
 	seed = 0
 	data_name = 'subj'
 	# for small_label in [0, 1]:
-	for small_label in [0]:
-		L = [0.2, 0.3]
-		# L = np.arange(0.3, 1.0, 0.1)
+	for small_label in [1]:
+		L = np.arange(0.3, 1.0, 0.1)
 		for small_prop in L:
 			small_prop = round(small_prop, 1)
 			print(data_name, small_label, small_prop)
@@ -287,4 +286,4 @@ if __name__ == "__main__":
 	# finally:
 	# 	pool.close()
 	# 	pool.join()
-	create_subj_files(9)
+	create_subj_files(3)
