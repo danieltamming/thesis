@@ -23,7 +23,8 @@ lr  = 0.001
 
 def experiment(balance_seed):
 	logger = initialize_logger(this_script_name, balance_seed)
-	for pct_usage in np.arange(0.1, 1.1, 0.1):
+	for pct_usage in np.arange(0.1, 1.0, 0.1):
+		pct_usage = round(pct_usage, 2)
 		for geo in np.arange(0.1, 1.0, 0.1):
 			geo = round(geo, 2)
 			agent = RnnAgent(device, logger, 'sst', 25, num_epochs, lr,
@@ -32,7 +33,6 @@ def experiment(balance_seed):
 							 balance_seed=balance_seed, 
 							 geo=geo)
 			agent.run()
-		pct_usage = round(pct_usage, 2)
 		agent = RnnAgent(device, logger, 'sst', 25, num_epochs, lr, 
 						 None, 'dev', 128, 
 						 pct_usage=pct_usage, 
@@ -42,7 +42,7 @@ def experiment(balance_seed):
 print('Number of cpus: {}'.format(mp.cpu_count()))
 try:
 	pool = mp.Pool(mp.cpu_count())
-	pool.map(experiment, list(range(30)))
+	pool.map(experiment, list(range(10)))
 finally:
 	pool.close()
 	pool.join()

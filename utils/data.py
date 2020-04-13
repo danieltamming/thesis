@@ -153,20 +153,22 @@ def get_sst(input_length, aug_mode, pct_usage=None,
 			set_path = os.path.join(data_path, set_name+'.txt')
 			data_dict[set_name] = read_no_aug(
 				set_path, input_length, False, None)
-
-		# for split, data in data_dict.items():
-		# 	print(split, Counter([label for label, _, _ in data]))
-		# print(50*'-')
-
-		train_small_label = read_context_aug(
-			aug_data_path, pct_usage, small_label, small_prop, seed)
-		set_path = os.path.join(data_path, 'train.txt')
-		train_other_labels = read_no_aug(set_path, input_length, 
-										False, small_label)
-		train_other_labels = [(label, tokenizer.encode(
-									seq, add_special_tokens=False), aug) 
-							  for label, seq, aug in train_other_labels]
-		data_dict['train'] = train_small_label + train_other_labels
+		if pct_usage is not None:
+			train = read_context_aug(
+				aug_data_path, pct_usage, small_label, small_prop, seed)
+			print(Counter([tup[0] for tup in train]))
+			print(train[0])
+			data_dict['train'] = train
+		else:
+			train_small_label = read_context_aug(
+				aug_data_path, pct_usage, small_label, small_prop, seed)
+			set_path = os.path.join(data_path, 'train.txt')
+			train_other_labels = read_no_aug(set_path, input_length, 
+											False, small_label)
+			train_other_labels = [(label, tokenizer.encode(
+										seq, add_special_tokens=False), aug) 
+								  for label, seq, aug in train_other_labels]
+			data_dict['train'] = train_small_label + train_other_labels
 
 		# for split, data in data_dict.items():
 		# 	print(split, Counter([label for label, _, _ in data]))
