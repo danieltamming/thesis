@@ -107,17 +107,28 @@ def read_context_aug(aug_data_path, pct_usage, small_label,
 	'''
 	Unlike trans aug, this only retrieves that train set
 	'''
+	if pct_usage is None:
+		pct_usage_display = pct_usage
+	else:
+		pct_usage_display = int(100*pct_usage)
+	if small_prop is None:
+		small_prop_display = small_prop
+	else:
+		small_prop_display = int(100*small_prop)
+
 	if split_num is None:
-		filename = '{}-{}-{}-{}.pickle'.format(
-			pct_usage, small_label, int(100*small_prop), seed)
+		filename = '{}-{}-{}-{}-{}.pickle'.format(
+			pct_usage_display, small_label, small_prop_display, seed, 0)
 	else:
 		filename = '{}-{}-{}-{}-{}.pickle'.format(
-			pct_usage, small_label, int(100*small_prop), seed, split_num)		
+			pct_usage_display, small_label, small_prop_display, seed, split_num)		
 	filepath = os.path.join(aug_data_path, filename)
 	with open(filepath, 'rb') as f:
 		data = pickle.load(f)
-	data = [(label, seq, aug) for label, seq, aug in data 
-			if label == small_label]
+	# data = [(label, seq, aug) for label, seq, aug in data 
+	# 		if label == small_label]
+	if small_label is not None:
+		assert all([label == small_label for label, _, _ in data])
 	return data
 
 def get_sst(input_length, aug_mode, pct_usage=None, 
@@ -157,7 +168,6 @@ def get_sst(input_length, aug_mode, pct_usage=None,
 			train = read_context_aug(
 				aug_data_path, pct_usage, small_label, small_prop, seed)
 			print(Counter([tup[0] for tup in train]))
-			print(train[0])
 			data_dict['train'] = train
 		else:
 			train_small_label = read_context_aug(

@@ -276,7 +276,6 @@ def create_sst_files(seed):
 					 	  small_label, small_prop)
 		agent.train()
 		agent.augment()
-		break
 
 def create_subj_files(split_num):
 	pct_usage = None
@@ -295,10 +294,10 @@ def create_subj_files(split_num):
 			agent.augment()
 
 if __name__ == "__main__":
-	# try:
-	# 	pool = mp.Pool(mp.cpu_count())
-	# 	pool.map(create_subj_files, [8, 9])
-	# finally:
-	# 	pool.close()
-	# 	pool.join()
-	create_sst_files(0)
+	try:
+		pool = mp.Pool(mp.cpu_count())
+		pool.map(create_sst_files, [0, 1, 2, 3])
+	finally:
+		pool.close()
+		pool.join()
+	# create_sst_files(0)
