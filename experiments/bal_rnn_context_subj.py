@@ -35,6 +35,7 @@ def experiment(split_num):
 								 'context', 'dev', 128, 
 								 small_label=small_label, 
 								 small_prop=small_prop, 
+								 balance_seed=balance_seed,
 								 split_num=split_num,
 								 geo=geo)
 				agent.run()
@@ -43,6 +44,7 @@ def experiment(split_num):
 								 None, 'dev', 128, 
 								 small_label=small_label, 
 								 small_prop=small_prop, 
+								 balance_seed=balance_seed,
 								 split_num=split_num, 
 								 undersample=undersample)
 				agent.run()
@@ -53,5 +55,3 @@ try:
 finally:
 	pool.close()
 	pool.join()
-
-# experiment(0, 0)
