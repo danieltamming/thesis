@@ -33,7 +33,8 @@ def get_synonyms(word, tag, min_reputation):
 			synonym = lemma.name().replace('_',' ').replace('-',' ')
 			if synonym != word: 
 				synonyms.update({synonym:lemma.count()})
-	synonyms = Counter({synonym:synonyms[synonym] for synonym in synonyms if synonyms[synonym] >= min_reputation})
+	synonyms = Counter({synonym: synonyms[synonym] for synonym in synonyms 
+						if synonyms[synonym] >= min_reputation})
 	return [word.split() for word,_ in synonyms.most_common()]
 
 def get_synonym_dict(seq, min_reputation):
