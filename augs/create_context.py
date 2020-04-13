@@ -141,7 +141,14 @@ class BertAgent:
 			self.mngr = SubjDatasetManager(*mngr_args, **mngr_kwargs)
 		else:
 			raise ValueError('Data name not recognized.')
-		self.train_data, self.inf_data = self.mngr.get_train_inf_data()
+		if self.small_label is not None  and self.small_prop is not None:
+			self.train_data, self.inf_data = self.mngr.get_train_inf_data()
+		elif self.pct_usage is not None:
+			self.train_data = [(label, seq) for label, seq, aug 
+								in self.mngr.get_dataset('train').data]
+			self.inf_data = self.train_data
+		else:
+			ValueError('Invalid input.')
 
 		# with open('split_{}.pickle'.format(self.split_num), 'wb') as f:
 		# 	pickle.dump(self.train_data, f, protocol=pickle.HIGHEST_PROTOCOL)		
@@ -250,18 +257,18 @@ class BertAgent:
 			pickle.dump(data, f, protocol=pickle.HIGHEST_PROTOCOL)
 
 def create_sst_files(seed):
-	pct_usage = None
+	small_label = None
+	small_prop = None
 	lr = 5e-5
 	data_name = 'sst'
-	for small_label in [0, 1]:
-		L = [0.2, 0.4, 0.6, 0.8]
-		for small_prop in L:
-			small_prop = round(small_prop, 1)
-			print(data_name, small_label, small_prop)
-			agent = BertAgent(lr, data_name, seed, pct_usage, 
-						 	  small_label, small_prop)
-			agent.train()
-			agent.augment()
+	for pct_usage in np.arange(0.1, 1.0, 0.1):
+		pct_usage = round(pct_usage, 1)
+		print(data_name, small_label, small_prop)
+		agent = BertAgent(lr, data_name, seed, pct_usage, 
+					 	  small_label, small_prop)
+		agent.train()
+		agent.augment()
+		break
 
 def create_subj_files(split_num):
 	pct_usage = None
@@ -286,4 +293,4 @@ if __name__ == "__main__":
 	# finally:
 	# 	pool.close()
 	# 	pool.join()
-	create_subj_files(6)
+	create_sst_files(0)
