@@ -22,7 +22,8 @@ this_script_name = os.path.basename(__file__).split('.')[0]
 num_epochs = 100
 lr  = 0.001
 
-def experiment(balance_seed, split_num):
+def experiment(split_num):
+	balance_seed = 0
 	logger = initialize_logger(
 		this_script_name, balance_seed, other=split_num)
 	for small_prop in np.arange(0.1, 1.0, 0.1):
@@ -34,7 +35,6 @@ def experiment(balance_seed, split_num):
 								 'context', 'dev', 128, 
 								 small_label=small_label, 
 								 small_prop=small_prop, 
-								 balance_seed=balance_seed, 
 								 split_num=split_num,
 								 geo=geo)
 				agent.run()
@@ -43,18 +43,13 @@ def experiment(balance_seed, split_num):
 								 None, 'dev', 128, 
 								 small_label=small_label, 
 								 small_prop=small_prop, 
-								 balance_seed=balance_seed,
 								 split_num=split_num, 
 								 undersample=undersample)
 				agent.run()
 
 try:
-	split_num_list = list(range(10))
-	seed_list = list(range(3))
-	# seed_list = [3]
-	params = list(itertools.product(seed_list, split_num_list))
 	pool = mp.Pool(mp.cpu_count())
-	pool.starmap(experiment, params)
+	pool.map(experiment, list(range(10)))
 finally:
 	pool.close()
 	pool.join()
