@@ -205,21 +205,17 @@ def get_subj(input_length, aug_mode, pct_usage=None, small_label=None,
 	dev_data, train_data = partition_within_classes(
 		all_data, 0.1, False, seed=seed, split_num=split_num)
 	if aug_mode == 'context':
-		print('PLEASE TEST CONTEXT + SUBJ BEFORE USING')
 		train_other_labels = [(label, tokenizer.encode(
 									seq, add_special_tokens=False), aug) 
 							  for label, seq, aug in train_data
 							  if label != small_label]
-		# train_other_labels = [tup for tup in train_data 
-							  # if tup[0] != small_label]
 		aug_data_path = os.path.join(data_path, 'context_aug/')
 		train_small_label = read_context_aug(
 			aug_data_path, pct_usage, small_label, small_prop, seed, 
 			split_num=split_num)
 		train_data = train_other_labels + train_small_label
-		print(Counter([tup[0] for tup in train_small_label]))
-		print(Counter([tup[0] for tup in train_other_labels]))
-		exit()
+		print(Counter([tup[0] for tup in train_data]))
+		print(Counter([tup[0] for tup in dev_data]))
 	# since subj uses crosstest we'll refer to dev set as test and dev
 	return {'test': dev_data, 'dev': dev_data, 'train': train_data}
 
