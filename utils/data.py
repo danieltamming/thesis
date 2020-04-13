@@ -103,12 +103,16 @@ def read_trans_aug(set_path):
 	return set_data
 
 def read_context_aug(aug_data_path, pct_usage, small_label, 
-					 small_prop, seed):
+					 small_prop, seed, split_num=None):
 	'''
 	Unlike trans aug, this only retrieves that train set
 	'''
-	filename = '{}-{}-{}-{}.pickle'.format(pct_usage, small_label, 
-										   int(100*small_prop), seed)
+	if split_num is None:
+		filename = '{}-{}-{}-{}.pickle'.format(
+			pct_usage, small_label, int(100*small_prop), seed)
+	else:
+		filename = '{}-{}-{}-{}-{}.pickle'.format(
+			pct_usage, small_label, int(100*small_prop), seed, split_num)		
 	filepath = os.path.join(aug_data_path, filename)
 	with open(filepath, 'rb') as f:
 		data = pickle.load(f)
@@ -210,7 +214,8 @@ def get_subj(input_length, aug_mode, pct_usage=None, small_label=None,
 							  # if tup[0] != small_label]
 		aug_data_path = os.path.join(data_path, 'context_aug/')
 		train_small_label = read_context_aug(
-			aug_data_path, pct_usage, small_label, small_prop, seed)
+			aug_data_path, pct_usage, small_label, small_prop, seed, 
+			split_num=split_num)
 		train_data = train_other_labels + train_small_label
 		print(Counter([tup[0] for tup in train_small_label]))
 		print(Counter([tup[0] for tup in train_other_labels]))
