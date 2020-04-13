@@ -247,10 +247,14 @@ class BertAgent:
 			assert clean_seq == seq.tolist()[1:1+len(clean_seq)]
 			data.append((cat, clean_seq, aug))
 
+		if self.small_prop is None:
+			small_prop_display = self.small_prop
+		else:
+			small_prop_display = int(100*self.small_prop)
 		context_aug_filepath = ('../DownloadedData/{}/context_aug'
 			'/{}-{}-{}-{}-{}.pickle'.format(
 				self.data_name, self.pct_usage, self.small_label, 
-				int(100*self.small_prop), self.seed, self.split_num
+				small_prop_display, self.seed, self.split_num
 			)
 		)
 		with open(context_aug_filepath, 'wb') as f:
