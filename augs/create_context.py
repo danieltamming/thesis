@@ -296,7 +296,7 @@ def create_subj_files(split_num):
 if __name__ == "__main__":
 	try:
 		pool = mp.Pool(mp.cpu_count())
-		pool.map(create_sst_files, [10, 11])
+		pool.map(create_sst_files, [12, 13, 14])
 	finally:
 		pool.close()
 		pool.join()

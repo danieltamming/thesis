@@ -1,9 +1,13 @@
 from collections import Counter
+import os
 
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
+
+import matplotlib.style as style
+# style.use('fivethirtyeight')
 
 from mpl_toolkits.mplot3d import Axes3D
 
@@ -263,10 +267,71 @@ def plot_imbalance_tests():
 	plt.show()
 	return df
 
+def get_imbalance_tests_df(filepath):
+	methods = ['SR', 'BT', 'CA', 'Oversample', 'Undersample']
+	df = pd.DataFrame(index=range(10, 100, 10))
+	for col_name in methods:
+		df[col_name] = [[] for _ in range(len(df))]
+	filenames_list = ['test_bal_rnn_syn_sst.log', 
+					 'test_bal_rnn_trans_sst.log',
+					 'test_bal_rnn_context_sst.log']
+	aug_modes_list = ['SR', 'BT', 'CA']
+	for filename, aug_mode in zip(filenames_list, aug_modes_list):
+		filepath = os.path.join('logs/archived/tests/', filename)
+		with open(filepath) as f:
+			line = f.readline()
+			if 'RUN START' in line:
+				line = f.readline()
+			while line:
+				small_prop = get_small_prop(line)
+				undersample = get_undersample(line)
+				aug_mode_str = get_aug_mode(line)
+				geo = get_geo(line)
+				if aug_mode_str == 'None':
+					if undersample:
+						mode = 'Undersample'
+					else:
+						mode = 'Oversample'
+				else:
+					mode = aug_mode
+				num_epochs = get_num_epochs(line)
+				for _ in range(num_epochs):
+					line = f.readline()
+					if is_validating(line):
+						line = f.readline()
+				line = f.readline()
+				# print(line)
+				assert is_validating(line)
+				df.loc[100*small_prop, mode].append(get_acc(line))
+				line = f.readline()
+	for col_name in methods:
+		df[col_name+'_mean'] = df[col_name].apply(np.mean)
+		df[col_name+'_std'] = df[col_name].apply(np.std)
+	return df.drop(columns=methods)
+
+def plot_all_aug_imbalance_tests():
+	filepath = 'logs/archived/tests/test_bal_rnn_syn_sst.log'
+	df = get_imbalance_tests_df(filepath)
+
+	for m in ['SR', 'BT', 'CA', 'Oversample', 'Undersample']:
+		sns.lineplot(x=df.index, y=m+'_mean', data=df, label=m)
+		plt.fill_between(
+			df.index, 
+			df[m+'_mean'] - df[m+'_std'], 
+			df[m+'_mean'] + df[m+'_std'],
+			alpha=0.1
+		)
+	plt.xlabel('Percentage of Minority Label Examples Left In Training Set')
+	plt.ylabel('Accuracy (%)')
+	plt.legend()
+	plt.show()
+	return df
+
 
 if __name__ == "__main__":
-	plot_imbalance_experiments()
+	# plot_imbalance_experiments()
 	# plot_imbalance_tests()
+	plot_all_aug_imbalance_tests()
 	exit()
 	# filepath = 'logs/main/seed_0_other_0.5_num_3.log'
 	# experiments = {}
@@ -287,13 +352,3 @@ if __name__ == "__main__":
 	# 	if tup[0] not in [0.3, 0.7]:
 	# 		sns.lineplot(x=list(range(len(vec))), y=vec, label=tup[0])
 	# plt.show()
-
-# 0.4, 78
-# 0.2, 79
-# 0.3, 80
-# 0.5, 80.5
-# 0.3, 81
-# 0.4, 81
-# 0.7, 81.5
-# 0.8, 81.5
-# 0.9, 81.5
