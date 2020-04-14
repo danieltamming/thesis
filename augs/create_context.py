@@ -269,7 +269,7 @@ def create_sst_files(seed):
 	small_prop = None
 	lr = 5e-5
 	data_name = 'sst'
-	for pct_usage in np.arange(0.1, 1.0, 0.1):
+	for pct_usage in np.arange(0.2, 1.0, 0.1):
 		pct_usage = round(pct_usage, 1)
 		print(data_name, small_label, small_prop)
 		agent = BertAgent(lr, data_name, seed, pct_usage, 
@@ -296,7 +296,7 @@ def create_subj_files(split_num):
 if __name__ == "__main__":
 	try:
 		pool = mp.Pool(mp.cpu_count())
-		pool.map(create_sst_files, [12, 13, 14])
+		pool.map(create_sst_files, [12, 13])
 	finally:
 		pool.close()
 		pool.join()
