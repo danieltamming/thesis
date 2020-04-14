@@ -20,7 +20,7 @@ from utils.parsing import get_device
 device = get_device()
 this_script_name = os.path.basename(__file__).split('.')[0]
 num_epochs = 4
-data_name = 'trans'
+data_name = 'sst'
 aug_mode = 'synonym'
 batch_size = 32
 accumulation_steps = 1
