@@ -51,18 +51,21 @@ def get_geo(line):
 	geo = line.split('geo is ')[1].split(',', 1)[0]
 	return float(geo)
 
-def read_pct_desc(line):
-	aug_mode = get_aug_mode(line)
-	pct_usage = get_pct_usage(line)
-	if aug_mode == 'None':
-		return (-1, pct_usage, None)
-	else:
-		geo = get_geo(line)
-		return (geo, pct_usage, aug_mode)
+# def read_pct_desc(line):
+# 	aug_mode = get_aug_mode(line)
+# 	pct_usage = get_pct_usage(line)
+# 	if aug_mode == 'None':
+# 		return (-1, pct_usage, None)
+# 	else:
+# 		geo = get_geo(line)
+# 		return (geo, pct_usage, aug_mode)
 
-def read_imbalance_desc(line):
+def read_imbalance_desc(line, avg_across_labels):
 	aug_mode = get_aug_mode(line)
-	small_label = get_small_label(line)
+	if avg_across_labels:
+		small_label = 'both'
+	else:
+		small_label = get_small_label(line)
 	small_prop = get_small_prop(line)
 	if aug_mode == 'None':
 		undersample = get_undersample(line)
@@ -70,6 +73,15 @@ def read_imbalance_desc(line):
 	else:
 		geo = get_geo(line)
 		return (geo, None, small_label, small_prop)
+
+def read_pct_desc(line):
+	aug_mode = get_aug_mode(line)
+	pct_usage = get_pct_usage(line)
+	if aug_mode == 'None':
+		return (-1, pct_usage)
+	else:
+		geo = get_geo(line)
+		return (geo, pct_usage)	
 
 def plot_mat(mat, err_bars, *args, **kwargs):
 	avg = mat.mean(0)
@@ -83,48 +95,7 @@ def plot_mat(mat, err_bars, *args, **kwargs):
 	plt.plot(np.argmax(avg), avg.max(), kwargs['color'], marker='o')
 	# plt.hlines(np.max(avg), 0, 100, color=kwargs['color'])
 
-def read_experiments(filepath, avg_across_labels):
-	experiments = {}
-	with open(filepath) as f:
-		line = f.readline()
-		if 'RUN START' in line:
-			line = f.readline()
-		while line:
-			tup = read_imbalance_desc(line)
-			if avg_across_labels:
-				tup = (tup[0], tup[1], 'both', tup[3]) # ignore small_label
-			accs = []
-			line = f.readline()
-			while is_training(line) or is_validating(line):
-				if is_validating(line):
-					accs.append(get_acc(line))
-				line = f.readline()
-			# if len(accs) != 100:
-			# 	continue
-			if tup not in experiments:
-				experiments[tup] = np.array(accs)
-			else:
-				experiments[tup] = np.vstack([experiments[tup], np.array(accs)])
-	return experiments
-
-def plot_imbalance_experiments():
-	avg_across_labels = True
-	model = 'rnn'
-	# model = 'bert'
-	# aug_mode = 'syn'
-	# aug_mode = 'trans'
-	aug_mode = 'context'
-	data_name = 'sst'
-	# data_name = 'subj'
-	filepath = 'logs/archived/valids/bal_{}_{}_{}.log'.format(model, aug_mode, data_name)
-	# filepath = 'logs/archived/bal_rnn_context_odds_10seeds.log'
-	# filepath = 'logs/archived/older/bal_bert_trans_subj_pct.log'
-	# filepath = 'logs/archived/older/bal_rnn_trans_subj_fine.log'
-	err_bars = False
-	experiments = read_experiments(filepath, avg_across_labels)
-	
-	averages = experiments
-
+def plot_bal_experiments(averages, data_name, aug_mode, err_bars):
 	for small_prop in sorted(list(set(key[3] for key in averages))):
 		small_prop_averages = {key: avg for key, avg in averages.items()
 							   if key[3] == small_prop}
@@ -155,6 +126,77 @@ def plot_imbalance_experiments():
 				plot_mat(100*undersample_avg, err_bars, label='undersampling', color='r', alpha=0.5)
 				plt.legend()
 				plt.show()
+
+def read_experiments(filepath, avg_across_labels, setting):
+	experiments = {}
+	with open(filepath) as f:
+		line = f.readline()
+		if 'RUN START' in line:
+			line = f.readline()
+		while line:
+			if setting == 'bal':
+				tup = read_imbalance_desc(line, avg_across_labels) # ignore small_label
+			else:
+				tup = read_pct_desc(line)
+			accs = []
+			line = f.readline()
+			while is_training(line) or is_validating(line):
+				if is_validating(line):
+					accs.append(get_acc(line))
+				line = f.readline()
+			# if len(accs) != 100:
+			# 	continue
+			if tup not in experiments:
+				experiments[tup] = np.array(accs)
+			else:
+				experiments[tup] = np.vstack([experiments[tup], np.array(accs)])
+	return experiments
+
+def plot_imbalance_experiments():
+	avg_across_labels = True
+	# setting = 'bal'
+	setting = 'pct'
+	model = 'rnn'
+	# model = 'bert'
+	aug_mode = 'syn'
+	# aug_mode = 'trans'
+	# aug_mode = 'context'
+	data_name = 'sst'
+	# data_name = 'subj'
+	filepath = 'logs/archived/valids/{}_{}_{}_{}.log'.format(setting, model, aug_mode, data_name)
+	# filepath = 'logs/archived/bal_rnn_context_odds_10seeds.log'
+	# filepath = 'logs/archived/older/bal_bert_trans_subj_pct.log'
+	# filepath = 'logs/archived/older/bal_rnn_trans_subj_fine.log'
+	err_bars = False
+	experiments = read_experiments(filepath, avg_across_labels, setting)
+
+	if setting == 'bal':
+		plot_bal_experiments(experiments, data_name, aug_mode, err_bars)
+	else:
+		averages = experiments
+		for pct_usage in sorted(list(set(key[1] for key in averages))):
+			pct_usage_averages = {key: avg for key, avg in averages.items()
+								   if key[1] == pct_usage}
+
+			no_aug_avg = pct_usage_averages[(-1, pct_usage)]
+			del pct_usage_averages[(-1, pct_usage)]
+
+			colors = ['tab:blue', 'tab:orange', 'tab:cyan', 'tab:green',
+					  'tab:purple', 'tab:brown', 'tab:pink', 'tab:gray', 
+					  'tab:olive', 'tab:red']
+			for ((geo, _), vec), color in zip(sorted(pct_usage_averages.items()), colors):
+				# if small_prop == 1.0:
+				# 	continue
+				plt.title('Augmenting {} with {} using {}% of training data.'.format(
+						  		data_name, aug_mode, 100*pct_usage))
+				plt.ylabel('Validation Accuracy (%)')
+				plt.xlabel('Training Epoch')
+
+				plot_mat(100*vec, err_bars, label='geo {}'.format(geo), color=color, alpha=0.5)
+			# if small_prop != 1.0:
+			plot_mat(100*no_aug_avg, err_bars, label='no aug', color='r', alpha=0.5)
+			plt.legend()
+			plt.show()
 
 def get_num_epochs(line):
 	num_epochs = line.split('max_epochs is ')[1].split(',', 1)[0]
