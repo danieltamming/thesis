@@ -53,7 +53,7 @@ def experiment(balance_seed):
 	agent = BertAgent(device, logger, data_name, 25, num_epochs, 
 					  aug_mode, 'dev', batch_size, accumulation_steps,
 					  **kwargs)
-	# agent.run()
+	agent.run()
 
 
 arg_dict = get_args()
