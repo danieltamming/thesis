@@ -6,6 +6,7 @@ import pickle
 import multiprocessing as mp
 from collections import Counter
 from itertools import cycle, islice
+import argparse
 
 current_dir = os.path.dirname(
 	os.path.abspath(inspect.getfile(inspect.currentframe()))
@@ -106,7 +107,7 @@ class TextDataset(Dataset):
 
 
 class BertAgent:
-	def __init__(self, lr, data_name, seed, pct_usage, 
+	def __init__(self, lr, device, data_name, seed, pct_usage, 
 				 small_label, small_prop, split_num=0):
 		self.data_name = data_name
 		self.seed = seed
@@ -124,7 +125,7 @@ class BertAgent:
 		self.max_grad_norm = 1.0
 		self.tokenizer = BertTokenizer.from_pretrained(self.checkpoint)
 		self.model = BertForMaskedLM.from_pretrained(self.checkpoint)
-		self.device = (torch.device(get_device() if torch.cuda.is_available() 
+		self.device = (torch.device(device if torch.cuda.is_available() 
 					   else 'cpu'))
 		self.model = self.model.to(self.device)
 		mngr_args = ['bert', self.input_length, None,
@@ -264,40 +265,63 @@ class BertAgent:
 		with open(context_aug_filepath, 'wb') as f:
 			pickle.dump(data, f, protocol=pickle.HIGHEST_PROTOCOL)
 
-def create_sst_files(seed):
-	small_label = None
-	small_prop = None
+
+def get_args():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-a', '--start_split_num', type=int, required=True)
+    parser.add_argument('-b', '--end_split_num', type=int, required=True)
+    parser.add_argument('-g', '--gpu', type=int, required=True)
+    parser.add_argument('-p', '--small_prop', type=float)
+    parser.add_argument('-l', '--small_label', type=int)
+    parser.add_argument('-u', '--pct_usage', type=float)
+    arg_dict = vars(parser.parse_args())
+    arg_dict['gpu'] = 'cuda:'+str(arg_dict['gpu'])
+    return arg_dict
+
+# def create_sst_files(seed):
+# 	small_label = None
+# 	small_prop = None
+# 	lr = 5e-5
+# 	data_name = 'sst'
+# 	for pct_usage in np.arange(0.1, 1.0, 0.1):
+# 		pct_usage = round(pct_usage, 1)
+# 		print(data_name, small_label, small_prop)
+# 		agent = BertAgent(lr, device, data_name, seed, pct_usage, 
+# 					 	  small_label, small_prop)
+# 		agent.train()
+# 		agent.augment()
+
+def create_subj_files(split_num):
+	# small_prop = None
+	# small_label = None
+	# pct_usage = 0.5
 	lr = 5e-5
-	data_name = 'sst'
+	# seed = 0
+	data_name = 'subj'
 	for pct_usage in np.arange(0.1, 1.0, 0.1):
 		pct_usage = round(pct_usage, 1)
 		print(data_name, small_label, small_prop)
-		agent = BertAgent(lr, data_name, seed, pct_usage, 
-					 	  small_label, small_prop)
+		agent = BertAgent(lr, device, data_name, seed, pct_usage, 
+					 	  small_label, small_prop, split_num=split_num)
 		agent.train()
 		agent.augment()
 
-def create_subj_files(split_num):
-	pct_usage = None
-	lr = 5e-5
-	seed = 0
-	data_name = 'subj'
-	# for small_label in [0, 1]:
-	for small_label in [1]:
-		L = np.arange(0.2, 1.0, 0.1)
-		for small_prop in L:
-			small_prop = round(small_prop, 1)
-			print(data_name, small_label, small_prop)
-			agent = BertAgent(lr, data_name, seed, pct_usage, 
-						 	  small_label, small_prop, split_num=split_num)
-			agent.train()
-			agent.augment()
 
-if __name__ == "__main__":
-	try:
-		pool = mp.Pool(mp.cpu_count())
-		pool.map(create_sst_files, [14, 15])
-	finally:
-		pool.close()
-		pool.join()
-	# create_sst_files(4)
+
+arg_dict = get_args()
+device = arg_dict['gpu']
+small_label = arg_dict['small_label']
+small_prop = arg_dict['small_prop']
+pct_usage = arg_dict['pct_usage']
+seed = 0
+
+seed_list = list(range(arg_dict['start_split_num'], arg_dict['end_split_num']))
+print(seed_list)
+try:
+	pool = mp.Pool(mp.cpu_count())
+	pool.map(create_subj_files, seed_list)
+finally:
+	pool.close()
+	pool.join()
+
+# create_subj_files(0)
