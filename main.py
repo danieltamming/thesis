@@ -33,11 +33,11 @@ def experiment(balance_seed):
 					  balance_seed=balance_seed)
 	agent.run()
 
-try:
-	pool = mp.Pool(mp.cpu_count())
-	pool.map(experiment, [0, 1, 2, 3])
-finally:
-	pool.close()
-	pool.join()
+# try:
+# 	pool = mp.Pool(mp.cpu_count())
+# 	pool.map(experiment, [0, 1, 2, 3])
+# finally:
+# 	pool.close()
+# 	pool.join()
 
-# experiment(0)
+experiment(0)
