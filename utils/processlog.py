@@ -158,18 +158,18 @@ def read_experiments(filepath, avg_across_labels, setting):
 
 def plot_imbalance_experiments():
 	avg_across_labels = True
-	# setting = 'bal'
-	setting = 'pct'
-	model = 'rnn'
-	# model = 'bert'
-	aug_mode = 'syn'
-	# aug_mode = 'trans'
+	setting = 'bal'
+	# setting = 'pct'
+	# model = 'rnn'
+	model = 'bert'
+	# aug_mode = 'syn'
+	aug_mode = 'trans'
 	# aug_mode = 'context'
 	data_name = 'sst'
 	# data_name = 'subj'
 	filepath = 'logs/archived/valids/{}_{}_{}_{}.log'.format(setting, model, aug_mode, data_name)
 	# filepath = 'logs/archived/bal_rnn_context_odds_10seeds.log'
-	# filepath = 'logs/archived/older/bal_bert_trans_subj_pct.log'
+	filepath = 'logs/archived/older/bal_bert_trans_subj_pct.log'
 	# filepath = 'logs/archived/older/bal_rnn_trans_subj_fine.log'
 	err_bars = False
 	experiments = read_experiments(filepath, avg_across_labels, setting)
@@ -315,23 +315,22 @@ def plot_all_aug_imbalance_tests():
 
 	for m in ['SR', 'BT', 'CA', 'Oversample', 'Undersample']:
 		sns.lineplot(x=df.index, y=m+'_mean', data=df, label=m)
-		plt.fill_between(
-			df.index, 
-			df[m+'_mean'] - df[m+'_std'], 
-			df[m+'_mean'] + df[m+'_std'],
-			alpha=0.1
-		)
+		# plt.fill_between(
+		# 	df.index, 
+		# 	df[m+'_mean'] - df[m+'_std'], 
+		# 	df[m+'_mean'] + df[m+'_std'],
+		# 	alpha=0.1
+		# )
 	plt.xlabel('Percentage of Minority Label Examples Left In Training Set')
 	plt.ylabel('Accuracy (%)')
 	plt.legend()
 	plt.show()
 	return df
 
-
 if __name__ == "__main__":
-	# plot_imbalance_experiments()
+	plot_imbalance_experiments()
 	# plot_imbalance_tests()
-	plot_all_aug_imbalance_tests()
+	# plot_all_aug_imbalance_tests()
 	exit()
 	# filepath = 'logs/main/seed_0_other_0.5_num_3.log'
 	# experiments = {}
