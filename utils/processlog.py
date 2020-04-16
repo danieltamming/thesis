@@ -158,18 +158,18 @@ def read_experiments(filepath, avg_across_labels, setting):
 
 def plot_imbalance_experiments():
 	avg_across_labels = True
-	setting = 'bal'
-	# setting = 'pct'
-	# model = 'rnn'
-	model = 'bert'
-	# aug_mode = 'syn'
-	aug_mode = 'trans'
+	# setting = 'bal'
+	setting = 'pct'
+	model = 'rnn'
+	# model = 'bert'
+	aug_mode = 'syn'
+	# aug_mode = 'trans'
 	# aug_mode = 'context'
 	data_name = 'sst'
 	# data_name = 'subj'
 	filepath = 'logs/archived/valids/{}_{}_{}_{}.log'.format(setting, model, aug_mode, data_name)
 	# filepath = 'logs/archived/bal_rnn_context_odds_10seeds.log'
-	filepath = 'logs/archived/older/bal_bert_trans_subj_pct.log'
+	# filepath = 'logs/archived/older/bal_bert_trans_subj_pct.log'
 	# filepath = 'logs/archived/older/bal_rnn_trans_subj_fine.log'
 	err_bars = False
 	experiments = read_experiments(filepath, avg_across_labels, setting)
@@ -268,14 +268,18 @@ def plot_imbalance_tests():
 	return df
 
 def get_imbalance_tests_df(filepath):
-	methods = ['SR', 'BT', 'CA', 'Oversample', 'Undersample']
+	# methods = ['SR', 'BT', 'CA', 'Oversample', 'Undersample']
+	methods = ['SR', 'BT', 'Oversample', 'Undersample']
 	df = pd.DataFrame(index=range(10, 100, 10))
 	for col_name in methods:
 		df[col_name] = [[] for _ in range(len(df))]
-	filenames_list = ['test_bal_rnn_syn_sst.log', 
-					 'test_bal_rnn_trans_sst.log',
-					 'test_bal_rnn_context_sst.log']
-	aug_modes_list = ['SR', 'BT', 'CA']
+	# filenames_list = ['test_bal_rnn_syn_sst.log', 
+	# 				 'test_bal_rnn_trans_sst.log',
+	# 				 'test_bal_rnn_context_sst.log']
+	# aug_modes_list = ['SR', 'BT', 'CA']
+	filenames_list = ['test_bal_rnn_syn_subj.log', 
+					 'test_bal_rnn_trans_subj.log']
+	aug_modes_list = ['SR', 'BT']
 	for filename, aug_mode in zip(filenames_list, aug_modes_list):
 		filepath = os.path.join('logs/archived/tests/', filename)
 		with open(filepath) as f:
@@ -313,14 +317,15 @@ def plot_all_aug_imbalance_tests():
 	filepath = 'logs/archived/tests/test_bal_rnn_syn_sst.log'
 	df = get_imbalance_tests_df(filepath)
 
-	for m in ['SR', 'BT', 'CA', 'Oversample', 'Undersample']:
+	# for m in ['SR', 'BT', 'CA', 'Oversample', 'Undersample']:
+	for m in ['SR', 'BT', 'Oversample', 'Undersample']:
 		sns.lineplot(x=df.index, y=m+'_mean', data=df, label=m)
-		# plt.fill_between(
-		# 	df.index, 
-		# 	df[m+'_mean'] - df[m+'_std'], 
-		# 	df[m+'_mean'] + df[m+'_std'],
-		# 	alpha=0.1
-		# )
+		plt.fill_between(
+			df.index, 
+			df[m+'_mean'] - df[m+'_std'], 
+			df[m+'_mean'] + df[m+'_std'],
+			alpha=0.1
+		)
 	plt.xlabel('Percentage of Minority Label Examples Left In Training Set')
 	plt.ylabel('Accuracy (%)')
 	plt.legend()
