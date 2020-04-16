@@ -24,7 +24,7 @@ data_name = 'sst'
 aug_mode = None
 batch_size = 32
 accumulation_steps = 1
-input_length = 512
+input_length = 256
 def experiment(balance_seed):
 	logger = initialize_logger(this_script_name, balance_seed)
 	agent = BertAgent(device, logger, data_name, input_length, num_epochs, 
