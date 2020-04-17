@@ -22,16 +22,16 @@ num_epochs = 100
 lr  = 0.001
 
 param_map = {
-	0.1: {'aug': (0.5, 28), 'no': 26},
-	0.2: {'aug': (0.4, 54), 'no': 53}, 
-	0.3: {'aug': (0.6, 28), 'no': 47}, 
-	0.4: {'aug': (0.6, 72), 'no': 57}, 
-	0.5: {'aug': (0.5, 39), 'no': 63}, 
-	0.6: {'aug': (0.5, 26), 'no': 36}, 
-	0.7: {'aug': (0.5, 79), 'no': 98}, 
-	0.8: {'aug': (0.9, 94), 'no': 36}, 
-	0.9: {'aug': (0.7, 77), 'no': 86},
-	1.0: {'aug': (0.8, 68), 'no': 88} 
+	0.1: {'aug': (, ), 'no': },
+	0.2: {'aug': (, ), 'no': }, 
+	0.3: {'aug': (, ), 'no': }, 
+	0.4: {'aug': (, ), 'no': }, 
+	0.5: {'aug': (, ), 'no': }, 
+	0.6: {'aug': (, ), 'no': }, 
+	0.7: {'aug': (, ), 'no': }, 
+	0.8: {'aug': (, ), 'no': }, 
+	0.9: {'aug': (, ), 'no': },
+	1.0: {'aug': (, ), 'no': } 
 }
 
 def experiment(balance_seed):
@@ -42,7 +42,7 @@ def experiment(balance_seed):
 
 		geo, num_epochs = param_pct_map['aug']
 		agent = RnnAgent(device, logger, 'sst', 25, num_epochs, lr,
-						 'synonym', 'test', 128, 
+						 'trans', 'test', 128, 
 						 pct_usage=pct_usage, 
 						 balance_seed=balance_seed, 
 						 geo=geo)

@@ -158,15 +158,15 @@ def read_experiments(filepath, avg_across_labels, setting):
 
 def plot_imbalance_experiments():
 	avg_across_labels = True
-	setting = 'bal'
-	# setting = 'pct'
+	# setting = 'bal'
+	setting = 'pct'
 	model = 'rnn'
 	# model = 'bert'
 	# aug_mode = 'syn'
-	# aug_mode = 'trans'
-	aug_mode = 'context'
-	# data_name = 'sst'
-	data_name = 'subj'
+	aug_mode = 'trans'
+	# aug_mode = 'context'
+	data_name = 'sst'
+	# data_name = 'subj'
 	filepath = 'logs/archived/valids/{}_{}_{}_{}.log'.format(setting, model, aug_mode, data_name)
 	# filepath = 'logs/archived/bal_rnn_context_odds_10seeds.log'
 	# filepath = 'logs/archived/older/bal_bert_trans_subj_pct.log'
@@ -178,7 +178,7 @@ def plot_imbalance_experiments():
 		plot_bal_experiments(experiments, data_name, aug_mode, err_bars)
 	else:
 		averages = experiments
-		for pct_usage in sorted(list(set(key[1] for key in averages))):
+		for pct_usage in sorted(list(set(key[1] for key in averages)), reverse=True):
 			pct_usage_averages = {key: avg for key, avg in averages.items()
 								   if key[1] == pct_usage}
 
