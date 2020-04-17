@@ -3,7 +3,7 @@
 set -e
 gpu=0
 a=0
-b=1
+b=6
 
 for pct_usage in $(seq 0.1 0.1 1.0)
 do
