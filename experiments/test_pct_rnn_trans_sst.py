@@ -55,12 +55,12 @@ def experiment(balance_seed):
 						 balance_seed=balance_seed)
 		agent.run()
 
-# print('Number of cpus: {}'.format(mp.cpu_count()))
-# try:
-# 	pool = mp.Pool(mp.cpu_count())
-# 	pool.map(experiment, list(range(30)))
-# finally:
-# 	pool.close()
-# 	pool.join()
+print('Number of cpus: {}'.format(mp.cpu_count()))
+try:
+	pool = mp.Pool(mp.cpu_count())
+	pool.map(experiment, list(range(20)))
+finally:
+	pool.close()
+	pool.join()
 
-experiment(0)
+# experiment(0)
