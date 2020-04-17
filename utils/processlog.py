@@ -49,7 +49,7 @@ def get_lr(line):
 
 def get_pct_usage(line):
 	pct_usage = line.split('pct_usage is ')[1].split(',', 1)[0]
-	return float(pct_usage)
+	return round(float(pct_usage), 1)
 
 def get_geo(line):
 	geo = line.split('geo is ')[1].split(',', 1)[0]
@@ -178,7 +178,7 @@ def plot_imbalance_experiments():
 		plot_bal_experiments(experiments, data_name, aug_mode, err_bars)
 	else:
 		averages = experiments
-		for pct_usage in sorted(list(set(key[1] for key in averages)), reverse=True):
+		for pct_usage in sorted(list(set(key[1] for key in averages)), reverse=False):
 			pct_usage_averages = {key: avg for key, avg in averages.items()
 								   if key[1] == pct_usage}
 
