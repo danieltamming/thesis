@@ -24,13 +24,14 @@ lr  = 0.001
 def experiment(balance_seed):
 	logger = initialize_logger(this_script_name, balance_seed)
 	for pct_usage in np.arange(0.1, 1.1, 0.1):
-		pct_usage = round(pct_usage, 2)
-		agent = RnnAgent(device, logger, 'sst', 25, num_epochs, lr, 
-						 None, 'dev', 128, 
-						 pct_usage=pct_usage, 
-						 balance_seed=balance_seed)
-		agent.run()
-		for geo in np.arange(0.2, 1.0, 0.1):
+		# pct_usage = round(pct_usage, 2)
+		# agent = RnnAgent(device, logger, 'sst', 25, num_epochs, lr, 
+		# 				 None, 'dev', 128, 
+		# 				 pct_usage=pct_usage, 
+		# 				 balance_seed=balance_seed)
+		# agent.run()
+		# for geo in np.arange(0.2, 1.0, 0.1):
+		for geo in [0.1]:
 			geo = round(geo, 2)
 			agent = RnnAgent(device, logger, 'sst', 25, num_epochs, lr,
 							 'trans', 'dev', 128, 
