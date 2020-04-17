@@ -1,7 +1,7 @@
 #!/bin/bash
 
 set -e
-gpu=0
+gpu=1
 a=0
 b=6
 
