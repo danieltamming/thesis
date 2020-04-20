@@ -73,7 +73,7 @@ def gen_trans_aug(example, en2de, de2en, beam, temperature):
 	return example_aug_list
 
 def gen_save_trans(downloaded_dir, data_name, en2de, de2en):
-	if data_name == 'sst':
+	if data_name in ['sst', 'sfu']:
 		read_type = 'r'
 	else:
 		read_type = 'rb'
@@ -115,5 +115,5 @@ if __name__ == '__main__':
 
 	downloaded_dir = '../DownloadedData/'
 	# for data_name in ['sst', 'subj', 'trec']:
-	for data_name in ['sst']:
+	for data_name in ['sfu']:
 		gen_save_trans(downloaded_dir, data_name, en2de, de2en)
