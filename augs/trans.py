@@ -61,6 +61,10 @@ def is_english(s):
 def gen_trans_aug(example, en2de, de2en, beam, temperature):
 	example_aug_list = []
 	en_bin = en2de.encode(example)
+	print(100*'-')
+	print(example, '\n')
+	print(en_bin)
+	print(100*'-')
 	de_bin = en2de.generate(en_bin, beam=beam, sampling=True, 
 							temperature=temperature)
 	de_str_list = [en2de.decode(res['tokens']) for res in de_bin]
@@ -85,7 +89,8 @@ def gen_save_trans(downloaded_dir, data_name, en2de, de2en):
 			continue
 		trans_aug_filepath = os.path.join(trans_aug_dir, filename)
 		with open(no_aug_filepath, read_type) as f, open(trans_aug_filepath, 'w') as g:
-			for line in tqdm(f.read().splitlines()):
+			# for line in tqdm(f.read().splitlines()):
+			for line in tqdm(f.read().splitlines()[169:]):
 				if read_type == 'rb':
 					line = line.decode('latin-1')
 				label, example = line.split(maxsplit=1)
