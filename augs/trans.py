@@ -64,6 +64,8 @@ def gen_trans_aug(example, en2de, de2en, beam, temperature):
 	print(100*'-')
 	print(example, '\n')
 	print(en_bin)
+	print(en_bin.shape)
+	print(en_bin[:1024].shape)
 	print(100*'-')
 	de_bin = en2de.generate(en_bin, beam=beam, sampling=True, 
 							temperature=temperature)
