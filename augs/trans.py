@@ -60,7 +60,7 @@ def is_english(s):
 
 def gen_trans_aug(example, en2de, de2en, beam, temperature):
 	example_aug_list = []
-	en_bin = en2de.encode(example)
+	en_bin = en2de.encode(example)[:1024]
 	print(100*'-')
 	print(example, '\n')
 	print(en_bin)
