@@ -207,7 +207,7 @@ def get_num_epochs(line):
 	return int(num_epochs)
 
 def plot_imbalance_tests():
-	filepath = 'logs/archived/tests/test_bal_rnn_trans_subj.log'
+	filepath = 'logs/archived/tests/test_bal_rnn_context_subj.log'
 	methods = ['Augmentation', 'Oversample', 'Undersample']
 	df = pd.DataFrame(index=range(10, 100, 10))
 	for col_name in methods:
@@ -268,18 +268,19 @@ def plot_imbalance_tests():
 	return df
 
 def get_imbalance_tests_df(filepath):
-	# methods = ['SR', 'BT', 'CA', 'Oversample', 'Undersample']
-	methods = ['SR', 'BT', 'Oversample', 'Undersample']
+	aug_modes_list = ['Synonym Replacment', 'Backtranslation', 'BERT Augmentation']
+	methods = aug_modes_list + ['Oversample', 'Undersample']
+	# methods = ['SR', 'BT', 'Oversample', 'Undersample']
 	df = pd.DataFrame(index=range(10, 100, 10))
 	for col_name in methods:
 		df[col_name] = [[] for _ in range(len(df))]
-	# filenames_list = ['test_bal_rnn_syn_sst.log', 
-	# 				 'test_bal_rnn_trans_sst.log',
-	# 				 'test_bal_rnn_context_sst.log']
+	filenames_list = ['test_bal_rnn_syn_sst.log', 
+					 'test_bal_rnn_trans_sst.log',
+					 'test_bal_rnn_context_sst.log']
 	# aug_modes_list = ['SR', 'BT', 'CA']
-	filenames_list = ['test_bal_rnn_syn_subj.log', 
-					 'test_bal_rnn_trans_subj.log']
-	aug_modes_list = ['SR', 'BT']
+	# filenames_list = ['test_bal_rnn_syn_subj.log', 
+	# 				 'test_bal_rnn_trans_subj.log']
+	# aug_modes_list = ['SR', 'BT', 'CA']
 	for filename, aug_mode in zip(filenames_list, aug_modes_list):
 		filepath = os.path.join('logs/archived/tests/', filename)
 		with open(filepath) as f:
@@ -311,14 +312,14 @@ def get_imbalance_tests_df(filepath):
 	for col_name in methods:
 		df[col_name+'_mean'] = df[col_name].apply(np.mean)
 		df[col_name+'_std'] = df[col_name].apply(np.std)
-	return df.drop(columns=methods)
+	return df.drop(columns=methods), methods
 
 def plot_all_aug_imbalance_tests():
 	filepath = 'logs/archived/tests/test_bal_rnn_syn_sst.log'
-	df = get_imbalance_tests_df(filepath)
+	df, methods = get_imbalance_tests_df(filepath)
 
-	# for m in ['SR', 'BT', 'CA', 'Oversample', 'Undersample']:
-	for m in ['SR', 'BT', 'Oversample', 'Undersample']:
+	for m in methods:
+	# for m in ['SR', 'BT', 'Oversample', 'Undersample']:
 		sns.lineplot(x=df.index, y=m+'_mean', data=df, label=m)
 		plt.fill_between(
 			df.index, 
@@ -333,9 +334,9 @@ def plot_all_aug_imbalance_tests():
 	return df
 
 if __name__ == "__main__":
-	plot_imbalance_experiments()
+	# plot_imbalance_experiments()
 	# plot_imbalance_tests()
-	# plot_all_aug_imbalance_tests()
+	plot_all_aug_imbalance_tests()
 	exit()
 	# filepath = 'logs/main/seed_0_other_0.5_num_3.log'
 	# experiments = {}

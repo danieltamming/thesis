@@ -268,8 +268,8 @@ class BertAgent:
 
 def get_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument('-a', '--start_split_num', type=int, required=True)
-    parser.add_argument('-b', '--end_split_num', type=int, required=True)
+    # parser.add_argument('-a', '--start_split_num', type=int, required=True)
+    # parser.add_argument('-b', '--end_split_num', type=int, required=True)
     parser.add_argument('-g', '--gpu', type=int, required=True)
     parser.add_argument('-p', '--small_prop', type=float)
     parser.add_argument('-l', '--small_label', type=int)
@@ -311,13 +311,13 @@ device = arg_dict['gpu']
 # small_label = arg_dict['small_label']
 # small_prop = arg_dict['small_prop']
 pct_usage = arg_dict['pct_usage']
-# seed = arg_dict['seed']
-# create_sst_files(seed)
+seed = arg_dict['seed']
+create_sst_files(seed)
 
 
-split_num_list = list(range(arg_dict['start_split_num'], arg_dict['end_split_num']))
+# split_num_list = list(range(arg_dict['start_split_num'], arg_dict['end_split_num']))
 
-create_subj_files(split_num_list[0])
+# create_subj_files(split_num_list[0])
 
 # try:
 # 	pool = mp.Pool(mp.cpu_count())
