@@ -280,7 +280,7 @@ def get_args():
     return arg_dict
 
 def create_sst_files(seed):
-	device = 'gpu:1'
+	device = 'cuda:1'
 	small_label = None
 	small_prop = None
 	pct_usage = 1.0
