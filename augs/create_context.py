@@ -22,7 +22,7 @@ from torch.utils.data import Dataset, DataLoader
 from transformers import (BertForMaskedLM, BertTokenizer, 
 						  AdamW, get_linear_schedule_with_warmup)
 
-from utils.data import get_sst, get_subj, get_trec, partition_within_classes
+from utils.data import get_sst, get_subj, get_sfu, partition_within_classes
 from utils.metrics import AverageMeter
 from utils.parsing import get_device
 from data.managers import SSTDatasetManager, SubjDatasetManager
@@ -280,8 +280,10 @@ def get_args():
     return arg_dict
 
 def create_sst_files(seed):
+	device = 'gpu:1'
 	small_label = None
 	small_prop = None
+	pct_usage = 1.0
 	lr = 5e-5
 	data_name = 'sst'
 	print(data_name, small_label, small_prop)
@@ -306,24 +308,27 @@ def create_subj_files(split_num):
 
 
 
-arg_dict = get_args()
-device = arg_dict['gpu']
-# small_label = arg_dict['small_label']
-# small_prop = arg_dict['small_prop']
-pct_usage = arg_dict['pct_usage']
-seed = arg_dict['seed']
-create_sst_files(seed)
+# arg_dict = get_args()
+# device = arg_dict['gpu']
+# # small_label = arg_dict['small_label']
+# # small_prop = arg_dict['small_prop']
+# pct_usage = arg_dict['pct_usage']
+# seed = arg_dict['seed']
+# create_sst_files(seed)
 
 
 # split_num_list = list(range(arg_dict['start_split_num'], arg_dict['end_split_num']))
 
 # create_subj_files(split_num_list[0])
 
-# try:
-# 	pool = mp.Pool(mp.cpu_count())
-# 	pool.map(create_subj_files, split_num_list)
-# finally:
-# 	pool.close()
-# 	pool.join()
+# create_sst_files(0)
+
+seed_list = list(range(4))
+try:
+	pool = mp.Pool(mp.cpu_count())
+	pool.map(create_sst_files, seed_list)
+finally:
+	pool.close()
+	pool.join()
 
 # create_subj_files(0)

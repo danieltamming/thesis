@@ -18,7 +18,7 @@ current_dir = os.path.dirname(
 parent_dir = os.path.dirname(current_dir)
 sys.path.insert(0, parent_dir) 
 
-from utils.data import get_sst, get_subj, get_trec
+from utils.data import get_sst, get_subj, get_sfu
 
 def get_wordnet_pos(tag):
 	tag_dict = {'J': wn.ADJ, 'N': wn.NOUN, 'V': wn.VERB, 'R':wn.ADV}
@@ -116,7 +116,23 @@ def create_subj_aug():
 	with open(syn_aug_filepath, 'wb') as f:
 		pickle.dump(data_aug, f, protocol=pickle.HIGHEST_PROTOCOL)
 
+def create_sfu_aug():
+	input_length = 10**3
+	syn_aug_dir = '../DownloadedData/sfu/syn_aug'
+	if not os.path.exists(syn_aug_dir):
+		os.mkdir(syn_aug_dir)
+	data = get_sfu(input_length, None, gen_splits=False)
+	data_aug = []
+	for label, example, _ in tqdm(data):
+		aug = get_synonym_dict(example.split(), 2)
+		data_aug.append((label, example, aug))
+
+	syn_aug_filepath = os.path.join(syn_aug_dir, 'sfu.pickle')
+	with open(syn_aug_filepath, 'wb') as f:
+		pickle.dump(data_aug, f, protocol=pickle.HIGHEST_PROTOCOL)
+
 if __name__ == "__main__":
 	# create_sst_aug()
 	# create_subj_aug()
+	create_sfu_aug()
 	pass

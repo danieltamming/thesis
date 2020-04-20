@@ -231,27 +231,46 @@ def get_subj(input_length, aug_mode, pct_usage=None, small_label=None,
 	# since subj uses crosstest we'll refer to dev set as test and dev
 	return {'test': dev_data, 'dev': dev_data, 'train': train_data}
 
-def get_trec(input_length, aug_mode):
+def get_sfu(input_length, aug_mode, pct_usage=None, small_label=None, 
+			 small_prop=None, seed=0, tokenizer=None, gen_splits=True,
+			 split_num=0):
 	script_path = os.path.dirname(os.path.realpath(__file__))
 	repo_path = os.path.join(script_path, os.pardir)
 	data_parent = os.path.join(repo_path, os.pardir, 'DownloadedData')
-	target_parent = os.path.join(repo_path, 'data')
-	data_path = os.path.join(data_parent,'trec')
-	data_dict = {}
-	if aug_mode is None or aug_mode == 'synonym':
-		for set_name in ['train', 'test']:
-			set_path = os.path.join(data_path, set_name+'.txt')
-			data_dict[set_name] = read_no_aug(set_path, input_length, 
-											  True, None)
+	data_path = os.path.join(data_parent, 'sfu')
+	if aug_mode is None:
+		file_path = os.path.join(data_path,'sfu.txt')
+		all_data = read_no_aug(file_path, input_length, False, None)
+		# let 10% of data be the development set
+		# dev_data, train_data = partition_within_classes(all_data, 0.1, False)
+		# return {'dev': dev_data, 'train': train_data}
+	elif aug_mode == 'synonym':
+		aug_file_path = os.path.join(data_path, 'syn_aug/sfu.pickle')
+		with open(aug_file_path, 'rb') as f:
+			all_data = pickle.load(f)
 	elif aug_mode == 'trans':
-		aug_data_path = os.path.join(data_path, 'trans_aug')
-		for set_name in ['train', 'test']:
-			set_path = os.path.join(aug_data_path, set_name+'.txt')
-			data_dict[set_name] = read_trans_aug(set_path)
+		aug_file_path = os.path.join(data_path, 'trans_aug/sfu.txt')
+		all_data = read_trans_aug(aug_file_path)
+	elif aug_mode == 'context':
+		file_path = os.path.join(data_path,'sfu.txt')
+		all_data = read_no_aug(file_path, input_length, False, None)
 	else:
 		raise ValueError('Unrecognized augmentation.')
-	# split given training split into training and dev set
-	dev_data, train_data = partition_within_classes(data_dict['train'], 0.1, False)
-	data_dict['dev'] = dev_data
-	data_dict['train'] = train_data
-	return data_dict
+	if not gen_splits:
+		return all_data
+	dev_data, train_data = partition_within_classes(
+		all_data, 0.1, False, seed=seed, split_num=split_num)
+	if aug_mode == 'context':
+		train_other_labels = [(label, tokenizer.encode(
+									seq, add_special_tokens=False), aug) 
+							  for label, seq, aug in train_data
+							  if label != small_label]
+		aug_data_path = os.path.join(data_path, 'context_aug/')
+		train_small_label = read_context_aug(
+			aug_data_path, pct_usage, small_label, small_prop, seed, 
+			split_num=split_num)
+		train_data = train_other_labels + train_small_label
+		print(Counter([tup[0] for tup in train_data]))
+		print(Counter([tup[0] for tup in dev_data]))
+	# since sfu uses crosstest we'll refer to dev set as test and dev
+	return {'test': dev_data, 'dev': dev_data, 'train': train_data}

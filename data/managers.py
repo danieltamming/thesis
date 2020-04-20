@@ -6,7 +6,7 @@ import numpy as np
 from torch.utils.data import DataLoader
 from transformers import BertTokenizer
 
-from utils.data import get_sst, get_subj, get_trec, partition_within_classes
+from utils.data import get_sst, get_subj, get_sfu, partition_within_classes
 from data.datasets import BertDataset, RnnDataset
 
 class DatasetManagerBase:
