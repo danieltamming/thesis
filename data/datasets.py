@@ -3,7 +3,6 @@ from itertools import cycle, islice
 
 import torch
 from torch.utils.data import Dataset
-from transformers import BertTokenizer
 
 from utils.data import partition_within_classes, get_sst, get_subj
 from augs.synonym import syn_aug

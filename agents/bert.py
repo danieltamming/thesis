@@ -99,7 +99,6 @@ class BertAgent:
 		if not os.path.exists(ckpt_dir):
 			os.mkdir(ckpt_dir)
 		self.model.save_pretrained(ckpt_dir)
-		# self.tokenizer.save_pretrained(ckpt_dir)
 
 	def run(self):
 		if self.mode == 'crosstest':
