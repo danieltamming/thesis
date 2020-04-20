@@ -206,6 +206,52 @@ def get_num_epochs(line):
 	num_epochs = line.split('max_epochs is ')[1].split(',', 1)[0]
 	return int(num_epochs)
 
+def plot_pct_tests():
+	filepath = 'logs/archived/tests/test_pct_rnn_trans_sst.log'
+	methods = ['Augmentation', 'No Augmentation']
+	df = pd.DataFrame(index=range(10, 110, 10))
+	for col_name in methods:
+		df[col_name] = [[] for _ in range(len(df))]
+	with open(filepath) as f:
+		line = f.readline()
+		if 'RUN START' in line:
+			line = f.readline()
+		while line:
+			pct_usage = get_pct_usage(line)
+			aug_mode = get_aug_mode(line)
+			geo = get_geo(line)
+			if aug_mode == 'None':
+				mode = 'No Augmentation'
+			else:
+				mode = 'Augmentation'
+			num_epochs = get_num_epochs(line)
+			for _ in range(num_epochs):
+				line = f.readline()
+				if is_validating(line):
+					line = f.readline()
+			line = f.readline()
+			# print(line)
+			assert is_validating(line)
+			df.loc[100*pct_usage, mode].append(get_acc(line))
+			line = f.readline()
+	for col_name in methods:
+		df[col_name+'_mean'] = df[col_name].apply(np.mean)
+		df[col_name+'_std'] = df[col_name].apply(np.std)
+	df = df.drop(columns=methods)
+	for m in methods:
+		sns.lineplot(x=df.index, y=m+'_mean', data=df, label=m)
+		plt.fill_between(
+			df.index, 
+			df[m+'_mean'] - df[m+'_std'], 
+			df[m+'_mean'] + df[m+'_std'],
+			alpha=0.1
+		)
+	plt.xlabel('Percentage of Minority Label Examples Left In Training Set')
+	plt.ylabel('Accuracy (%)')
+	plt.legend()
+	plt.show()
+	return df
+
 def plot_imbalance_tests():
 	filepath = 'logs/archived/tests/test_bal_rnn_context_subj.log'
 	methods = ['Augmentation', 'Oversample', 'Undersample']
@@ -250,17 +296,6 @@ def plot_imbalance_tests():
 			df[m+'_mean'] + df[m+'_std'],
 			alpha=0.1
 		)
-		# plt.errorbar(x=df.index, y=df[m+'_mean'], yerr=df[m+'_std'])
-	# sns.lineplot(
-	# 	x=df.index, y='Augmentation_mean', data=df, label='Augmentation')
-	# plt.fill_between(
-	# 	df.index, 
-	# 	df.Augmentation_mean - df.Augmentation_std, 
-	# 	df.Augmentation_mean + df.Augmentation_std,
-	# 	alpha=0.25
-	# )
-	# sns.lineplot(x=df.index, y='Undersample_mean', data=df, label='Undersample')
-	# sns.lineplot(x=df.index, y='Oversample_mean', data=df, label='Oversample')
 	plt.xlabel('Percentage of Minority Label Examples Left In Training Set')
 	plt.ylabel('Accuracy (%)')
 	plt.legend()
@@ -336,7 +371,8 @@ def plot_all_aug_imbalance_tests():
 if __name__ == "__main__":
 	# plot_imbalance_experiments()
 	# plot_imbalance_tests()
-	plot_all_aug_imbalance_tests()
+	plot_pct_tests()
+	# plot_all_aug_imbalance_tests()
 	exit()
 	# filepath = 'logs/main/seed_0_other_0.5_num_3.log'
 	# experiments = {}

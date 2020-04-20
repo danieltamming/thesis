@@ -280,10 +280,10 @@ def get_args():
     return arg_dict
 
 def create_sst_files(seed):
-	device = 'cuda:1'
+	device = 'cuda:0'
 	small_label = None
 	small_prop = None
-	pct_usage = 1.0
+	pct_usage = 0.9
 	lr = 5e-5
 	data_name = 'sst'
 	print(data_name, small_label, small_prop)
@@ -321,14 +321,14 @@ def create_subj_files(split_num):
 
 # create_subj_files(split_num_list[0])
 
-# create_sst_files(0)
+create_sst_files(0)
 
-seed_list = list(range(4))
-try:
-	pool = mp.Pool(mp.cpu_count())
-	pool.map(create_sst_files, seed_list)
-finally:
-	pool.close()
-	pool.join()
+# seed_list = list(range(4))
+# try:
+# 	pool = mp.Pool(mp.cpu_count())
+# 	pool.map(create_sst_files, seed_list)
+# finally:
+# 	pool.close()
+# 	pool.join()
 
 # create_subj_files(0)
