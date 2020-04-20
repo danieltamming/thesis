@@ -60,7 +60,7 @@ def is_english(s):
 
 def gen_trans_aug(example, en2de, de2en, beam, temperature):
 	example_aug_list = []
-	en_bin = en2de.encode(example)[:1024]
+	en_bin = en2de.encode(example)[:200] # truncate at 200
 	de_bin = en2de.generate(en_bin, beam=beam, sampling=True, 
 							temperature=temperature)
 	de_str_list = [en2de.decode(res['tokens']) for res in de_bin]
