@@ -317,7 +317,6 @@ pct_usage = arg_dict['pct_usage']
 
 split_num_list = list(range(arg_dict['start_split_num'], arg_dict['end_split_num']))
 
-print(seed_list)
 try:
 	pool = mp.Pool(mp.cpu_count())
 	pool.map(create_subj_files, split_num_list)
