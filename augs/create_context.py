@@ -268,28 +268,27 @@ class BertAgent:
 
 def get_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument('-a', '--start_split_num', type=int, required=True)
-    parser.add_argument('-b', '--end_split_num', type=int, required=True)
+    # parser.add_argument('-a', '--start_split_num', type=int, required=True)
+    # parser.add_argument('-b', '--end_split_num', type=int, required=True)
     parser.add_argument('-g', '--gpu', type=int, required=True)
     parser.add_argument('-p', '--small_prop', type=float)
     parser.add_argument('-l', '--small_label', type=int)
     parser.add_argument('-u', '--pct_usage', type=float)
+    parser.add_argument('-s', '--seed', type=int)
     arg_dict = vars(parser.parse_args())
     arg_dict['gpu'] = 'cuda:'+str(arg_dict['gpu'])
     return arg_dict
 
-# def create_sst_files(seed):
-# 	small_label = None
-# 	small_prop = None
-# 	lr = 5e-5
-# 	data_name = 'sst'
-# 	for pct_usage in np.arange(0.1, 1.0, 0.1):
-# 		pct_usage = round(pct_usage, 1)
-# 		print(data_name, small_label, small_prop)
-# 		agent = BertAgent(lr, device, data_name, seed, pct_usage, 
-# 					 	  small_label, small_prop)
-# 		agent.train()
-# 		agent.augment()
+def create_sst_files(seed):
+	small_label = None
+	small_prop = None
+	lr = 5e-5
+	data_name = 'sst'
+	print(data_name, small_label, small_prop)
+	agent = BertAgent(lr, device, data_name, seed, pct_usage, 
+				 	  small_label, small_prop)
+	agent.train()
+	agent.augment()
 
 def create_subj_files(split_num):
 	# small_prop = None
@@ -310,18 +309,20 @@ def create_subj_files(split_num):
 
 arg_dict = get_args()
 device = arg_dict['gpu']
-small_label = arg_dict['small_label']
-small_prop = arg_dict['small_prop']
+# small_label = arg_dict['small_label']
+# small_prop = arg_dict['small_prop']
 pct_usage = arg_dict['pct_usage']
-seed = 0
+seed = arg_dict['seed']
+create_sst_files(seed)
 
-seed_list = list(range(arg_dict['start_split_num'], arg_dict['end_split_num']))
-print(seed_list)
-try:
-	pool = mp.Pool(mp.cpu_count())
-	pool.map(create_subj_files, seed_list)
-finally:
-	pool.close()
-	pool.join()
+
+# seed_list = list(range(arg_dict['start_split_num'], arg_dict['end_split_num']))
+# print(seed_list)
+# try:
+# 	pool = mp.Pool(mp.cpu_count())
+# 	pool.map(create_subj_files, seed_list)
+# finally:
+# 	pool.close()
+# 	pool.join()
 
 # create_subj_files(0)
