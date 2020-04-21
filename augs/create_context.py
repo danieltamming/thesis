@@ -293,10 +293,10 @@ def create_sst_files(seed):
 	agent.augment()
 
 def create_subj_files(split_num):
-	device = 'cuda:0'
+	device = 'cuda:1'
 	small_prop = None
 	small_label = None
-	pct_usage = 0.9
+	pct_usage = 0.6
 	lr = 5e-5
 	seed = 0
 	data_name = 'subj'
@@ -324,12 +324,11 @@ def create_subj_files(split_num):
 
 # create_sst_files(0)
 
-# split_num_list = [4, 5, 7]
-# split_num_list = [8, 9]
-split_num_list = [6]
+
+split_num_list = [4, 5, 6]
 try:
 	pool = mp.Pool(mp.cpu_count())
-	pool.map(create_sst_files, split_num_list)
+	pool.map(create_subj_files, split_num_list)
 finally:
 	pool.close()
 	pool.join()
