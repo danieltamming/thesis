@@ -22,9 +22,9 @@ num_epochs = 100
 lr  = 0.001
 
 def experiment(balance_seed):
-	logger = initialize_logger(this_script_name, balance_seed)
+	logger = initialize_logger(this_script_name+'_90pct', balance_seed)
 	# for pct_usage in np.arange(0.1, 1.0, 0.1):
-	for pct_usage in [1.0]:
+	for pct_usage in [0.9]:
 		pct_usage = round(pct_usage, 2)
 		for geo in np.arange(0.1, 1.0, 0.1):
 			geo = round(geo, 2)
@@ -40,12 +40,12 @@ def experiment(balance_seed):
 						 balance_seed=balance_seed)
 		agent.run()
 
-print('Number of cpus: {}'.format(mp.cpu_count()))
-try:
-	pool = mp.Pool(mp.cpu_count())
-	pool.map(experiment, list(range(10)))
-finally:
-	pool.close()
-	pool.join()
+# print('Number of cpus: {}'.format(mp.cpu_count()))
+# try:
+# 	pool = mp.Pool(mp.cpu_count())
+# 	pool.map(experiment, list(range(10)))
+# finally:
+# 	pool.close()
+# 	pool.join()
 
-# experiment(0)
+experiment(0)
