@@ -34,7 +34,7 @@ def experiment(balance_seed, split_num):
 								 split_num=split_num,
 								 undersample=undersample)
 				agent.run()
-			for geo in np.arange(0.3, 1.0, 0.1):
+			for geo in np.arange(0.1, 1.0, 0.1):
 				geo = round(geo, 2)
 				agent = RnnAgent(device, logger, 'sfu', 25, num_epochs, lr,
 								 'synonym', 'dev', 128, 
