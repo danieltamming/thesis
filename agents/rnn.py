@@ -13,7 +13,7 @@ import torch.nn.functional as F
 from graphs.rnn import Rnn
 from graphs.loss import CrossEntropyLoss
 from data.managers import (SSTDatasetManager, SubjDatasetManager, 
-						   TrecDatasetManager)
+						   SFUDatasetManager)
 from utils.metrics import AverageMeter, get_accuracy, EarlyStopper
 from utils.logger import print_and_log
 
@@ -68,9 +68,9 @@ class RnnAgent:
 		elif data_name == 'subj':
 			self.num_labels = 2
 			self.mngr = SubjDatasetManager(*mngr_args, **mngr_kwargs)
-		elif data_name == 'trec':
+		elif data_name == 'sfu':
 			self.num_labels = 6
-			self.mngr = TrecDatasetManager(*mngr_args, **mngr_kwargs)
+			self.mngr = SFUDatasetManager(*mngr_args, **mngr_kwargs)
 		else:
 			raise ValueError('Data name not recognized.')
 

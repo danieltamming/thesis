@@ -117,6 +117,6 @@ class SubjDatasetManager(DatasetManagerBase):
 	def __init__(self, *args, **kwargs):
 		super().__init__(get_subj, *args, **kwargs)
 
-class TrecDatasetManager(DatasetManagerBase):
+class SFUDatasetManager(DatasetManagerBase):
 	def __init__(self, *args, **kwargs):
-		super().__init__(get_trec, *args, **kwargs)
+		super().__init__(get_sfu, *args, **kwargs)
