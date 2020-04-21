@@ -15,7 +15,7 @@ from transformers import (BertForSequenceClassification,
 from graphs.loss import CrossEntropyLoss
 from data.datasets import TestTimeDataset
 from data.managers import (SSTDatasetManager, SubjDatasetManager, 
-						   TrecDatasetManager)
+						   SFUDatasetManager)
 from utils.metrics import AverageMeter, get_accuracy, EarlyStopper
 from utils.logger import print_and_log
 
