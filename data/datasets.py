@@ -31,7 +31,7 @@ class DatasetBase(Dataset):
 			else:
 				self.data = self._im_re_balance(data, balance_seed, 
 												undersample)
-		elif pct_usage is not None:
+		elif pct_usage is not None and aug_mode != 'context':
 			self.data, _ = partition_within_classes(
 				data, pct_usage, False, seed=balance_seed)
 		else:

@@ -163,8 +163,8 @@ def plot_imbalance_experiments():
 	model = 'rnn'
 	# model = 'bert'
 	# aug_mode = 'syn'
-	aug_mode = 'trans'
-	# aug_mode = 'context'
+	# aug_mode = 'trans'
+	aug_mode = 'context'
 	data_name = 'sst'
 	# data_name = 'subj'
 	filepath = 'logs/archived/valids/{}_{}_{}_{}.log'.format(setting, model, aug_mode, data_name)
@@ -369,9 +369,9 @@ def plot_all_aug_imbalance_tests():
 	return df
 
 if __name__ == "__main__":
-	# plot_imbalance_experiments()
+	plot_imbalance_experiments()
 	# plot_imbalance_tests()
-	plot_pct_tests()
+	# plot_pct_tests()
 	# plot_all_aug_imbalance_tests()
 	exit()
 	# filepath = 'logs/main/seed_0_other_0.5_num_3.log'
