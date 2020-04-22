@@ -105,7 +105,7 @@ def gen_save_trans(downloaded_dir, data_name, en2de, de2en):
 				g.write('\n')
 
 if __name__ == '__main__':
-	device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
+	device = torch.device('cuda:1' if torch.cuda.is_available() else 'cpu')
 	en2de = torch.hub.load(
 		'pytorch/fairseq', 'transformer.wmt19.en-de.single_model', 
 		tokenizer='moses', bpe='fastbpe').to(device)
