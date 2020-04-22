@@ -325,7 +325,7 @@ def create_subj_files(split_num):
 # create_sst_files(0)
 
 
-split_num_list = [0, 1, 2, 3]
+split_num_list = [4, 5, 6, 7]
 try:
 	pool = mp.Pool(mp.cpu_count())
 	pool.map(create_subj_files, split_num_list)
