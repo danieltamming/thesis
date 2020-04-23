@@ -296,7 +296,7 @@ def create_subj_files(split_num):
 	device = 'cuda:0'
 	small_prop = None
 	small_label = None
-	pct_usage = 0.3
+	pct_usage = 0.4
 	lr = 5e-5
 	seed = 0
 	data_name = 'subj'
