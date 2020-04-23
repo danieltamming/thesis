@@ -293,10 +293,10 @@ def create_sst_files(seed):
 	agent.augment()
 
 def create_subj_files(split_num):
-	device = 'cuda:1'
+	device = 'cuda:0'
 	small_prop = None
 	small_label = None
-	pct_usage = 1.0
+	pct_usage = 0.3
 	lr = 5e-5
 	seed = 0
 	data_name = 'subj'
@@ -325,12 +325,12 @@ def create_subj_files(split_num):
 # create_sst_files(0)
 
 
-split_num_list = [8, 9]
-try:
-	pool = mp.Pool(mp.cpu_count())
-	pool.map(create_subj_files, split_num_list)
-finally:
-	pool.close()
-	pool.join()
+# split_num_list = [5]
+# try:
+# 	pool = mp.Pool(mp.cpu_count())
+# 	pool.map(create_subj_files, split_num_list)
+# finally:
+# 	pool.close()
+# 	pool.join()
 
-# create_subj_files(0)
+create_subj_files(5)
