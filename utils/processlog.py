@@ -167,7 +167,7 @@ def plot_imbalance_experiments():
 	aug_mode = 'context'
 	data_name = 'sst'
 	# data_name = 'subj'
-	filepath = 'logs/archived/valids/{}_{}_{}_{}_p90.log'.format(setting, model, aug_mode, data_name)
+	filepath = 'logs/archived/valids/{}_{}_{}_{}.log'.format(setting, model, aug_mode, data_name)
 	# filepath = 'logs/archived/'
 	err_bars = False
 	experiments = read_experiments(filepath, avg_across_labels, setting)
