@@ -162,8 +162,8 @@ def plot_imbalance_experiments():
 	setting = 'pct'
 	model = 'rnn'
 	# model = 'bert'
-	# aug_mode = 'syn'
-	aug_mode = 'trans'
+	aug_mode = 'syn'
+	# aug_mode = 'trans'
 	# aug_mode = 'context'
 	# data_name = 'sst'
 	data_name = 'subj'
@@ -176,7 +176,7 @@ def plot_imbalance_experiments():
 		plot_bal_experiments(experiments, data_name, aug_mode, err_bars)
 	else:
 		averages = experiments
-		for pct_usage in sorted(list(set(key[1] for key in averages)), reverse=False):
+		for pct_usage in sorted(list(set(key[1] for key in averages)), reverse=True):
 			pct_usage_averages = {key: avg for key, avg in averages.items()
 								   if key[1] == pct_usage}
 
