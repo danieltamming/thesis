@@ -51,7 +51,7 @@ def experiment(balance_seed, split_num):
 		
 		geo, num_epochs = param_pct_map['aug']
 		agent = RnnAgent(device, logger, 'subj', 25, num_epochs, lr,
-						 'syn', 'test', 128, 
+						 'synonym', 'test', 128, 
 						 pct_usage=pct_usage, 
 						 balance_seed=balance_seed, 
 						 split_num=split_num,
