@@ -11,7 +11,7 @@ gpu=0
 # 	python augs/create_context.py -a $a -b $b -g $gpu -u $pct_usage
 # done
 
-for pct_usage in $(seq 0.3 0.1 0.6)
+for pct_usage in $(seq 0.3 0.9 1.0)
 do
 	for split_num in {0..10}
 	do
