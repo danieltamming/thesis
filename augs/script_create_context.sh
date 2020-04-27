@@ -4,7 +4,7 @@ set -e
 gpu=1
 # a=3
 # b=4
-pct_usage=0.1
+pct_usage=0.3
 
 # for pct_usage in $(seq 0.1 0.1 1.0)
 # do
