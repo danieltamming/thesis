@@ -26,13 +26,13 @@ def experiment(split_num):
 	logger = initialize_logger(
 		this_script_name, balance_seed, other=split_num)
 	for pct_usage in np.arange(0.1, 1.1, 0.1):
-		pct_usage = round(pct_usage, 2)
-		agent = RnnAgent(device, logger, 'subj', 25, num_epochs, lr, 
-						 None, 'dev', 128, 
-						 pct_usage=pct_usage, 
-						 balance_seed=balance_seed,
-						 split_num=split_num)
-		agent.run()
+		# pct_usage = round(pct_usage, 2)
+		# agent = RnnAgent(device, logger, 'subj', 25, num_epochs, lr, 
+		# 				 None, 'dev', 128, 
+		# 				 pct_usage=pct_usage, 
+		# 				 balance_seed=balance_seed,
+		# 				 split_num=split_num)
+		# agent.run()
 		for geo in np.arange(0.1, 1.0, 0.1):
 			geo = round(geo, 2)
 			agent = RnnAgent(device, logger, 'subj', 25, num_epochs, lr,
@@ -49,3 +49,5 @@ try:
 finally:
 	pool.close()
 	pool.join()
+
+# experiment(0)

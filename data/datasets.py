@@ -25,6 +25,9 @@ class DatasetBase(Dataset):
 		self.tokenizer = tokenizer
 		self.keep_inf_data = keep_inf_data
 
+		# from collections import Counter
+		# print(Counter([(label, type(aug_dict)) for label, _, aug_dict in data]))
+
 		if small_label is not None and small_prop is not None:
 			if aug_mode == 'context':
 				self.data = self._re_balance(data, balance_seed)
