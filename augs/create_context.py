@@ -25,7 +25,7 @@ from transformers import (BertForMaskedLM, BertTokenizer,
 from utils.data import get_sst, get_subj, get_sfu, partition_within_classes
 from utils.metrics import AverageMeter
 from utils.parsing import get_device
-from data.managers import SSTDatasetManager, SubjDatasetManager
+from data.managers import SSTDatasetManager, SubjDatasetManager, SFUDatasetManager
 
 
 def mask_tokens(inputs, tokenizer):
@@ -140,6 +140,9 @@ class BertAgent:
 		elif data_name == 'subj':
 			self.num_labels = 2
 			self.mngr = SubjDatasetManager(*mngr_args, **mngr_kwargs)
+		elif data_name == 'sfu':
+			self.num_labels = 2
+			self.mngr = SFUDatasetManager(*mngr_args, **mngr_kwargs)
 		else:
 			raise ValueError('Data name not recognized.')
 		if self.small_label is not None  and self.small_prop is not None:
@@ -274,7 +277,7 @@ def get_args():
     parser.add_argument('-p', '--small_prop', type=float)
     parser.add_argument('-l', '--small_label', type=int)
     parser.add_argument('-u', '--pct_usage', type=float)
-    parser.add_argument('-s', '--seed', type=int)
+    parser.add_argument('-s', '--split_num', type=int)
     arg_dict = vars(parser.parse_args())
     arg_dict['gpu'] = 'cuda:'+str(arg_dict['gpu'])
     return arg_dict
@@ -307,15 +310,30 @@ def create_subj_files(split_num):
 	agent.train()
 	agent.augment()
 
+def create_sfu_files(split_num, arg_dict):
+	device = arg_dict['gpu']
+	small_label = arg_dict['small_label']
+	small_prop = arg_dict['small_prop']
+	pct_usage = arg_dict['pct_usage']
+	for key, val in arg_dict.items():
+		print(key, val)
+	# device = 'cuda:0'
+	# small_prop = None
+	# small_label = None
+	# pct_usage = 0.1
+	lr = 5e-5
+	seed = 0
+	data_name = 'sfu'
+	pct_usage = round(pct_usage, 1)
+	# print(data_name, small_label, small_prop)
+	agent = BertAgent(lr, device, data_name, seed, pct_usage, 
+				 	  small_label, small_prop, split_num=split_num)
+	agent.train()
+	agent.augment()
 
-
-# arg_dict = get_args()
-# device = arg_dict['gpu']
-# # small_label = arg_dict['small_label']
-# # small_prop = arg_dict['small_prop']
-# pct_usage = arg_dict['pct_usage']
-# seed = arg_dict['seed']
-# create_sst_files(seed)
+arg_dict = get_args()
+split_num = arg_dict['split_num']
+create_sfu_files(split_num, arg_dict)
 
 
 # split_num_list = list(range(arg_dict['start_split_num'], arg_dict['end_split_num']))
@@ -333,4 +351,4 @@ def create_subj_files(split_num):
 # 	pool.close()
 # 	pool.join()
 
-create_subj_files(5)
+# create_sfu_files(0)

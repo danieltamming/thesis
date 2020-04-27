@@ -29,7 +29,7 @@ def experiment(balance_seed, split_num):
 			for geo in np.arange(0.1, 1.0, 0.1):
 				geo = round(geo, 2)
 				agent = RnnAgent(device, logger, 'sfu', 25, num_epochs, lr,
-								 'trans', 'dev', 128, 
+								 'context', 'dev', 128, 
 								 small_label=small_label, 
 								 small_prop=small_prop, 
 								 balance_seed=balance_seed, 
@@ -48,8 +48,8 @@ def experiment(balance_seed, split_num):
 
 try:
 	split_num_list = list(range(10))
-	seed_list = list(range(2))
-	# seed_list = [3]
+	# seed_list = list(range(2))
+	seed_list = [0]
 	params = list(itertools.product(seed_list, split_num_list))
 	pool = mp.Pool(mp.cpu_count())
 	pool.starmap(experiment, params)
