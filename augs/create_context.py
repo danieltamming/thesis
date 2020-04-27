@@ -324,7 +324,10 @@ def create_sfu_files(split_num, arg_dict):
 	lr = 5e-5
 	seed = 0
 	data_name = 'sfu'
-	pct_usage = round(pct_usage, 1)
+	if pct_usage is not None:
+		pct_usage = round(pct_usage, 1)
+	if small_prop is not None:
+		small_prop = round(small_prop, 1)
 	# print(data_name, small_label, small_prop)
 	agent = BertAgent(lr, device, data_name, seed, pct_usage, 
 				 	  small_label, small_prop, split_num=split_num)
