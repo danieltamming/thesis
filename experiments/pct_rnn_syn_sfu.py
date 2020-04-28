@@ -20,12 +20,13 @@ device = get_device()
 this_script_name = os.path.basename(__file__).split('.')[0]
 num_epochs = 100
 lr  = 0.001
+input_length = 128
 def experiment(balance_seed, split_num):
 	logger = initialize_logger(
 		this_script_name, balance_seed, other=split_num)
 	for pct_usage in np.arange(0.1, 1.0, 0.1):
 		pct_usage = round(pct_usage, 2)
-		agent = RnnAgent(device, logger, 'sfu', 25, num_epochs, lr,
+		agent = RnnAgent(device, logger, 'sfu', input_length, num_epochs, lr,
 						 None, 'dev', 128, 
 						 pct_usage=pct_usage, 
 						 balance_seed=balance_seed,
@@ -33,7 +34,7 @@ def experiment(balance_seed, split_num):
 		agent.run()
 		for geo in np.arange(0.1, 1.0, 0.1):
 			geo = round(geo, 2)
-			agent = RnnAgent(device, logger, 'sfu', 25, num_epochs, lr,
+			agent = RnnAgent(device, logger, 'sfu', input_length, num_epochs, lr,
 							 'synonym', 'dev', 128, 
 							 pct_usage=pct_usage, 
 							 balance_seed=balance_seed, 

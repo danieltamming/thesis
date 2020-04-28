@@ -22,16 +22,16 @@ num_epochs = 100
 lr  = 0.001
 
 param_map = {
-	0.1: {'aug': (, ), 'no': },
-	0.2: {'aug': (, ), 'no': }, 
-	0.3: {'aug': (, ), 'no': }, 
-	0.4: {'aug': (, ), 'no': }, 
-	0.5: {'aug': (, ), 'no': }, 
-	0.6: {'aug': (, ), 'no': }, 
-	0.7: {'aug': (, ), 'no': }, 
-	0.8: {'aug': (, ), 'no': }, 
-	0.9: {'aug': (, ), 'no': },
-	1.0: {'aug': (, ), 'no': } 
+	# 0.1: {'aug': (2, 43), 'no': 98},
+	# 0.2: {'aug': (1, 96), 'no': 53}, 
+	# 0.3: {'aug': (1, 71), 'no': 68}, 
+	# 0.4: {'aug': (1, 76), 'no': 91}, 
+	# 0.5: {'aug': (2, 86), 'no': 54}, 
+	# 0.6: {'aug': (2, 57), 'no': 77}, 
+	# 0.7: {'aug': (2, 84), 'no': 82}, 
+	# 0.8: {'aug': (1, 87), 'no': 84}, 
+	# 0.9: {'aug': (2, 65), 'no': 93},
+	# 1.0: {'aug': (3, 96), 'no': 64} 
 }
 
 def experiment(balance_seed, split_num):
@@ -42,7 +42,7 @@ def experiment(balance_seed, split_num):
 		param_pct_map = param_map[pct_usage]
 
 		num_epochs = param_pct_map['no']
-		agent = RnnAgent(device, logger, 'subj', 25, num_epochs, lr, 
+		agent = RnnAgent(device, logger, 'subj', 25, num_epochs+1, lr, 
 						 None, 'test', 128, 
 						 pct_usage=pct_usage, 
 						 balance_seed=balance_seed,
@@ -50,7 +50,7 @@ def experiment(balance_seed, split_num):
 		agent.run()
 		
 		geo, num_epochs = param_pct_map['aug']
-		agent = RnnAgent(device, logger, 'subj', 25, num_epochs, lr,
+		agent = RnnAgent(device, logger, 'subj', 25, num_epochs+1, lr,
 						 'context', 'test', 128, 
 						 pct_usage=pct_usage, 
 						 balance_seed=balance_seed, 
@@ -61,7 +61,7 @@ def experiment(balance_seed, split_num):
 try:
 	split_num_list = list(range(10))
 	# seed_list = list(range(3))
-	seed_list = [1]
+	seed_list = [0]
 	params = list(itertools.product(seed_list, split_num_list))
 	pool = mp.Pool(mp.cpu_count())
 	pool.starmap(experiment, params)
