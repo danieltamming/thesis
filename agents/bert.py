@@ -21,7 +21,7 @@ from utils.logger import print_and_log
 
 class BertAgent:
 	def __init__(self, device, logger, data_name, input_length, max_epochs, 
-				 aug_mode, mode, batch_size, accumulation_steps, 
+				 lr, aug_mode, mode, batch_size, accumulation_steps, 
 				 small_label=None, small_prop=None, balance_seed=None, 
 				 undersample=False, pct_usage=None, geo=0.5, split_num=0,
 				 verbose=False):
@@ -34,6 +34,7 @@ class BertAgent:
 		self.data_name = data_name
 		self.input_length = input_length
 		self.max_epochs = max_epochs
+		self.lr = lr
 		self.aug_mode = aug_mode
 		self.mode = mode
 		self.batch_size = batch_size
@@ -70,11 +71,11 @@ class BertAgent:
 					   else 'cpu'))
 		s = ('Model is Bert, dataset is {}, undersample is {},'
 			 ' aug mode is {}, geo is {}, pct_usage is {}, small_label is {},'
-			 ' small_prop is {}, balance_seed is {}, max_epochs is {},'
-			 ' split_num is {}').format(
+			 ' small_prop is {}, balance_seed is {}, lr is {},'
+			 ' max_epochs is {}, split_num is {}').format(
 				data_name, self.undersample, self.aug_mode, self.geo, 
 				self.pct_usage, self.small_label, self.small_prop, 
-				self.balance_seed, self.max_epochs, self.split_num)
+				self.balance_seed, self.lr, self.max_epochs, self.split_num)
 		print_and_log(self.logger, s)
 
 	def initialize_model(self):
@@ -82,7 +83,7 @@ class BertAgent:
 			'bert-base-uncased', num_labels=self.num_labels).to(self.device)
 		# optimizer immediately below had worse performance
 		# self.optimizer = AdamW(self.model.parameters(), lr=5e-5, eps=1e-8)
-		self.optimizer = AdamW(self.model.parameters(), lr=2e-5, eps=1e-8)
+		self.optimizer = AdamW(self.model.parameters(), lr=self.lr, eps=1e-8)
 		total_steps = (len(self.train_loader) 
 					   // self.accumulation_steps) * self.max_epochs
 		# self.scheduler = get_constant_schedule(self.optimizer)

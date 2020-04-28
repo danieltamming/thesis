@@ -51,7 +51,7 @@ def experiment(balance_seed):
 	aug_mode = kwargs.pop('aug_mode')
 	kwargs['balance_seed'] = balance_seed
 	agent = BertAgent(device, logger, data_name, 25, num_epochs, 
-					  aug_mode, 'dev', batch_size, accumulation_steps,
+					  lr, aug_mode, 'dev', batch_size, accumulation_steps,
 					  **kwargs)
 	agent.run()
 
@@ -63,6 +63,7 @@ data_name = 'sst'
 aug_mode = 'trans'
 batch_size = 32
 accumulation_steps = 1
+lr = 2e-5
 
 # experiment(0)
 
