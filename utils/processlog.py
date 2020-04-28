@@ -169,15 +169,15 @@ def plot_imbalance_experiments():
 	# data_name = 'subj'
 	data_name = 'sfu'
 	filepath = 'logs/archived/valids/{}_{}_{}_{}.log'.format(setting, model, aug_mode, data_name)
-	# filepath = 'logs/archived/'
-	err_bars = False
+	# filepath = 'logs/pct_rnn_syn_sfu/pct_rnn_syn_sfu.log'
+	err_bars = True
 	experiments = read_experiments(filepath, avg_across_labels, setting)
 
 	if setting == 'bal':
 		plot_bal_experiments(experiments, data_name, aug_mode, err_bars)
 	else:
 		averages = experiments
-		for pct_usage in sorted(list(set(key[1] for key in averages)), reverse=True):
+		for pct_usage in sorted(list(set(key[1] for key in averages)), reverse=False):
 			pct_usage_averages = {key: avg for key, avg in averages.items()
 								   if key[1] == pct_usage}
 
