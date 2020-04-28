@@ -23,7 +23,7 @@ num_epochs = 12
 lr = 5e-6
 data_name = 'subj'
 aug_mode = 'trans'
-batch_size = 32
+batch_size = 128
 accumulation_steps = 1
 def experiment(balance_seed):
 	# for small_prop in np.arange(0.1, 1.0, 0.1):
