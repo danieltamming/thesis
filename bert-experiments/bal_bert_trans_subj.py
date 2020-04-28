@@ -35,7 +35,8 @@ def experiment(balance_seed):
 				agent = BertAgent(device, logger, data_name, 25, num_epochs, 
 								  lr, None, 'dev', batch_size, accumulation_steps,
 								  small_label=small_label, small_prop=small_prop, 
-								  balance_seed=balance_seed, undersample=undersample)
+								  balance_seed=balance_seed, undersample=undersample,
+								  verbose=True)
 				agent.run()
 			# for geo in np.arange(0.1, 1.0, 0.1):
 			for geo in [0.1]:
@@ -43,13 +44,15 @@ def experiment(balance_seed):
 				agent = BertAgent(device, logger, data_name, 25, num_epochs, 
 								  lr, aug_mode, 'dev', batch_size, accumulation_steps,
 								  small_label=small_label, small_prop=small_prop, 
-								  balance_seed=balance_seed, geo=geo)
+								  balance_seed=balance_seed, geo=geo,
+								  verbose=True)
 				agent.run()
 			for undersample in [True]:
 				agent = BertAgent(device, logger, data_name, 25, 3, 
 								  2e-5, None, 'dev', batch_size, accumulation_steps,
 								  small_label=small_label, small_prop=small_prop, 
-								  balance_seed=balance_seed, undersample=undersample)
+								  balance_seed=balance_seed, undersample=undersample,
+								  verbose=True)
 				agent.run()			
 
 # for balance_seed in range(3):
