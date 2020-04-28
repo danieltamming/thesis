@@ -19,7 +19,8 @@ from utils.parsing import get_device
 device = get_device()
 this_script_name = os.path.basename(__file__).split('.')[0]
 num_epochs = 100
-lr  = 0.001
+# lr  = 0.001
+lr = 0.01
 input_length = 128
 def experiment(balance_seed, split_num):
 	logger = initialize_logger(
@@ -41,6 +42,8 @@ def experiment(balance_seed, split_num):
 							 split_num=split_num,
 							 geo=geo)
 			agent.run()
+
+		break
 
 try:
 	split_num_list = list(range(10))
