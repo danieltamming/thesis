@@ -11,7 +11,7 @@ gpu=1
 # 	python augs/create_context.py -a $a -b $b -g $gpu -u $pct_usage
 # done
 
-# for pct_usage in $(seq 0.3 0.1 0.6)
+# for pct_usage in $(seq 0.9 0.1 1.0)
 # do
 # 	for split_num in {0..10}
 # 	do
@@ -19,13 +19,13 @@ gpu=1
 # 	done
 # done
 
-for small_prop in $(seq 0.1 0.1 0.5)
+for small_prop in $(seq 0.8 0.1 1.0)
 do
 	for small_label in {0..1}
-	do
+ 	do
 		for split_num in {0..10}
 		do
 			python augs/create_context.py -g $gpu -l $small_label -p $small_prop -s $split_num
 		done
 	done
-done
+ done
