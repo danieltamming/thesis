@@ -19,28 +19,33 @@ from utils.parsing import get_device
 
 device = get_device()
 this_script_name = os.path.basename(__file__).split('.')[0]
-num_epochs = 4
+num_epochs = 3
 lr = 2e-5
-data_name = 'subj'
+data_name = 'sst'
 aug_mode = 'trans'
 batch_size = 32
 accumulation_steps = 1
 def experiment(balance_seed):
-	for small_prop in np.arange(0.1, 1.0, 0.1):
+	# for small_prop in np.arange(0.1, 1.0, 0.1):
+	for small_prop in [0.1]:
 		small_prop = round(small_prop, 2)
 		for small_label in [0, 1]:
-			for undersample in [False, True]:
+			# for undersample in [False, True]:
+			for undersample in [True]:
 				agent = BertAgent(device, logger, data_name, 25, num_epochs, 
 								  lr, None, 'dev', batch_size, accumulation_steps,
 								  small_label=small_label, small_prop=small_prop, 
-								  balance_seed=balance_seed, undersample=undersample)
+								  balance_seed=balance_seed, undersample=undersample,
+								  verbose=True)
 				agent.run()
-			for geo in np.arange(0.1, 1.0, 0.1):
+			for geo in np.arange(0.1, 1.0, 0.2):
+			# for geo in [0.6]:
 				geo = round(geo, 2)
 				agent = BertAgent(device, logger, data_name, 25, num_epochs, 
 								  lr, aug_mode, 'dev', batch_size, accumulation_steps,
 								  small_label=small_label, small_prop=small_prop, 
-								  balance_seed=balance_seed, geo=geo)
+								  balance_seed=balance_seed, geo=geo,
+								  verbose=True)
 				agent.run()
 
 # for balance_seed in range(3):

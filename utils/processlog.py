@@ -158,18 +158,18 @@ def read_experiments(filepath, avg_across_labels, setting):
 
 def plot_imbalance_experiments():
 	avg_across_labels = True
-	# setting = 'bal'
-	setting = 'pct'
-	model = 'rnn'
-	# model = 'bert'
+	setting = 'bal'
+	# setting = 'pct'
+	# model = 'rnn'
+	model = 'bert'
 	# aug_mode = 'syn'
 	aug_mode = 'trans'
 	# aug_mode = 'context'
-	# data_name = 'sst'
+	data_name = 'sst'
 	# data_name = 'subj'
-	data_name = 'sfu'
+	# data_name = 'sfu'
 	filepath = 'logs/archived/valids/{}_{}_{}_{}.log'.format(setting, model, aug_mode, data_name)
-	# filepath = 'logs/pct_rnn_syn_sfu/pct_rnn_syn_sfu.log'
+	# filepath = 'logs/bal_bert_trans_subj/seed_0_num_0.log'
 	err_bars = True
 	experiments = read_experiments(filepath, avg_across_labels, setting)
 
@@ -373,22 +373,19 @@ if __name__ == "__main__":
 	# plot_pct_tests()
 	# plot_all_aug_imbalance_tests()
 	exit()
-	# filepath = 'logs/main/seed_0_other_0.5_num_3.log'
-	# experiments = {}
-	# with open(filepath) as f:
-	# 	line = f.readline()
-	# 	if 'RUN START' in line:
-	# 		line = f.readline()
-	# 	while line:
-	# 		tup = read_pct_desc(line)
-	# 		accs = []
-	# 		line = f.readline()
-	# 		while is_training(line) or is_validating(line):
-	# 			if is_validating(line):
-	# 				accs.append(get_acc(line))
-	# 			line = f.readline()
-	# 		experiments[tup] = np.array(accs)
-	# for tup, vec in experiments.items():
-	# 	if tup[0] not in [0.3, 0.7]:
-	# 		sns.lineplot(x=list(range(len(vec))), y=vec, label=tup[0])
-	# plt.show()
+	filepath = 'logs/archived/other/bal_bert_trans_subj/seed_0_num_0.log'
+	experiments = []
+	with open(filepath) as f:
+		line = f.readline()
+		while line:
+			tup = read_imbalance_desc(line, False)
+			accs = []
+			line = f.readline()
+			while is_training(line) or is_validating(line):
+				if is_validating(line):
+					accs.append(get_acc(line))
+				line = f.readline()
+			experiments.append(np.array(accs))
+	for vec, label in zip(experiments, ['no aug 1', 'aug', 'no aug 2']):
+		sns.lineplot(x=list(range(len(vec))), y=vec, label=label)
+	plt.show()
