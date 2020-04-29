@@ -32,7 +32,7 @@ param_map = {
 	0.7: {'aug': (0.7, 33), 'no': 70}, 
 	0.8: {'aug': (0.7, 35), 'no': 45}, 
 	0.9: {'aug': (0.7, 53), 'no': 30},
-	1.0: {'aug': (, ), 'no': } 
+	1.0: {'aug': (0.7, 81), 'no': 25} 
 }
 
 def experiment(balance_seed, split_num):
@@ -60,8 +60,8 @@ def experiment(balance_seed, split_num):
 
 try:
 	split_num_list = list(range(10))
-	# seed_list = list(range(2))
-	seed_list = [0]
+	seed_list = list(range(3))
+	# seed_list = [0]
 	params = list(itertools.product(seed_list, split_num_list))
 	pool = mp.Pool(mp.cpu_count())
 	pool.starmap(experiment, params)

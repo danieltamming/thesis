@@ -162,14 +162,14 @@ def plot_imbalance_experiments():
 	setting = 'pct'
 	model = 'rnn'
 	# model = 'bert'
-	aug_mode = 'syn'
-	# aug_mode = 'trans'
+	# aug_mode = 'syn'
+	aug_mode = 'trans'
 	# aug_mode = 'context'
 	# data_name = 'sst'
 	# data_name = 'subj'
 	data_name = 'sfu'
 	filepath = 'logs/archived/valids/{}_{}_{}_{}.log'.format(setting, model, aug_mode, data_name)
-	filepath = 'logs/pct_rnn_trans_sfu/temp_2.log'
+	# filepath = 'logs/pct_rnn_trans_sfu/temp_2.log'
 	err_bars = False
 	experiments = read_experiments(filepath, avg_across_labels, setting)
 
