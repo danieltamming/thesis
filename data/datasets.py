@@ -27,7 +27,8 @@ class DatasetBase(Dataset):
 
 		# from collections import Counter
 		# print(Counter([(label, type(aug_dict)) for label, _, aug_dict in data]))
-
+		# exit()
+		
 		if small_label is not None and small_prop is not None:
 			if aug_mode == 'context':
 				self.data = self._re_balance(data, balance_seed)
@@ -100,12 +101,15 @@ class DatasetBase(Dataset):
 		if len(other_data) == 3610:
 			num_orig = 3310
 		elif len(other_data) == 3310:
-			num_orig = 3310
+			num_orig = 3610
 		elif len(other_data) == 4500:
 			num_orig = 4500
+		elif len(other_data) == 441:
+			num_orig = 499
+		elif len(other_data) == 499:
+			num_orig = 441
 		else:
 			raise ValueError('Unanticipated length of other_data.')
-
 		print(len(other_data), len(label_data))
 		label_data = list(islice(cycle(label_data), num_orig))
 		print(len(other_data), len(label_data))
