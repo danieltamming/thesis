@@ -158,15 +158,15 @@ def read_experiments(filepath, avg_across_labels, setting):
 
 def plot_imbalance_experiments():
 	avg_across_labels = True
-	setting = 'bal'
-	# setting = 'pct'
-	# model = 'rnn'
-	model = 'bert'
+	# setting = 'bal'
+	setting = 'pct'
+	model = 'rnn'
+	# model = 'bert'
 	# aug_mode = 'syn'
-	aug_mode = 'trans'
-	# aug_mode = 'context'
-	data_name = 'sst'
-	# data_name = 'subj'
+	# aug_mode = 'trans'
+	aug_mode = 'context'
+	# data_name = 'sst'
+	data_name = 'subj'
 	# data_name = 'sfu'
 	filepath = 'logs/archived/valids/{}_{}_{}_{}.log'.format(setting, model, aug_mode, data_name)
 	# filepath = 'logs/bal_bert_trans_subj/seed_0_num_0.log'
@@ -373,19 +373,19 @@ if __name__ == "__main__":
 	# plot_pct_tests()
 	# plot_all_aug_imbalance_tests()
 	exit()
-	filepath = 'logs/archived/other/bal_bert_trans_subj/seed_0_num_0.log'
-	experiments = []
-	with open(filepath) as f:
-		line = f.readline()
-		while line:
-			tup = read_imbalance_desc(line, False)
-			accs = []
-			line = f.readline()
-			while is_training(line) or is_validating(line):
-				if is_validating(line):
-					accs.append(get_acc(line))
-				line = f.readline()
-			experiments.append(np.array(accs))
-	for vec, label in zip(experiments, ['no aug 1', 'aug', 'no aug 2']):
-		sns.lineplot(x=list(range(len(vec))), y=vec, label=label)
-	plt.show()
+	# filepath = 'logs/archived/other/bal_bert_trans_subj/seed_0_num_0.log'
+	# experiments = []
+	# with open(filepath) as f:
+	# 	line = f.readline()
+	# 	while line:
+	# 		tup = read_imbalance_desc(line, False)
+	# 		accs = []
+	# 		line = f.readline()
+	# 		while is_training(line) or is_validating(line):
+	# 			if is_validating(line):
+	# 				accs.append(get_acc(line))
+	# 			line = f.readline()
+	# 		experiments.append(np.array(accs))
+	# for vec, label in zip(experiments, ['no aug 1', 'aug', 'no aug 2']):
+	# 	sns.lineplot(x=list(range(len(vec))), y=vec, label=label)
+	# plt.show()
