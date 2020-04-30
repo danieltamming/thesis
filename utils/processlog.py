@@ -49,7 +49,10 @@ def get_lr(line):
 
 def get_pct_usage(line):
 	pct_usage = line.split('pct_usage is ')[1].split(',', 1)[0]
-	return round(float(pct_usage), 1)
+	if pct_usage == 'None':
+		return None
+	else:
+		return round(float(pct_usage), 1)
 
 def get_geo(line):
 	geo = line.split('geo is ')[1].split(',', 1)[0]
@@ -158,18 +161,18 @@ def read_experiments(filepath, avg_across_labels, setting):
 
 def plot_imbalance_experiments():
 	avg_across_labels = True
-	# setting = 'bal'
-	setting = 'pct'
-	model = 'rnn'
-	# model = 'bert'
+	setting = 'bal'
+	# setting = 'pct'
+	# model = 'rnn'
+	model = 'bert'
 	# aug_mode = 'syn'
-	# aug_mode = 'trans'
-	aug_mode = 'context'
-	# data_name = 'sst'
+	aug_mode = 'trans'
+	# aug_mode = 'context'
+	data_name = 'sst'
 	# data_name = 'subj'
-	data_name = 'sfu'
+	# data_name = 'sfu'
 	filepath = 'logs/archived/valids/{}_{}_{}_{}.log'.format(setting, model, aug_mode, data_name)
-	# filepath = 'logs/pct_rnn_trans_sfu/temp_2.log'
+	filepath = 'logs/archived/older/bal_bert_trans_subj_pct.log'
 	err_bars = False
 	experiments = read_experiments(filepath, avg_across_labels, setting)
 
@@ -302,20 +305,21 @@ def plot_imbalance_tests():
 	plt.show()
 	return df
 
-def get_imbalance_tests_df(filepath):
+def get_imbalance_tests_df(setting, data_name):
 	aug_modes_list = ['Synonym Replacment', 'Backtranslation', 'BERT Augmentation']
-	methods = aug_modes_list + ['Oversample', 'Undersample']
-	# methods = ['SR', 'BT', 'Oversample', 'Undersample']
-	df = pd.DataFrame(index=range(10, 100, 10))
+	if setting == 'pct':
+		methods = aug_modes_list + ['No Augmentation']
+	else:
+		methods = aug_modes_list + ['Oversample', 'Undersample']
+	if setting == 'pct':
+		df = pd.DataFrame(index=range(10, 110, 10))
+	else:
+		df = pd.DataFrame(index=range(10, 100, 10))
 	for col_name in methods:
 		df[col_name] = [[] for _ in range(len(df))]
-	filenames_list = ['test_bal_rnn_syn_sst.log', 
-					 'test_bal_rnn_trans_sst.log',
-					 'test_bal_rnn_context_sst.log']
-	# aug_modes_list = ['SR', 'BT', 'CA']
-	# filenames_list = ['test_bal_rnn_syn_subj.log', 
-	# 				 'test_bal_rnn_trans_subj.log']
-	# aug_modes_list = ['SR', 'BT', 'CA']
+	filenames_list = ['test_{}_rnn_{}_{}.log'.format(
+		setting, aug_mode, data_name) for aug_mode
+		in ['syn', 'trans', 'context']]
 	for filename, aug_mode in zip(filenames_list, aug_modes_list):
 		filepath = os.path.join('logs/archived/tests/', filename)
 		with open(filepath) as f:
@@ -323,12 +327,15 @@ def get_imbalance_tests_df(filepath):
 			if 'RUN START' in line:
 				line = f.readline()
 			while line:
+				pct_usage = get_pct_usage(line)
 				small_prop = get_small_prop(line)
 				undersample = get_undersample(line)
 				aug_mode_str = get_aug_mode(line)
 				geo = get_geo(line)
 				if aug_mode_str == 'None':
-					if undersample:
+					if pct_usage is not None:
+						mode = 'No Augmentation'
+					elif undersample:
 						mode = 'Undersample'
 					else:
 						mode = 'Oversample'
@@ -340,21 +347,21 @@ def get_imbalance_tests_df(filepath):
 					if is_validating(line):
 						line = f.readline()
 				line = f.readline()
-				# print(line)
 				assert is_validating(line)
-				df.loc[100*small_prop, mode].append(get_acc(line))
+				if pct_usage is not None:
+					df.loc[100*pct_usage, mode].append(get_acc(line))
+				else:
+					df.loc[100*small_prop, mode].append(get_acc(line))
 				line = f.readline()
 	for col_name in methods:
 		df[col_name+'_mean'] = df[col_name].apply(np.mean)
 		df[col_name+'_std'] = df[col_name].apply(np.std)
 	return df.drop(columns=methods), methods
 
-def plot_all_aug_imbalance_tests():
-	filepath = 'logs/archived/tests/test_bal_rnn_syn_sst.log'
-	df, methods = get_imbalance_tests_df(filepath)
+def plot_all_aug_imbalance_tests(setting, data_name):
+	df, methods = get_imbalance_tests_df(setting, data_name)
 
 	for m in methods:
-	# for m in ['SR', 'BT', 'Oversample', 'Undersample']:
 		sns.lineplot(x=df.index, y=m+'_mean', data=df, label=m)
 		plt.fill_between(
 			df.index, 
@@ -369,10 +376,10 @@ def plot_all_aug_imbalance_tests():
 	return df
 
 if __name__ == "__main__":
-	plot_imbalance_experiments()
+	# plot_imbalance_experiments()
 	# plot_imbalance_tests()
 	# plot_pct_tests()
-	# plot_all_aug_imbalance_tests()
+	plot_all_aug_imbalance_tests('pct', 'sst')
 	exit()
 	# filepath = 'logs/archived/other/bal_bert_trans_subj/seed_0_num_0.log'
 	# experiments = []
