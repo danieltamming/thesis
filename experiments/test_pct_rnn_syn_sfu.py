@@ -38,7 +38,8 @@ param_map = {
 def experiment(balance_seed, split_num):
 	logger = initialize_logger(
 		this_script_name, balance_seed, other=split_num)
-	for pct_usage in np.arange(0.1, 1.1, 0.1):
+	# for pct_usage in np.arange(0.1, 1.1, 0.1):
+	for pct_usage in [1.0]:
 		pct_usage = round(pct_usage, 2)
 		param_pct_map = param_map[pct_usage]
 
