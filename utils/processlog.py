@@ -163,8 +163,8 @@ def plot_imbalance_experiments():
 	model = 'rnn'
 	# model = 'bert'
 	# aug_mode = 'syn'
-	aug_mode = 'trans'
-	# aug_mode = 'context'
+	# aug_mode = 'trans'
+	aug_mode = 'context'
 	# data_name = 'sst'
 	# data_name = 'subj'
 	data_name = 'sfu'
@@ -207,6 +207,7 @@ def get_num_epochs(line):
 
 def plot_pct_tests():
 	filepath = 'logs/archived/tests/test_pct_rnn_trans_sst.log'
+	filepath = 'logs/test_pct_rnn_syn_sfu/all.log'
 	methods = ['Augmentation', 'No Augmentation']
 	df = pd.DataFrame(index=range(10, 110, 10))
 	for col_name in methods:
