@@ -161,18 +161,18 @@ def read_experiments(filepath, avg_across_labels, setting):
 
 def plot_imbalance_experiments():
 	avg_across_labels = True
-	setting = 'bal'
-	# setting = 'pct'
-	# model = 'rnn'
-	model = 'bert'
-	# aug_mode = 'syn'
-	aug_mode = 'trans'
+	# setting = 'bal'
+	setting = 'pct'
+	model = 'rnn'
+	# model = 'bert'
+	aug_mode = 'syn'
+	# aug_mode = 'trans'
 	# aug_mode = 'context'
-	data_name = 'sst'
+	# data_name = 'sst'
 	# data_name = 'subj'
-	# data_name = 'sfu'
+	data_name = 'sfu'
 	filepath = 'logs/archived/valids/{}_{}_{}_{}.log'.format(setting, model, aug_mode, data_name)
-	filepath = 'logs/archived/older/bal_bert_trans_subj_pct.log'
+	# filepath = 'logs/archived/other/pct_bert_trans_sst.log'
 	err_bars = False
 	experiments = read_experiments(filepath, avg_across_labels, setting)
 
@@ -256,7 +256,7 @@ def plot_pct_tests():
 	return df
 
 def plot_imbalance_tests():
-	filepath = 'logs/archived/tests/test_bal_rnn_context_subj.log'
+	filepath = 'logs/archived/tests/test_bal_rnn_trans_sfu.log'
 	methods = ['Augmentation', 'Oversample', 'Undersample']
 	df = pd.DataFrame(index=range(10, 100, 10))
 	for col_name in methods:
@@ -288,6 +288,8 @@ def plot_imbalance_tests():
 			df.loc[100*small_prop, mode].append(get_acc(line))
 			line = f.readline()
 	for col_name in methods:
+		df[col_name+'_min'] = df[col_name].apply(np.min)
+
 		df[col_name+'_mean'] = df[col_name].apply(np.mean)
 		df[col_name+'_std'] = df[col_name].apply(np.std)
 	df = df.drop(columns=methods)
@@ -299,6 +301,7 @@ def plot_imbalance_tests():
 			df[m+'_mean'] + df[m+'_std'],
 			alpha=0.1
 		)
+		# sns.lineplot(x=df.index, y=m+'_min', data=df, label=m)
 	plt.xlabel('Percentage of Minority Label Examples Left In Training Set')
 	plt.ylabel('Accuracy (%)')
 	plt.legend()
@@ -376,10 +379,10 @@ def plot_all_aug_imbalance_tests(setting, data_name):
 	return df
 
 if __name__ == "__main__":
-	# plot_imbalance_experiments()
+	plot_imbalance_experiments()
 	# plot_imbalance_tests()
 	# plot_pct_tests()
-	plot_all_aug_imbalance_tests('pct', 'sst')
+	# plot_all_aug_imbalance_tests('pct', 'sst')
 	exit()
 	# filepath = 'logs/archived/other/bal_bert_trans_subj/seed_0_num_0.log'
 	# experiments = []
