@@ -148,7 +148,8 @@ def read_experiments(filepath, avg_across_labels, setting):
 			accs = []
 			line = f.readline()
 			while is_training(line) or is_validating(line):
-				if is_validating(line):
+				# if is_validating(line):
+				if is_training(line):
 					accs.append(get_acc(line))
 				line = f.readline()
 			# if len(accs) != 100:
@@ -172,36 +173,41 @@ def plot_imbalance_experiments():
 	# data_name = 'subj'
 	data_name = 'sfu'
 	filepath = 'logs/archived/valids/{}_{}_{}_{}.log'.format(setting, model, aug_mode, data_name)
-	# filepath = 'logs/archived/other/pct_bert_trans_sst.log'
+	filepath = 'logs/pct_rnn_syn_sfu/sfu_tests.log'
 	err_bars = False
 	experiments = read_experiments(filepath, avg_across_labels, setting)
 
-	if setting == 'bal':
-		plot_bal_experiments(experiments, data_name, aug_mode, err_bars)
-	else:
-		averages = experiments
-		for pct_usage in sorted(list(set(key[1] for key in averages)), reverse=False):
-			pct_usage_averages = {key: avg for key, avg in averages.items()
-								   if key[1] == pct_usage}
+	# if setting == 'bal':
+	# 	plot_bal_experiments(experiments, data_name, aug_mode, err_bars)
+	# else:
+	# 	averages = experiments
+	# 	for pct_usage in sorted(list(set(key[1] for key in averages)), reverse=False):
+	# 		pct_usage_averages = {key: avg for key, avg in averages.items()
+	# 							   if key[1] == pct_usage}
 
-			no_aug_avg = pct_usage_averages[(-1, pct_usage)]
-			del pct_usage_averages[(-1, pct_usage)]
+	# 		no_aug_avg = pct_usage_averages[(-1, pct_usage)]
+	# 		del pct_usage_averages[(-1, pct_usage)]
 
-			colors = ['tab:blue', 'tab:orange', 'tab:cyan', 'tab:green',
-					  'tab:purple', 'tab:brown', 'tab:pink', 'tab:gray', 
-					  'tab:olive', 'tab:red']
-			for ((geo, _), vec), color in zip(sorted(pct_usage_averages.items()), colors):
-				# if small_prop == 1.0:
-				# 	continue
-				plt.title('Augmenting {} with {} using {}% of training data.'.format(
-						  		data_name, aug_mode, 100*pct_usage))
-				plt.ylabel('Validation Accuracy (%)')
-				plt.xlabel('Training Epoch')
+	# 		colors = ['tab:blue', 'tab:orange', 'tab:cyan', 'tab:green',
+	# 				  'tab:purple', 'tab:brown', 'tab:pink', 'tab:gray', 
+	# 				  'tab:olive', 'tab:red']
+	# 		for ((geo, _), vec), color in zip(sorted(pct_usage_averages.items()), colors):
+	# 			# if small_prop == 1.0:
+	# 			# 	continue
+	# 			plt.title('Augmenting {} with {} using {}% of training data.'.format(
+	# 					  		data_name, aug_mode, 100*pct_usage))
+	# 			plt.ylabel('Validation Accuracy (%)')
+	# 			plt.xlabel('Training Epoch')
 
-				plot_mat(100*vec, err_bars, label='geo {}'.format(geo), color=color, alpha=0.5)
-			# if small_prop != 1.0:
-			plot_mat(100*no_aug_avg, err_bars, label='no aug', color='r', alpha=0.5)
-			plt.legend()
+	# 			plot_mat(100*vec, err_bars, label='geo {}'.format(geo), color=color, alpha=0.5)
+	# 		# if small_prop != 1.0:
+	# 		plot_mat(100*no_aug_avg, err_bars, label='no aug', color='r', alpha=0.5)
+	# 		plt.legend()
+	# 		plt.show()
+	for tup, mat in experiments.items():
+		for i in range(40):
+			sns.lineplot(x=range(100), y=100*mat[i,:])
+			plt.title(tup)
 			plt.show()
 
 def get_num_epochs(line):
