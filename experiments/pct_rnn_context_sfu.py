@@ -19,12 +19,12 @@ from utils.parsing import get_device
 device = get_device()
 this_script_name = os.path.basename(__file__).split('.')[0]
 num_epochs = 100
-lr  = 0.001
+lr  = 0.01
 input_length = 128
 def experiment(balance_seed, split_num):
 	logger = initialize_logger(
 		this_script_name, balance_seed, other=split_num)
-	for pct_usage in np.arange(0.1, 1.1, 0.1):
+	for pct_usage in np.arange(0.2, 1.1, 0.2):
 		pct_usage = round(pct_usage, 2)
 		agent = RnnAgent(device, logger, 'sfu', input_length, num_epochs, lr,
 						 None, 'dev', 128, 
