@@ -45,7 +45,7 @@ def experiment(balance_seed, split_num):
 
 try:
 	split_num_list = list(range(10))
-	seed_list = [2, 3]
+	seed_list = [0, 1]
 	params = list(itertools.product(seed_list, split_num_list))
 	pool = mp.Pool(mp.cpu_count())
 	pool.starmap(experiment, params)
