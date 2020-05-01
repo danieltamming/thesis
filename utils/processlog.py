@@ -172,7 +172,8 @@ def plot_imbalance_experiments():
 	# data_name = 'sst'
 	# data_name = 'subj'
 	data_name = 'sfu'
-	filepath = 'logs/archived/valids/{}_{}_{}_{}.log'.format(setting, model, aug_mode, data_name)
+	# filepath = 'logs/archived/valids/{}_{}_{}_{}.log'.format(setting, model, aug_mode, data_name)
+	filepath = 'logs/{}_{}_{}_{}.log'.format(setting, model, aug_mode, data_name)
 	# filepath = 'logs/archived/sfu_tests/sfu_tests.log'
 	err_bars = False
 	experiments = read_experiments(filepath, avg_across_labels, setting)
