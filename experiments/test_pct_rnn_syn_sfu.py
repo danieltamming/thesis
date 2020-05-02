@@ -19,27 +19,34 @@ from utils.parsing import get_device
 device = get_device()
 this_script_name = os.path.basename(__file__).split('.')[0]
 num_epochs = 100
-lr  = 0.001
+lr  = 0.01
 input_length = 128
 
+# param_map = {
+# 	0.1: {'aug': (0.1, 88), 'no': 76},
+# 	0.2: {'aug': (0.2, 72), 'no': 74}, 
+# 	0.3: {'aug': (0.1, 38), 'no': 56}, 
+# 	0.4: {'aug': (0.3, 91), 'no': 41}, 
+# 	0.5: {'aug': (0.4, 62), 'no': 44}, 
+# 	0.6: {'aug': (0.4, 83), 'no': 53}, 
+# 	0.7: {'aug': (0.7, 66), 'no': 36}, 
+# 	0.8: {'aug': (0.7, 87), 'no': 73}, 
+# 	0.9: {'aug': (0.7, 37), 'no': 56},
+# 	1.0: {'aug': (0.8, 78), 'no': 77} 
+# }
+
 param_map = {
-	0.1: {'aug': (0.1, 88), 'no': 76},
-	0.2: {'aug': (0.2, 72), 'no': 74}, 
-	0.3: {'aug': (0.1, 38), 'no': 56}, 
-	0.4: {'aug': (0.3, 91), 'no': 41}, 
-	0.5: {'aug': (0.4, 62), 'no': 44}, 
-	0.6: {'aug': (0.4, 83), 'no': 53}, 
-	0.7: {'aug': (0.7, 66), 'no': 36}, 
-	0.8: {'aug': (0.7, 87), 'no': 73}, 
-	0.9: {'aug': (0.7, 37), 'no': 56},
-	1.0: {'aug': (0.8, 78), 'no': 77} 
+	0.2: {'aug': (0.6, 45), 'no': 91}, 
+	0.4: {'aug': (0.2, 43), 'no': 49}, 
+	0.6: {'aug': (0.3, 61), 'no': 80}, 
+	0.8: {'aug': (0.6, 61), 'no': 29}, 
+	1.0: {'aug': (0.1, 90), 'no': 79} 
 }
 
 def experiment(balance_seed, split_num):
 	logger = initialize_logger(
 		this_script_name, balance_seed, other=split_num)
-	# for pct_usage in np.arange(0.1, 1.1, 0.1):
-	for pct_usage in [1.0]:
+	for pct_usage in np.arange(0.2, 1.1, 0.2):
 		pct_usage = round(pct_usage, 2)
 		param_pct_map = param_map[pct_usage]
 
