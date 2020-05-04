@@ -1,9 +1,9 @@
 #!/bin/bash
 
 set -e
-gpu=1
-a=18
-b=24
+gpu=0
+a=24
+b=30
 
 for pct_usage in $(seq 0.2 0.2 0.8)
 do
