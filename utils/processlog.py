@@ -164,8 +164,8 @@ def plot_imbalance_experiments():
 	avg_across_labels = True
 	# setting = 'bal'
 	setting = 'pct'
-	# model = 'rnn'
-	model = 'bert'
+	model = 'rnn'
+	# model = 'bert'
 	# aug_mode = 'syn'
 	aug_mode = 'trans'
 	# aug_mode = 'context'
@@ -174,7 +174,7 @@ def plot_imbalance_experiments():
 	# data_name = 'sfu'
 	filepath = 'logs/archived/valids/{}_{}_{}_{}.log'.format(setting, model, aug_mode, data_name)
 	# filepath = 'logs/{}_{}_{}_{}.log'.format(setting, model, aug_mode, data_name)
-	filepath = 'logs/archived/other/pct_bert_trans_sst.log'
+	# filepath = 'logs/archived/other/pct_bert_trans_sst.log'
 	err_bars = False
 	experiments = read_experiments(filepath, avg_across_labels, setting)
 
@@ -387,11 +387,54 @@ def plot_all_aug_imbalance_tests(setting, data_name):
 	plt.show()
 	return df
 
+def detect_overfitting():
+	filepath = 'logs/archived/valids/pct_rnn_trans_sst.log'
+	experiments = {}
+	with open(filepath) as f:
+		line = f.readline()
+		while line:
+			tup = read_pct_desc(line)
+			metrics_dict = {key: [] for key in ['val_accs', 'val_loss', 
+												'train_accs', 'train_loss']}
+			line = f.readline()
+			while is_training(line) or is_validating(line):
+				if is_validating(line):
+					metrics_dict['val_accs'].append(get_acc(line))
+					metrics_dict['val_loss'].append(get_loss(line))
+				elif is_training(line):
+					metrics_dict['train_accs'].append(get_acc(line))
+					metrics_dict['train_loss'].append(get_loss(line))
+				line = f.readline()
+			if tup[1] != 1.0 or tup[0] not in [0.3, -1]:
+				continue
+			metrics_dict = {key: np.array(L) for key, L in metrics_dict.items()}
+			if tup not in experiments:
+				experiments[tup] = metrics_dict
+			else:
+				for key, vec in metrics_dict.items():
+					experiments[tup][key] = np.vstack([experiments[tup][key], vec])
+				# experiments[tup] = np.vstack([experiments[tup], np.array(accs)])
+	colors = ['tab:blue', 'tab:orange', 'tab:cyan', 'tab:green',
+			  'tab:purple', 'tab:brown', 'tab:pink', 'tab:gray', 
+			  'tab:olive', 'tab:red']
+	for keys_list in [['val_accs', 'train_accs'], ['val_loss', 'train_loss']]:
+		for key in keys_list:
+			for ((geo, _), metrics_dict), color in zip(experiments.items(), colors):
+				plt.ylabel(key)
+				plt.xlabel('Training Epoch')
+
+				plot_mat(100*metrics_dict[key], False, label='{}, geo {}'.format(key, geo), color=color, alpha=0.5)
+			# if small_prop != 1.0:
+			# plot_mat(100*no_aug_avg, err_bars, label='no aug', color='r', alpha=0.5)
+		plt.legend()
+		plt.show()
+
 if __name__ == "__main__":
 	# plot_imbalance_experiments()
 	# plot_imbalance_tests()
 	# plot_pct_tests()
 	plot_all_aug_imbalance_tests('bal', 'sfu')
+	# detect_overfitting()
 	exit()
 	# filepath = 'logs/archived/other/bal_bert_trans_subj/seed_0_num_0.log'
 	# experiments = []
