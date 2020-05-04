@@ -2,8 +2,8 @@
 
 set -e
 gpu=1
-a=6
-b=12
+a=18
+b=24
 
 for pct_usage in $(seq 0.2 0.2 0.8)
 do
