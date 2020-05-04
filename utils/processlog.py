@@ -388,10 +388,10 @@ def plot_all_aug_imbalance_tests(setting, data_name):
 	return df
 
 if __name__ == "__main__":
-	plot_imbalance_experiments()
+	# plot_imbalance_experiments()
 	# plot_imbalance_tests()
 	# plot_pct_tests()
-	# plot_all_aug_imbalance_tests('pct', 'sfu')
+	plot_all_aug_imbalance_tests('bal', 'sfu')
 	exit()
 	# filepath = 'logs/archived/other/bal_bert_trans_subj/seed_0_num_0.log'
 	# experiments = []

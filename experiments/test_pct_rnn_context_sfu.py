@@ -22,23 +22,31 @@ num_epochs = 100
 lr  = 0.01
 input_length = 128
 
+# param_map = {
+# 	0.1: {'aug': (0.5, 96), 'no': 92},
+# 	0.2: {'aug': (0.5, 79), 'no': 95}, 
+# 	0.3: {'aug': (0.5, 42), 'no': 72}, 
+# 	0.4: {'aug': (0.5, 38), 'no': 65}, 
+# 	0.5: {'aug': (0.5, 74), 'no': 66}, 
+# 	0.6: {'aug': (0.7, 51), 'no': 50}, 
+# 	0.7: {'aug': (0.9, 54), 'no': 25}, 
+# 	0.8: {'aug': (0.8, 49), 'no': 67}, 
+# 	0.9: {'aug': (0.8, 54), 'no': 33},
+# 	1.0: {'aug': (0.8, 56), 'no': 36} 
+# }
+
 param_map = {
-	0.1: {'aug': (0.5, 96), 'no': 92},
-	0.2: {'aug': (0.5, 79), 'no': 95}, 
-	0.3: {'aug': (0.5, 42), 'no': 72}, 
-	0.4: {'aug': (0.5, 38), 'no': 65}, 
-	0.5: {'aug': (0.5, 74), 'no': 66}, 
-	0.6: {'aug': (0.7, 51), 'no': 50}, 
-	0.7: {'aug': (0.9, 54), 'no': 25}, 
-	0.8: {'aug': (0.8, 49), 'no': 67}, 
-	0.9: {'aug': (0.8, 54), 'no': 33},
-	1.0: {'aug': (0.8, 56), 'no': 36} 
+	0.2: {'aug': (0.6, 57), 'no': 34}, 
+	0.4: {'aug': (0.5, 69), 'no': 87}, 
+	0.6: {'aug': (0.3, 48), 'no': 27}, 
+	0.8: {'aug': (0.3, 99), 'no': 73},
+	1.0: {'aug': (0.1, 95), 'no': 51} 
 }
 
 def experiment(balance_seed, split_num):
 	logger = initialize_logger(
 		this_script_name, balance_seed, other=split_num)
-	for pct_usage in np.arange(0.1, 1.1, 0.1):
+	for pct_usage in np.arange(0.2, 1.1, 0.2):
 		pct_usage = round(pct_usage, 2)
 		param_pct_map = param_map[pct_usage]
 
