@@ -162,19 +162,19 @@ def read_experiments(filepath, avg_across_labels, setting):
 
 def plot_imbalance_experiments():
 	avg_across_labels = True
-	setting = 'bal'
-	# setting = 'pct'
-	model = 'rnn'
-	# model = 'bert'
+	# setting = 'bal'
+	setting = 'pct'
+	# model = 'rnn'
+	model = 'bert'
 	# aug_mode = 'syn'
-	# aug_mode = 'trans'
-	aug_mode = 'context'
-	# data_name = 'sst'
+	aug_mode = 'trans'
+	# aug_mode = 'context'
+	data_name = 'sst'
 	# data_name = 'subj'
-	data_name = 'sfu'
+	# data_name = 'sfu'
 	filepath = 'logs/archived/valids/{}_{}_{}_{}.log'.format(setting, model, aug_mode, data_name)
 	# filepath = 'logs/{}_{}_{}_{}.log'.format(setting, model, aug_mode, data_name)
-	# filepath = 'logs/archived/sfu_tests/sfu_tests.log'
+	filepath = 'logs/archived/other/pct_bert_trans_sst.log'
 	err_bars = False
 	experiments = read_experiments(filepath, avg_across_labels, setting)
 
@@ -218,8 +218,8 @@ def get_num_epochs(line):
 	return int(num_epochs)
 
 def plot_pct_tests():
-	filepath = 'logs/archived/tests/test_pct_rnn_trans_sst.log'
-	filepath = 'logs/test_pct_rnn_syn_sfu/all.log'
+	filepath = 'logs/archived/tests/test_pct_rnn_trans_sfu.log'
+	# filepath = 'logs/test_pct_rnn_syn_sfu/all.log'
 	methods = ['Augmentation', 'No Augmentation']
 	df = pd.DataFrame(index=range(10, 110, 10))
 	for col_name in methods:
@@ -391,7 +391,7 @@ if __name__ == "__main__":
 	plot_imbalance_experiments()
 	# plot_imbalance_tests()
 	# plot_pct_tests()
-	# plot_all_aug_imbalance_tests('pct', 'sst')
+	# plot_all_aug_imbalance_tests('pct', 'sfu')
 	exit()
 	# filepath = 'logs/archived/other/bal_bert_trans_subj/seed_0_num_0.log'
 	# experiments = []
