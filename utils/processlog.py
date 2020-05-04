@@ -164,15 +164,20 @@ def plot_imbalance_experiments():
 	avg_across_labels = True
 	# setting = 'bal'
 	setting = 'pct'
-	model = 'rnn'
-	# model = 'bert'
+	# model = 'rnn'
+	model = 'bert'
 	# aug_mode = 'syn'
 	aug_mode = 'trans'
 	# aug_mode = 'context'
 	data_name = 'sst'
 	# data_name = 'subj'
 	# data_name = 'sfu'
-	filepath = 'logs/archived/valids/{}_{}_{}_{}.log'.format(setting, model, aug_mode, data_name)
+	if model == 'rnn':
+		filepath = 'logs/archived/rnn/valids/{}_rnn_{}_{}.log'.format(setting, aug_mode, data_name)
+	elif model == 'bert':
+		filepath = 'logs/archived/bert/valids/{}_bert_{}_{}.log'.format(setting, aug_mode, data_name)
+	else:
+		raise ValueError('Unrecognized model.')
 	# filepath = 'logs/{}_{}_{}_{}.log'.format(setting, model, aug_mode, data_name)
 	# filepath = 'logs/archived/other/pct_bert_trans_sst.log'
 	err_bars = False
@@ -430,10 +435,10 @@ def detect_overfitting():
 		plt.show()
 
 if __name__ == "__main__":
-	# plot_imbalance_experiments()
+	plot_imbalance_experiments()
 	# plot_imbalance_tests()
 	# plot_pct_tests()
-	plot_all_aug_imbalance_tests('bal', 'sfu')
+	# plot_all_aug_imbalance_tests('bal', 'sfu')
 	# detect_overfitting()
 	exit()
 	# filepath = 'logs/archived/other/bal_bert_trans_subj/seed_0_num_0.log'
