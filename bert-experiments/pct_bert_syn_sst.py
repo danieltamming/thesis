@@ -40,7 +40,7 @@ def get_args():
     	del arg_dict['geo']
     	arg_dict['aug_mode'] = None
     else:
-    	arg_dict['aug_mode'] = 'syn'
+    	arg_dict['aug_mode'] = 'synonym'
     return arg_dict
 
 def experiment(balance_seed):
