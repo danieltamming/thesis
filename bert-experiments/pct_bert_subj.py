@@ -44,7 +44,7 @@ def experiment(experiment_num):
     kwargs = arg_dict.copy()
     aug_mode = kwargs.pop('aug_mode')
     balance_seed, split_num = divmod(experiment_num, 10)
-    logger = get_bert_logger(this_script_name, balance_seed, aug_mode=aug_mode)
+    logger = get_bert_logger(this_script_name, balance_seed, split_num=split_num, aug_mode=aug_mode)
     device = kwargs.pop('gpu')
     if arg_dict['geo'] is None:
         aug_mode = None
