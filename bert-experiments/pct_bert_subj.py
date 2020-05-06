@@ -37,23 +37,23 @@ def get_args():
     # 	del arg_dict['undersample']
     # else:
     # 	arg_dict['undersample'] = arg_dict['undersample'] == 1
-    if arg_dict['geo'] is None:
-    	del arg_dict['geo']
-    	assert arg_dict['aug_mode'] == None
+    assert arg_dict['aug_mode'] is not None
     return arg_dict
 
 def experiment(experiment_num):
-    balance_seed, split_num = divmod(experiment_num, 10)
-    logger = get_bert_logger(this_script_name, balance_seed)
     kwargs = arg_dict.copy()
-    device = kwargs.pop('gpu')
     aug_mode = kwargs.pop('aug_mode')
+    balance_seed, split_num = divmod(experiment_num, 10)
+    logger = get_bert_logger(this_script_name, balance_seed, aug_mode=aug_mode)
+    device = kwargs.pop('gpu')
+    if arg_dict['geo'] is None:
+        aug_mode = None
     kwargs['balance_seed'] = balance_seed
     kwargs['split_num'] = split_num
     agent = BertAgent(device, logger, data_name, 25, num_epochs, 
     				  lr, aug_mode, 'dev', batch_size, accumulation_steps,
     				  **kwargs)
-    agent.run()
+    # agent.run()
 
 
 arg_dict = get_args()
