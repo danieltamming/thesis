@@ -35,7 +35,13 @@ def initialize_logger(name, seed, other=None):
 	log_file = get_log_name(name, seed, other)
 	return logger_init(log_file)
 
-def get_bert_logger(name, seed):
+def get_bert_logger(script_name, seed, aug_mode=None):
+	if aug_mode is not None:
+		if aug_mode == 'synonym':
+			aug_mode = 'syn'
+		name = script_name + '_' + aug_mode
+	else:
+		name = script_name
 	folder_name = 'logs/' + name
 	os.makedirs(folder_name, exist_ok=True)
 	filename = 'seed_{}.log'.format(seed)
