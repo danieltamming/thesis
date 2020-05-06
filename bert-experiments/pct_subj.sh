@@ -1,8 +1,8 @@
 #!/bin/bash
 
 set -e
-gpu=1
-aug_mode="synonym"
+gpu=0
+aug_mode="trans"
 
 for a in $(seq 0 6 24)
 do
