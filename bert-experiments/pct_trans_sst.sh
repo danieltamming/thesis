@@ -1,7 +1,7 @@
 #!/bin/bash
 
 set -e
-gpu=1
+gpu=0
 a=18
 b=24
 pct_usage=1.0
