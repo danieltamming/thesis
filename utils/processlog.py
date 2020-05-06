@@ -162,8 +162,8 @@ def read_experiments(filepath, avg_across_labels, setting):
 
 def plot_imbalance_experiments():
 	avg_across_labels = True
-	# setting = 'bal'
-	setting = 'pct'
+	setting = 'bal'
+	# setting = 'pct'
 	# model = 'rnn'
 	model = 'bert'
 	# aug_mode = 'syn'
@@ -338,7 +338,7 @@ def get_imbalance_tests_df(setting, data_name):
 		setting, aug_mode, data_name) for aug_mode
 		in ['syn', 'trans', 'context']]
 	for filename, aug_mode in zip(filenames_list, aug_modes_list):
-		filepath = os.path.join('logs/archived/tests/', filename)
+		filepath = os.path.join('logs/archived/rnn/tests/', filename)
 		with open(filepath) as f:
 			line = f.readline()
 			if 'RUN START' in line:
@@ -393,7 +393,7 @@ def plot_all_aug_imbalance_tests(setting, data_name):
 	return df
 
 def detect_overfitting():
-	filepath = 'logs/archived/valids/pct_rnn_trans_sst.log'
+	filepath = 'logs/archived/rnn/valids/pct_rnn_trans_sst.log'
 	experiments = {}
 	with open(filepath) as f:
 		line = f.readline()
@@ -438,7 +438,9 @@ if __name__ == "__main__":
 	plot_imbalance_experiments()
 	# plot_imbalance_tests()
 	# plot_pct_tests()
-	# plot_all_aug_imbalance_tests('bal', 'sfu')
+	# for data_name in ['sst', 'subj', 'sfu']:
+	# 	for setting in ['pct', 'bal']:
+	# 		plot_all_aug_imbalance_tests(setting, data_name)
 	# detect_overfitting()
 	exit()
 	# filepath = 'logs/archived/other/bal_bert_trans_subj/seed_0_num_0.log'
