@@ -61,9 +61,9 @@ class BertAgent:
 		elif data_name == 'subj':
 			self.num_labels = 2
 			self.mngr = SubjDatasetManager(*mngr_args, **mngr_kwargs)
-		elif data_name == 'trec':
-			self.num_labels = 6
-			self.mngr = TrecDatasetManager(*mngr_args, **mngr_kwargs)
+		elif data_name == 'sfu':
+			self.num_labels = 2
+			self.mngr = SFUDatasetManager(*mngr_args, **mngr_kwargs)
 		else:
 			raise ValueError('Data name not recognized.')
 
