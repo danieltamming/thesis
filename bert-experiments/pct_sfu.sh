@@ -17,8 +17,8 @@ aug_mode="syn"
 # 	done
 # done
 
-a=0
-b=6
+a=2
+b=4
 pct_usage=1.0
 
 for learning_rate in 0.00002 0.00005 0.0001
