@@ -1,7 +1,7 @@
 #!/bin/bash
 
 set -e
-gpu=1
+gpu=0
 aug_mode="syn"
 
 # for a in $(seq 0 6 24)
@@ -17,8 +17,8 @@ aug_mode="syn"
 # 	done
 # done
 
-a=4
-b=6
+a=6
+b=8
 pct_usage=1.0
 
 for learning_rate in 0.00005 0.00002
