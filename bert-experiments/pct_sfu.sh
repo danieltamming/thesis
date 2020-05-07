@@ -17,11 +17,11 @@ aug_mode="syn"
 # 	done
 # done
 
-a=0
-b=2
+a=4
+b=6
 pct_usage=1.0
 
-for learning_rate in 0.000005 0.000002 0.000001
+for learning_rate in 0.00005 0.00002
 do
 	python bert-experiments/pct_bert_sfu.py -a $a -b $b -g $gpu -p $pct_usage -m $aug_mode -l $learning_rate
 	# echo $learning_rate

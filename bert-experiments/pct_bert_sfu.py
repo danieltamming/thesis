@@ -61,7 +61,7 @@ def experiment(experiment_num):
 
 arg_dict = get_args()
 this_script_name = os.path.basename(__file__).split('.')[0]
-num_epochs = 4
+num_epochs = 3
 data_name = 'sfu'
 batch_size = 32
 accumulation_steps = 1

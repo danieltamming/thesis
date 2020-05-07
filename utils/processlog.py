@@ -459,8 +459,9 @@ if __name__ == "__main__":
 	# for vec, label in zip(experiments, ['no aug 1', 'aug', 'no aug 2']):
 	# 	sns.lineplot(x=list(range(len(vec))), y=vec, label=label)
 	# plt.show()
-	filepath = 'logs/archived/rnn/valids/pct_rnn_syn_sfu.log'
+	filepath = 'logs/archived/test.log'
 	experiments = {}
+	counts = Counter()
 	with open(filepath) as f:
 		line = f.readline()
 		while line:
@@ -472,10 +473,16 @@ if __name__ == "__main__":
 				if is_validating(line):
 					accs.append(get_acc(line))
 				line = f.readline()
-			if 'lr' not in experiments:
-				experiments['lr'] = [accs]
+			counts.update([lr])
+			if lr not in experiments:
+				experiments[lr] = np.array(accs)
 			else:
-				experiments['lr'].append(np.array(accs))
-	for vec in experiments:
-		sns.lineplot(x=list(range(len(vec))), y=vec, label=label)
-	plt.show()
+				experiments[lr] = np.vstack([experiments[lr], np.array(accs)])
+				# print(experiments[lr].shape)
+	for i in range(1):
+		for lr, vec in experiments.items():
+			if lr in [2e-6, 1e-6]:
+				continue
+			sns.lineplot(x=list(range(vec.shape[1])), y=vec.mean(0), label=lr)
+		plt.show()
+	# print(counts)
