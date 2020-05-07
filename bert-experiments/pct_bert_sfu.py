@@ -32,7 +32,7 @@ def get_args():
     parser.add_argument('-u', '--undersample', type=int)
     parser.add_argument('-q', '--geo', type=float)
 
-    parser.add_argument('-l', '--learning_rate', type=float, required=True)
+    # parser.add_argument('-l', '--learning_rate', type=float, required=True)
 
     arg_dict = vars(parser.parse_args())
     arg_dict['gpu'] = 'cuda:'+str(arg_dict['gpu'])
@@ -65,8 +65,8 @@ num_epochs = 3
 data_name = 'sfu'
 batch_size = 32
 accumulation_steps = 1
-# lr = 2e-5
-lr = arg_dict.pop('learning_rate')
+lr = 2e-5
+# lr = arg_dict.pop('learning_rate')
 
 experiment_num_list = list(range(arg_dict.pop('start_num'), arg_dict.pop('end_num')))
 try:

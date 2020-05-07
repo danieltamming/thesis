@@ -459,7 +459,7 @@ if __name__ == "__main__":
 	# for vec, label in zip(experiments, ['no aug 1', 'aug', 'no aug 2']):
 	# 	sns.lineplot(x=list(range(len(vec))), y=vec, label=label)
 	# plt.show()
-	filepath = 'logs/archived/test.log'
+	filepath = 'logs/test.log'
 	experiments = {}
 	counts = Counter()
 	with open(filepath) as f:
@@ -474,6 +474,8 @@ if __name__ == "__main__":
 					accs.append(get_acc(line))
 				line = f.readline()
 			counts.update([lr])
+			if len(accs) == 0:
+				break
 			if lr not in experiments:
 				experiments[lr] = np.array(accs)
 			else:
