@@ -12,7 +12,7 @@ sys.path.insert(0, parent_dir)
 import numpy as np
 import torch
 
-from agents.rnn import RnnAgent
+# from agents.rnn import RnnAgent
 from agents.bert import BertAgent
 from utils.logger import get_bert_logger
 # from utils.parsing import get_device

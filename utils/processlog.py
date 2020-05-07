@@ -435,14 +435,14 @@ def detect_overfitting():
 		plt.show()
 
 if __name__ == "__main__":
-	plot_imbalance_experiments()
+	# plot_imbalance_experiments()
 	# plot_imbalance_tests()
 	# plot_pct_tests()
 	# for data_name in ['sst', 'subj', 'sfu']:
 	# 	for setting in ['pct', 'bal']:
 	# 		plot_all_aug_imbalance_tests(setting, data_name)
 	# detect_overfitting()
-	exit()
+	# exit()
 	# filepath = 'logs/archived/other/bal_bert_trans_subj/seed_0_num_0.log'
 	# experiments = []
 	# with open(filepath) as f:
@@ -459,3 +459,23 @@ if __name__ == "__main__":
 	# for vec, label in zip(experiments, ['no aug 1', 'aug', 'no aug 2']):
 	# 	sns.lineplot(x=list(range(len(vec))), y=vec, label=label)
 	# plt.show()
+	filepath = 'logs/archived/rnn/valids/pct_rnn_syn_sfu.log'
+	experiments = {}
+	with open(filepath) as f:
+		line = f.readline()
+		while line:
+			tup = read_imbalance_desc(line, False)
+			lr = get_lr(line)
+			accs = []
+			line = f.readline()
+			while is_training(line) or is_validating(line):
+				if is_validating(line):
+					accs.append(get_acc(line))
+				line = f.readline()
+			if 'lr' not in experiments:
+				experiments['lr'] = [accs]
+			else:
+				experiments['lr'].append(np.array(accs))
+	for vec in experiments:
+		sns.lineplot(x=list(range(len(vec))), y=vec, label=label)
+	plt.show()
