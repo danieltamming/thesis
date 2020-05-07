@@ -17,12 +17,16 @@ aug_mode="syn"
 # 	done
 # done
 
-a=6
-b=8
+# a=4
+# b=6
 pct_usage=1.0
 
-for learning_rate in 0.00005 0.00002
+for a in $(seq 16 2 30)
 do
-	python bert-experiments/pct_bert_sfu.py -a $a -b $b -g $gpu -p $pct_usage -m $aug_mode -l $learning_rate
-	# echo $learning_rate
+	((b = a + 2))
+	for learning_rate in 0.00005 0.00002
+	do
+		python bert-experiments/pct_bert_sfu.py -a $a -b $b -g $gpu -p $pct_usage -m $aug_mode -l $learning_rate
+		# echo $learning_rate
+	done
 done
