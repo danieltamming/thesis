@@ -21,7 +21,7 @@ aug_mode="syn"
 # b=6
 pct_usage=1.0
 
-for a in $seq(0 2 16)
+for a in $(seq 0 2 16)
 do
 	((b = a + 2))
 	for learning_rate in 0.00005 0.00002
