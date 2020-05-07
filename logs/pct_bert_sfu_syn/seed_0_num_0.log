@@ -25,3 +25,30 @@ Training epoch 2 | loss: 0.24281 - accuracy: 0.91915
 Validating epoch 2 | loss: 0.56975 - accuracy: 0.81553
 Training epoch 3 | loss: 0.17606 - accuracy: 0.94574
 Validating epoch 3 | loss: 0.56581 - accuracy: 0.83495
+Model is Bert, dataset is sfu, undersample is None, aug mode is None, geo is None, pct_usage is 1.0, small_label is None, small_prop is None, balance_seed is 0, lr is 5e-06, max_epochs is 4, split_num is 0
+Training epoch 0 | loss: 0.69577 - accuracy: 0.52128
+Validating epoch 0 | loss: 0.63075 - accuracy: 0.72816
+Training epoch 1 | loss: 0.58784 - accuracy: 0.77021
+Validating epoch 1 | loss: 0.58036 - accuracy: 0.76699
+Training epoch 2 | loss: 0.50299 - accuracy: 0.85532
+Validating epoch 2 | loss: 0.55107 - accuracy: 0.74757
+Training epoch 3 | loss: 0.45792 - accuracy: 0.87234
+Validating epoch 3 | loss: 0.54352 - accuracy: 0.75728
+Model is Bert, dataset is sfu, undersample is None, aug mode is None, geo is None, pct_usage is 1.0, small_label is None, small_prop is None, balance_seed is 0, lr is 2e-06, max_epochs is 4, split_num is 0
+Training epoch 0 | loss: 0.68503 - accuracy: 0.54787
+Validating epoch 0 | loss: 0.63471 - accuracy: 0.76699
+Training epoch 1 | loss: 0.57802 - accuracy: 0.75213
+Validating epoch 1 | loss: 0.55367 - accuracy: 0.7767
+Training epoch 2 | loss: 0.52287 - accuracy: 0.82234
+Validating epoch 2 | loss: 0.53588 - accuracy: 0.79612
+Training epoch 3 | loss: 0.49906 - accuracy: 0.83085
+Validating epoch 3 | loss: 0.5281 - accuracy: 0.79612
+Model is Bert, dataset is sfu, undersample is None, aug mode is None, geo is None, pct_usage is 1.0, small_label is None, small_prop is None, balance_seed is 0, lr is 1e-06, max_epochs is 4, split_num is 0
+Training epoch 0 | loss: 0.68094 - accuracy: 0.55
+Validating epoch 0 | loss: 0.63397 - accuracy: 0.62136
+Training epoch 1 | loss: 0.65388 - accuracy: 0.58085
+Validating epoch 1 | loss: 0.60882 - accuracy: 0.6699
+Training epoch 2 | loss: 0.61837 - accuracy: 0.6266
+Validating epoch 2 | loss: 0.59222 - accuracy: 0.69903
+Training epoch 3 | loss: 0.60624 - accuracy: 0.64043
+Validating epoch 3 | loss: 0.58802 - accuracy: 0.73786
