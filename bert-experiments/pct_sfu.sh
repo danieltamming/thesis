@@ -1,7 +1,7 @@
 #!/bin/bash
 
 set -e
-gpu=0
+gpu=1
 aug_mode="context"
 
 for a in $(seq 0 2 8)
