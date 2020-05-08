@@ -2,11 +2,11 @@
 
 set -e
 gpu=0
-aug_mode="syn"
+aug_mode="synonym"
 
 for a in $(seq 0 2 28)
 do
-	(( b = a + 6 ))
+	(( b = a + 2 ))
 	for pct_usage in $(seq 0.2 0.2 1.0)
 	do
 		python bert-experiments/pct_bert_sfu.py -a $a -b $b -g $gpu -p $pct_usage -m $aug_mode
