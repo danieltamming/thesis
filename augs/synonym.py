@@ -9,7 +9,8 @@ import pickle
 from tqdm import tqdm
 import numpy as np
 
-import nltk
+# import nltk
+from nltk import pos_tag
 from nltk.corpus import wordnet as wn
 
 current_dir = os.path.dirname(
@@ -39,7 +40,7 @@ def get_synonyms(word, tag, min_reputation):
 
 def get_synonym_dict(seq, min_reputation):
 	idx_to_syns = {}
-	for i, (word, tag) in enumerate(nltk.pos_tag(seq)):
+	for i, (word, tag) in enumerate(pos_tag(seq)):
 		synonyms = get_synonyms(word, tag, min_reputation)
 		if synonyms:
 			idx_to_syns[i] = synonyms
@@ -134,5 +135,5 @@ def create_sfu_aug():
 if __name__ == "__main__":
 	# create_sst_aug()
 	# create_subj_aug()
-	create_sfu_aug()
+	# create_sfu_aug()
 	pass
