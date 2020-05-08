@@ -2,11 +2,11 @@
 
 set -e
 gpu=0
-aug_mode="trans"
+aug_mode="context"
 
-for a in $(seq 0 6 24)
+for a in $(seq 0 5 5)
 do
-	(( b = a + 6 ))
+	(( b = a + 5 ))
 	for pct_usage in $(seq 0.2 0.2 1.0)
 	do
 		python bert-experiments/pct_bert_subj.py -a $a -b $b -g $gpu -p $pct_usage -m $aug_mode

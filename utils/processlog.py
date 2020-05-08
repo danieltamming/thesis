@@ -166,12 +166,12 @@ def plot_imbalance_experiments():
 	setting = 'pct'
 	# model = 'rnn'
 	model = 'bert'
-	# aug_mode = 'syn'
-	aug_mode = 'trans'
+	aug_mode = 'syn'
+	# aug_mode = 'trans'
 	# aug_mode = 'context'
 	# data_name = 'sst'
-	data_name = 'subj'
-	# data_name = 'sfu'
+	# data_name = 'subj'
+	data_name = 'sfu'
 	if model == 'rnn':
 		filepath = 'logs/archived/rnn/valids/{}_rnn_{}_{}.log'.format(setting, aug_mode, data_name)
 	elif model == 'bert':
@@ -435,14 +435,14 @@ def detect_overfitting():
 		plt.show()
 
 if __name__ == "__main__":
-	# plot_imbalance_experiments()
+	plot_imbalance_experiments()
 	# plot_imbalance_tests()
 	# plot_pct_tests()
 	# for data_name in ['sst', 'subj', 'sfu']:
 	# 	for setting in ['pct', 'bal']:
 	# 		plot_all_aug_imbalance_tests(setting, data_name)
 	# detect_overfitting()
-	# exit()
+	
 	# filepath = 'logs/archived/other/bal_bert_trans_subj/seed_0_num_0.log'
 	# experiments = []
 	# with open(filepath) as f:
@@ -459,32 +459,32 @@ if __name__ == "__main__":
 	# for vec, label in zip(experiments, ['no aug 1', 'aug', 'no aug 2']):
 	# 	sns.lineplot(x=list(range(len(vec))), y=vec, label=label)
 	# plt.show()
-	filepath = 'logs/test.log'
-	experiments = {}
-	counts = Counter()
-	with open(filepath) as f:
-		line = f.readline()
-		while line:
-			tup = read_imbalance_desc(line, False)
-			lr = get_lr(line)
-			accs = []
-			line = f.readline()
-			while is_training(line) or is_validating(line):
-				if is_validating(line):
-					accs.append(get_acc(line))
-				line = f.readline()
-			counts.update([lr])
-			if len(accs) == 0:
-				break
-			if lr not in experiments:
-				experiments[lr] = np.array(accs)
-			else:
-				experiments[lr] = np.vstack([experiments[lr], np.array(accs)])
-				# print(experiments[lr].shape)
-	for i in range(1):
-		for lr, vec in experiments.items():
-			if lr in [2e-6, 1e-6]:
-				continue
-			sns.lineplot(x=list(range(vec.shape[1])), y=vec.mean(0), label=lr)
-		plt.show()
+	# filepath = 'logs/test.log'
+	# experiments = {}
+	# counts = Counter()
+	# with open(filepath) as f:
+	# 	line = f.readline()
+	# 	while line:
+	# 		tup = read_imbalance_desc(line, False)
+	# 		lr = get_lr(line)
+	# 		accs = []
+	# 		line = f.readline()
+	# 		while is_training(line) or is_validating(line):
+	# 			if is_validating(line):
+	# 				accs.append(get_acc(line))
+	# 			line = f.readline()
+	# 		counts.update([lr])
+	# 		if len(accs) == 0:
+	# 			break
+	# 		if lr not in experiments:
+	# 			experiments[lr] = np.array(accs)
+	# 		else:
+	# 			experiments[lr] = np.vstack([experiments[lr], np.array(accs)])
+	# 			# print(experiments[lr].shape)
+	# for i in range(1):
+	# 	for lr, vec in experiments.items():
+	# 		if lr in [2e-6, 1e-6]:
+	# 			continue
+	# 		sns.lineplot(x=list(range(vec.shape[1])), y=vec.mean(0), label=lr)
+	# 	plt.show()
 	# print(counts)

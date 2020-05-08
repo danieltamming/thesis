@@ -2,9 +2,9 @@
 
 set -e
 gpu=0
-aug_mode="synonym"
+aug_mode="context"
 
-for a in $(seq 0 2 28)
+for a in $(seq 0 2 8)
 do
 	(( b = a + 2 ))
 	for pct_usage in $(seq 0.2 0.2 1.0)
