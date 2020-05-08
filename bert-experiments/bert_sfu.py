@@ -12,10 +12,8 @@ sys.path.insert(0, parent_dir)
 import numpy as np
 import torch
 
-# from agents.rnn import RnnAgent
 from agents.bert import BertAgent
 from utils.logger import get_bert_logger
-# from utils.parsing import get_device
 
 import argparse
 import json
@@ -27,19 +25,16 @@ def get_args():
     parser.add_argument('-a', '--start_num', type=int, required=True)
     parser.add_argument('-b', '--end_num', type=int, required=True)
     parser.add_argument('-g', '--gpu', type=int, required=True)
-    parser.add_argument('-p', '--pct_usage', type=float, required=True)
+    parser.add_argument('-p', '--pct_usage', type=float)
+    parser.add_argument('-r', '--small_prop', type=float)
+    parser.add_argument('-l', '--small_label', type=int)
     parser.add_argument('-m', '--aug_mode', type=str)
     parser.add_argument('-u', '--undersample', type=int)
     parser.add_argument('-q', '--geo', type=float)
-
-    # parser.add_argument('-l', '--learning_rate', type=float, required=True)
-
     arg_dict = vars(parser.parse_args())
     arg_dict['gpu'] = 'cuda:'+str(arg_dict['gpu'])
-    # if arg_dict['undersample'] is None:
-    # 	del arg_dict['undersample']
-    # else:
-    # 	arg_dict['undersample'] = arg_dict['undersample'] == 1
+    if arg_dict['undersample'] is not None:
+        arg_dict['undersample'] = bool(arg_dict['undersample'])
     assert arg_dict['aug_mode'] is not None
     return arg_dict
 
@@ -66,14 +61,13 @@ data_name = 'sfu'
 batch_size = 32
 accumulation_steps = 1
 lr = 2e-5
-# lr = arg_dict.pop('learning_rate')
 
 experiment_num_list = list(range(arg_dict.pop('start_num'), arg_dict.pop('end_num')))
-try:
-	pool = mp.Pool(mp.cpu_count())
-	pool.map(experiment, experiment_num_list)
-finally:
-	pool.close()
-	pool.join()
+# try:
+# 	pool = mp.Pool(mp.cpu_count())
+# 	pool.map(experiment, experiment_num_list)
+# finally:
+# 	pool.close()
+# 	pool.join()
 
-# experiment(experiment_num_list[0])
+experiment(experiment_num_list[0])
