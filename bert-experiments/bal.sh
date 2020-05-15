@@ -1,8 +1,8 @@
 #!/bin/bash
 
 set -e
-gpu=0
-aug_mode="synonym"
+gpu=1
+aug_mode="trans"
 
 script="bert-experiments/bert_sst.py"
 # script="bert-experiments/bert_subj.py"
