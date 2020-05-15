@@ -4,8 +4,8 @@ set -e
 gpu=1
 aug_mode="trans"
 
-script="bert-experiments/bert_sst.py"
-# script="bert-experiments/bert_subj.py"
+# script="bert-experiments/bert_sst.py"
+script="bert-experiments/bert_subj.py"
 # script="bert-experiments/bert_sfu.py"
 
 for a in $(seq 0 6 24)
