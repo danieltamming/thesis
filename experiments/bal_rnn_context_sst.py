@@ -25,14 +25,6 @@ def experiment(balance_seed):
 	for small_prop in np.arange(0.1, 1.0, 0.1):
 		small_prop = round(small_prop, 2)
 		for small_label in [0, 1]:
-			for undersample in [False, True]:
-				agent = RnnAgent(device, logger, 'sst', 25, num_epochs, lr,
-								 None, 'dev', 128, 
-								 small_label=small_label, 
-								 small_prop=small_prop, 
-								 balance_seed=balance_seed, 
-								 undersample=undersample)
-				agent.run()
 			for geo in np.arange(0.2, 1.0, 0.1):
 				geo = round(geo, 2)
 				agent = RnnAgent(device, logger, 'sst', 25, num_epochs, lr,
@@ -42,13 +34,21 @@ def experiment(balance_seed):
 								 balance_seed=balance_seed, 
 								 geo=geo)
 				agent.run()
+			for undersample in [False, True]:
+				agent = RnnAgent(device, logger, 'sst', 25, num_epochs, lr,
+								 None, 'dev', 128, 
+								 small_label=small_label, 
+								 small_prop=small_prop, 
+								 balance_seed=balance_seed, 
+								 undersample=undersample)
+				agent.run()
 
-print('Number of cpus: {}'.format(mp.cpu_count()))
-try:
-	pool = mp.Pool(mp.cpu_count())
-	pool.map(experiment, list(range(10)))
-finally:
-	pool.close()
-	pool.join()
+# print('Number of cpus: {}'.format(mp.cpu_count()))
+# try:
+# 	pool = mp.Pool(mp.cpu_count())
+# 	pool.map(experiment, list(range(10)))
+# finally:
+# 	pool.close()
+# 	pool.join()
 
-# experiment(0)
+experiment(0)
