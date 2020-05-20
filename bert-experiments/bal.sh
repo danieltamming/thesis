@@ -1,27 +1,31 @@
 #!/bin/bash
 
 set -e
-gpu=1
-aug_mode="synonym"
+gpu=0
+aug_mode="context"
 
 # script="bert-experiments/bert_sst.py"
-script="bert-experiments/bert_subj.py"
+# script="bert-experiments/bert_subj.py"
 # script="bert-experiments/bert_sfu.py"
 
-for a in $(seq 0 6 24)
+for script in "bert-experiments/bert_sst.py" "bert-experiments/bert_subj.py"
 do
-	(( b = a + 6 ))
-	for small_prop in $(seq 0.2 0.2 0.8)
+	# for a in $(seq 0 6 24)
+	for a in 0 5
 	do
-		for small_label in 0 1
+		(( b = a + 5 ))
+		for small_prop in $(seq 0.2 0.2 0.8)
 		do
-			for geo in $(seq 0.1 0.2 0.9)
+			for small_label in 0 1
 			do
-				python $script -a $a -b $b -g $gpu -m $aug_mode -r $small_prop -l $small_label -q $geo
-			done
-			for undersample in 0 1
-			do
-				python $script -a $a -b $b -g $gpu -m $aug_mode -r $small_prop -l $small_label -u $undersample
+				for geo in $(seq 0.1 0.2 0.9)
+				do
+					python $script -a $a -b $b -g $gpu -m $aug_mode -r $small_prop -l $small_label -q $geo
+				done
+				for undersample in 0 1
+				do
+					python $script -a $a -b $b -g $gpu -m $aug_mode -r $small_prop -l $small_label -u $undersample
+				done
 			done
 		done
 	done
