@@ -11,9 +11,9 @@ aug_mode="context"
 for script in "bert-experiments/bert_sfu.py"
 do
 	# for a in $(seq 0 6 24)
-	for a in 0 5
+	for a in 0 2 4 6 8
 	do
-		(( b = a + 5 ))
+		(( b = a + 2 ))
 		for small_prop in $(seq 0.2 0.2 0.8)
 		do
 			for small_label in 0 1
