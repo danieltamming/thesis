@@ -8,7 +8,7 @@ aug_mode="context"
 # script="bert-experiments/bert_subj.py"
 # script="bert-experiments/bert_sfu.py"
 
-for script in "bert-experiments/bert_sst.py" "bert-experiments/bert_subj.py"
+for script in "bert-experiments/bert_sfu.py"
 do
 	# for a in $(seq 0 6 24)
 	for a in 0 5
