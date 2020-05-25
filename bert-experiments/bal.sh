@@ -2,7 +2,7 @@
 
 set -e
 gpu=0
-aug_mode="context"
+aug_mode="synonymz"
 
 # script="bert-experiments/bert_sst.py"
 # script="bert-experiments/bert_subj.py"
@@ -10,10 +10,10 @@ aug_mode="context"
 
 for script in "bert-experiments/bert_sfu.py"
 do
-	# for a in $(seq 0 6 24)
-	for a in 0 2 4 6 8
+	for a in $(seq 0 6 24)
+	# for a in 0 2 4 6 8
 	do
-		(( b = a + 2 ))
+		(( b = a + 6 ))
 		for small_prop in $(seq 0.2 0.2 0.8)
 		do
 			for small_label in 0 1
