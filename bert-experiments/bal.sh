@@ -1,8 +1,8 @@
 #!/bin/bash
 
 set -e
-gpu=0
-aug_mode="synonymz"
+gpu=1
+aug_mode="trans"
 
 # script="bert-experiments/bert_sst.py"
 # script="bert-experiments/bert_subj.py"
@@ -10,10 +10,10 @@ aug_mode="synonymz"
 
 for script in "bert-experiments/bert_sfu.py"
 do
-	for a in $(seq 0 6 24)
+	for a in $(seq 0 2 28)
 	# for a in 0 2 4 6 8
 	do
-		(( b = a + 6 ))
+		(( b = a + 2 ))
 		for small_prop in $(seq 0.2 0.2 0.8)
 		do
 			for small_label in 0 1
