@@ -166,12 +166,12 @@ def plot_imbalance_experiments():
 	# setting = 'pct'
 	# model = 'rnn'
 	model = 'bert'
-	# aug_mode = 'syn'
+	aug_mode = 'syn'
 	# aug_mode = 'trans'
 	aug_mode = 'context'
 	# data_name = 'sst'
-	data_name = 'subj'
-	# data_name = 'sfu'
+	# data_name = 'subj'
+	data_name = 'sfu'
 	if model == 'rnn':
 		filepath = 'logs/archived/rnn/valids/{}_rnn_{}_{}.log'.format(setting, aug_mode, data_name)
 	elif model == 'bert':

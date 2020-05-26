@@ -75,11 +75,11 @@ elif arg_dict['small_prop'] is not None:
     key = arg_dict['small_prop']
 
 experiment_num_list = list(range(arg_dict.pop('start_num'), arg_dict.pop('end_num')))
-# try:
-# 	pool = mp.Pool(mp.cpu_count())
-# 	pool.map(experiment, experiment_num_list)
-# finally:
-# 	pool.close()
-# 	pool.join()
+try:
+	pool = mp.Pool(mp.cpu_count())
+	pool.map(experiment, experiment_num_list)
+finally:
+	pool.close()
+	pool.join()
 
-experiment(experiment_num_list[0])
+# experiment(experiment_num_list[0])
