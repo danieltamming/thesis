@@ -118,8 +118,12 @@ def read_context_aug(aug_data_path, pct_usage, small_label,
 
 	if split_num is None:
 		if 'sst' in aug_data_path:
-			filename = '{}-{}-{}-{}.pickle'.format(
-				pct_usage_display, small_label, small_prop_display, seed)
+			if pct_usage is None:
+				filename = '{}-{}-{}-{}.pickle'.format(
+					pct_usage_display, small_label, small_prop_display, seed)
+			else:
+				filename = '{}-{}-{}-{}-0.pickle'.format(
+					pct_usage_display, small_label, small_prop_display, seed)
 		else:
 			filename = '{}-{}-{}-{}-{}.pickle'.format(
 				pct_usage_display, small_label, small_prop_display, seed, 0)
