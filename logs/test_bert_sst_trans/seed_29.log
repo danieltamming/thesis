@@ -1,0 +1,60 @@
+Model is Bert, dataset is sst, undersample is None, aug mode is None, geo is 0.5, pct_usage is 0.2, small_label is None, small_prop is None, balance_seed is 29, lr is 2e-05, max_epochs is 4, split_num is 0
+Training epoch 0 | loss: 0.68494 - accuracy: 0.57659
+Training epoch 1 | loss: 0.38751 - accuracy: 0.84754
+Training epoch 2 | loss: 0.21165 - accuracy: 0.93425
+Training epoch 3 | loss: 0.13797 - accuracy: 0.96026
+Validating epoch 3 | loss: 0.41418 - accuracy: 0.84862
+Model is Bert, dataset is sst, undersample is None, aug mode is trans, geo is 0.5, pct_usage is 0.2, small_label is None, small_prop is None, balance_seed is 29, lr is 2e-05, max_epochs is 4, split_num is 0
+Training epoch 0 | loss: 0.63221 - accuracy: 0.63223
+Training epoch 1 | loss: 0.394 - accuracy: 0.83309
+Training epoch 2 | loss: 0.28702 - accuracy: 0.89451
+Training epoch 3 | loss: 0.24747 - accuracy: 0.91402
+Validating epoch 3 | loss: 0.35118 - accuracy: 0.86812
+Model is Bert, dataset is sst, undersample is None, aug mode is None, geo is 0.5, pct_usage is 0.4, small_label is None, small_prop is None, balance_seed is 29, lr is 2e-05, max_epochs is 4, split_num is 0
+Training epoch 0 | loss: 0.54255 - accuracy: 0.70809
+Training epoch 1 | loss: 0.28369 - accuracy: 0.88656
+Training epoch 2 | loss: 0.16046 - accuracy: 0.944
+Training epoch 3 | loss: 0.09095 - accuracy: 0.97363
+Validating epoch 3 | loss: 0.39359 - accuracy: 0.87959
+Model is Bert, dataset is sst, undersample is None, aug mode is trans, geo is 0.5, pct_usage is 0.4, small_label is None, small_prop is None, balance_seed is 29, lr is 2e-05, max_epochs is 4, split_num is 0
+Training epoch 0 | loss: 0.58321 - accuracy: 0.67558
+Training epoch 1 | loss: 0.37985 - accuracy: 0.84465
+Training epoch 2 | loss: 0.29113 - accuracy: 0.88475
+Training epoch 3 | loss: 0.24786 - accuracy: 0.91077
+Validating epoch 3 | loss: 0.33766 - accuracy: 0.86124
+Model is Bert, dataset is sst, undersample is None, aug mode is None, geo is 0.5, pct_usage is 0.6, small_label is None, small_prop is None, balance_seed is 29, lr is 2e-05, max_epochs is 4, split_num is 0
+Training epoch 0 | loss: 0.49063 - accuracy: 0.75819
+Training epoch 1 | loss: 0.23804 - accuracy: 0.91016
+Training epoch 2 | loss: 0.11144 - accuracy: 0.96291
+Training epoch 3 | loss: 0.06288 - accuracy: 0.98194
+Validating epoch 3 | loss: 0.42373 - accuracy: 0.87615
+Model is Bert, dataset is sst, undersample is None, aug mode is trans, geo is 0.5, pct_usage is 0.6, small_label is None, small_prop is None, balance_seed is 29, lr is 2e-05, max_epochs is 4, split_num is 0
+Training epoch 0 | loss: 0.52401 - accuracy: 0.72543
+Training epoch 1 | loss: 0.32616 - accuracy: 0.86368
+Training epoch 2 | loss: 0.26125 - accuracy: 0.89788
+Training epoch 3 | loss: 0.21624 - accuracy: 0.92221
+Validating epoch 3 | loss: 0.31258 - accuracy: 0.88188
+Model is Bert, dataset is sst, undersample is None, aug mode is None, geo is 0.5, pct_usage is 0.8, small_label is None, small_prop is None, balance_seed is 29, lr is 2e-05, max_epochs is 4, split_num is 0
+Training epoch 0 | loss: 0.49711 - accuracy: 0.74747
+Training epoch 1 | loss: 0.25577 - accuracy: 0.90191
+Training epoch 2 | loss: 0.14718 - accuracy: 0.94996
+Training epoch 3 | loss: 0.09712 - accuracy: 0.96911
+Validating epoch 3 | loss: 0.39317 - accuracy: 0.87844
+Model is Bert, dataset is sst, undersample is None, aug mode is trans, geo is 0.1, pct_usage is 0.8, small_label is None, small_prop is None, balance_seed is 29, lr is 2e-05, max_epochs is 4, split_num is 0
+Training epoch 0 | loss: 0.52407 - accuracy: 0.72706
+Training epoch 1 | loss: 0.3651 - accuracy: 0.84267
+Training epoch 2 | loss: 0.31329 - accuracy: 0.87175
+Training epoch 3 | loss: 0.28109 - accuracy: 0.88801
+Validating epoch 3 | loss: 0.29977 - accuracy: 0.87959
+Model is Bert, dataset is sst, undersample is None, aug mode is None, geo is 0.5, pct_usage is 1.0, small_label is None, small_prop is None, balance_seed is 29, lr is 2e-05, max_epochs is 4, split_num is 0
+Training epoch 0 | loss: 0.45983 - accuracy: 0.76329
+Training epoch 1 | loss: 0.2105 - accuracy: 0.91922
+Training epoch 2 | loss: 0.10226 - accuracy: 0.96474
+Training epoch 3 | loss: 0.05486 - accuracy: 0.98439
+Validating epoch 3 | loss: 0.4291 - accuracy: 0.88303
+Model is Bert, dataset is sst, undersample is None, aug mode is trans, geo is 0.1, pct_usage is 1.0, small_label is None, small_prop is None, balance_seed is 29, lr is 2e-05, max_epochs is 4, split_num is 0
+Training epoch 0 | loss: 0.50014 - accuracy: 0.73772
+Training epoch 1 | loss: 0.35312 - accuracy: 0.84812
+Training epoch 2 | loss: 0.30261 - accuracy: 0.875
+Training epoch 3 | loss: 0.28104 - accuracy: 0.88656
+Validating epoch 3 | loss: 0.30812 - accuracy: 0.87385
