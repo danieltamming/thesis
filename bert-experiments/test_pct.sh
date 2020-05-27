@@ -15,8 +15,8 @@ do
 		(( b = a + 2 ))
 		for pct_usage in $(seq 0.2 0.2 1.0)
 		do
-			python $script -a $a -b $b -g $gpu -m $aug_mode -p $pct_usage -o
 			python $script -a $a -b $b -g $gpu -m $aug_mode -p $pct_usage
+			python $script -a $a -b $b -g $gpu -m $aug_mode -p $pct_usage -o
 		done
 	done
 done
