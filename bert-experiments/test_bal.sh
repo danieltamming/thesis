@@ -1,25 +1,28 @@
 #!/bin/bash
 
 set -e
-gpu=0
+gpu=1
 aug_mode="synonym"
 
 script="bert-experiments/test_bert_sst.py"
 # script="bert-experiments/test_bert_subj.py"
 # script="bert-experiments/test_bert_sfu.py"
 
-for a in $(seq 0 6 24)
+for aug_mode in "synonym" "trans"
 do
-	(( b = a + 6 ))
-	for small_prop in $(seq 0.2 0.2 0.8)
+	for a in $(seq 0 6 24)
 	do
-		for small_label in 0 1
+		(( b = a + 6 ))
+		for small_prop in $(seq 0.2 0.2 0.8)
 		do
-			for undersample in 0 1
+			for small_label in 0 1
 			do
-				python $script -a $a -b $b -g $gpu -m $aug_mode -r $small_prop -l $small_label -u $undersample -o
+				for undersample in 0 1
+				do
+					python $script -a $a -b $b -g $gpu -m $aug_mode -r $small_prop -l $small_label -u $undersample -o
+				done
+				python $script -a $a -b $b -g $gpu -m $aug_mode -r $small_prop -l $small_label
 			done
-			python $script -a $a -b $b -g $gpu -m $aug_mode -r $small_prop -l $small_label
 		done
 	done
 done
