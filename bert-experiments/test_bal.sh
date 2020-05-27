@@ -1,11 +1,11 @@
 #!/bin/bash
 
 set -e
-gpu=1
+gpu=0
 aug_mode="synonym"
 
-script="bert-experiments/test_bert_sst.py"
-# script="bert-experiments/test_bert_subj.py"
+# script="bert-experiments/test_bert_sst.py"
+script="bert-experiments/test_bert_subj.py"
 # script="bert-experiments/test_bert_sfu.py"
 
 for aug_mode in "synonym" "trans"
