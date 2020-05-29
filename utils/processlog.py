@@ -322,23 +322,31 @@ def plot_imbalance_tests():
 	plt.show()
 	return df
 
-def get_imbalance_tests_df(setting, data_name):
+def get_imbalance_tests_df(model, setting, data_name):
 	aug_modes_list = ['Synonym Replacment', 'Backtranslation', 'BERT Augmentation']
 	if setting == 'pct':
 		methods = aug_modes_list + ['No Augmentation']
 	else:
 		methods = aug_modes_list + ['Oversample', 'Undersample']
 	if setting == 'pct':
-		df = pd.DataFrame(index=range(10, 110, 10))
+		if data_name == 'sfu' or model == 'bert':
+			df = pd.DataFrame(index=range(20, 120, 20))
+		else:
+			df = pd.DataFrame(index=range(10, 110, 10))
 	else:
-		df = pd.DataFrame(index=range(10, 100, 10))
+		if data_name == 'sfu' or model == 'bert':
+			df = pd.DataFrame(index=range(20, 100, 20))
+		else:
+			df = pd.DataFrame(index=range(10, 100, 10))
 	for col_name in methods:
 		df[col_name] = [[] for _ in range(len(df))]
-	filenames_list = ['test_{}_rnn_{}_{}.log'.format(
-		setting, aug_mode, data_name) for aug_mode
+	filenames_list = ['{}_{}_{}_{}.log'.format(
+		setting, model, aug_mode, data_name) for aug_mode
 		in ['syn', 'trans', 'context']]
+	if model == 'rnn':
+		filenames_list = ['test_' + s for s in filenames_list]
 	for filename, aug_mode in zip(filenames_list, aug_modes_list):
-		filepath = os.path.join('logs/archived/rnn/tests/', filename)
+		filepath = os.path.join('logs/archived/{}/tests/'.format(model), filename)
 		with open(filepath) as f:
 			line = f.readline()
 			if 'RUN START' in line:
@@ -373,10 +381,12 @@ def get_imbalance_tests_df(setting, data_name):
 	for col_name in methods:
 		df[col_name+'_mean'] = df[col_name].apply(np.mean)
 		df[col_name+'_std'] = df[col_name].apply(np.std)
+
+	# print(df.head())
 	return df.drop(columns=methods), methods
 
-def plot_all_aug_imbalance_tests(setting, data_name):
-	df, methods = get_imbalance_tests_df(setting, data_name)
+def plot_all_aug_imbalance_tests(model, setting, data_name):
+	df, methods = get_imbalance_tests_df(model, setting, data_name)
 
 	for m in methods:
 		sns.lineplot(x=df.index, y=m+'_mean', data=df, label=m)
@@ -435,12 +445,14 @@ def detect_overfitting():
 		plt.show()
 
 if __name__ == "__main__":
-	plot_imbalance_experiments()
+	# plot_imbalance_experiments()
 	# plot_imbalance_tests()
 	# plot_pct_tests()
-	# for data_name in ['sst', 'subj', 'sfu']:
-	# 	for setting in ['pct', 'bal']:
-	# 		plot_all_aug_imbalance_tests(setting, data_name)
+	# model = 'rnn'
+	model = 'bert'
+	for data_name in ['sst', 'subj', 'sfu']:
+		for setting in ['pct']:
+			plot_all_aug_imbalance_tests(model, setting, data_name)
 	# detect_overfitting()
 	
 	# filepath = 'logs/archived/other/bal_bert_trans_subj/seed_0_num_0.log'
