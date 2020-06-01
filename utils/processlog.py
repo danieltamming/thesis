@@ -120,10 +120,10 @@ def plot_bal_experiments(averages, data_name, aug_mode, err_bars):
 			for ((geo, _, _, _), vec), color in zip(sorted(small_prop_label_averages.items()), colors):
 				if small_prop == 1.0:
 					continue
-				plt.title('Rebalancing {} with {} after on {}% of label {}'
-						  ' is kept.'.format(
-						  		data_name, aug_mode, 
-						  		100*small_prop, small_label))
+				# plt.title('Rebalancing {} with {} after on {}% of label {}'
+				# 		  ' is kept.'.format(
+				# 		  		data_name, aug_mode, 
+				# 		  		100*small_prop, small_label))
 				plt.ylabel('Validation Accuracy (%)')
 				plt.xlabel('Training Epoch')
 
@@ -170,8 +170,8 @@ def plot_imbalance_experiments():
 	aug_mode = 'trans'
 	# aug_mode = 'context'
 	# data_name = 'sst'
-	# data_name = 'subj'
-	data_name = 'sfu'
+	data_name = 'subj'
+	# data_name = 'sfu'
 	if model == 'rnn':
 		filepath = 'logs/archived/rnn/valids/{}_rnn_{}_{}.log'.format(setting, aug_mode, data_name)
 	elif model == 'bert':
@@ -445,7 +445,8 @@ def detect_overfitting():
 		plt.show()
 
 if __name__ == "__main__":
-	# plot_imbalance_experiments()
+	plot_imbalance_experiments()
+	exit()
 	# plot_imbalance_tests()
 	# plot_pct_tests()
 	# model = 'rnn'
