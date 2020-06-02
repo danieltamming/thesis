@@ -22,18 +22,6 @@ num_epochs = 100
 lr  = 0.01
 input_length = 128
 
-# param_map = {
-# 	0.1: {'aug': (0.2, 19), 'under': 17, 'over': 22},
-# 	0.2: {'aug': (0.1, 23), 'under': 40, 'over': 27}, 
-# 	0.3: {'aug': (0.3, 27), 'under': 28, 'over': 30}, 
-# 	0.4: {'aug': (0.3, 42), 'under': 27, 'over': 21}, 
-# 	0.5: {'aug': (0.5, 83), 'under': 24, 'over': 30}, 
-# 	0.6: {'aug': (0.5, 31), 'under': 40, 'over': 26}, 
-# 	0.7: {'aug': (0.5, 39), 'under': 26, 'over': 32}, 
-# 	0.8: {'aug': (0.7, 37), 'under': 50, 'over': 46}, 
-# 	0.9: {'aug': (0.7, 59), 'under': 32, 'over': 42} 
-# }
-
 param_map = {
 	0.2: {'aug': (0.1, 45), 'under': 99, 'over': 81}, 
 	0.4: {'aug': (0.3, 47), 'under': 63, 'over': 99}, 

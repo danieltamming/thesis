@@ -327,7 +327,7 @@ def get_imbalance_tests_df(model, setting, data_name):
 	if setting == 'pct':
 		methods = aug_modes_list + ['No Augmentation']
 	else:
-		methods = aug_modes_list + ['Oversample', 'Undersample']
+		methods = aug_modes_list + ['Oversampling', 'Undersampling']
 	if setting == 'pct':
 		if data_name == 'sfu' or model == 'bert':
 			df = pd.DataFrame(index=range(20, 120, 20))
@@ -361,9 +361,9 @@ def get_imbalance_tests_df(model, setting, data_name):
 					if pct_usage is not None:
 						mode = 'No Augmentation'
 					elif undersample:
-						mode = 'Undersample'
+						mode = 'Undersampling'
 					else:
-						mode = 'Oversample'
+						mode = 'Oversampling'
 				else:
 					mode = aug_mode
 				num_epochs = get_num_epochs(line)
@@ -387,18 +387,34 @@ def get_imbalance_tests_df(model, setting, data_name):
 
 def plot_all_aug_imbalance_tests(model, setting, data_name):
 	df, methods = get_imbalance_tests_df(model, setting, data_name)
-
-	for m in methods:
-		sns.lineplot(x=df.index, y=m+'_mean', data=df, label=m)
+	if len(methods) == 5:
+		colors = ['tab:blue', 'tab:orange', 'tab:purple', 'tab:green', 'tab:red']
+	else:
+		colors = ['tab:blue', 'tab:orange', 'tab:purple', 'tab:red']
+	for m, c in zip(methods, colors):
+		sns.lineplot(x=df.index, y=m+'_mean', data=df, label=m, color=c)
 		plt.fill_between(
 			df.index, 
 			df[m+'_mean'] - df[m+'_std'], 
 			df[m+'_mean'] + df[m+'_std'],
 			alpha=0.1
 		)
-	plt.xlabel('Percentage of Minority Label Examples Left In Training Set')
-	plt.ylabel('Accuracy (%)')
-	plt.legend()
+	plt.title(data_name)
+	if setting == 'bal':
+		plt.xlabel('Percentage of Minority Label Examples Left In Training Set')
+	else:
+		plt.xlabel('Percentage of Training Set')
+	if data_name == 'sst':
+		plt.ylabel('Test Accuracy')
+	else:
+		plt.ylabel('10-Fold Cross-Validation Accuracy')
+	if data_name == 'subj':
+		plt.title('Subj')
+	else:
+		plt.title(data_name.upper())
+	plt.legend(loc='lower right')
+	filename = 'figures/{}-{}-{}'.format(model, setting, data_name)
+	plt.savefig(filename, dpi=200)
 	plt.show()
 	return df
 
@@ -445,14 +461,14 @@ def detect_overfitting():
 		plt.show()
 
 if __name__ == "__main__":
-	plot_imbalance_experiments()
-	exit()
+	# plot_imbalance_experiments()
+	# exit()
 	# plot_imbalance_tests()
 	# plot_pct_tests()
 	# model = 'rnn'
 	model = 'bert'
-	for data_name in ['sst', 'subj', 'sfu']:
-		for setting in ['pct']:
+	for setting in ['pct']:
+		for data_name in ['sst', 'subj', 'sfu']:
 			plot_all_aug_imbalance_tests(model, setting, data_name)
 	# detect_overfitting()
 	

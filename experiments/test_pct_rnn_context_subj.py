@@ -34,14 +34,6 @@ param_map = {
 	1.0: {'aug': (0.3, 96), 'no': 64} 
 }
 
-# param_map = {
-# 	0.2: {'aug': (0.6, 57), 'no': 34}, 
-# 	0.4: {'aug': (0.5, 69), 'no': 87}, 
-# 	0.6: {'aug': (0.3, 48), 'no': 27}, 
-# 	0.8: {'aug': (0.3, 99), 'no': 73},
-# 	1.0: {'aug': (0.1, 95), 'no': 51} 
-# }
-
 def experiment(balance_seed, split_num):
 	logger = initialize_logger(
 		this_script_name, balance_seed, other=split_num)
