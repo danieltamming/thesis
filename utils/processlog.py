@@ -462,7 +462,6 @@ def detect_overfitting():
 
 if __name__ == "__main__":
 	# plot_imbalance_experiments()
-	# exit()
 	# plot_imbalance_tests()
 	# plot_pct_tests()
 	# model = 'rnn'
@@ -471,6 +470,7 @@ if __name__ == "__main__":
 		for data_name in ['sst', 'subj', 'sfu']:
 			plot_all_aug_imbalance_tests(model, setting, data_name)
 	# detect_overfitting()
+
 	
 	# filepath = 'logs/archived/other/bal_bert_trans_subj/seed_0_num_0.log'
 	# experiments = []

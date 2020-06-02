@@ -219,3 +219,20 @@ sfu_params = {
         }
     }
 }
+
+if __name__=="__main__":
+    import numpy as np
+    import pandas as pd
+    import matplotlib.pyplot as plt
+    import seaborn as sns
+
+    import matplotlib.style as style
+    # style.use('fivethirtyeight')
+    from mpl_toolkits.mplot3d import Axes3D
+
+    sns.lineplot(
+        list(subj_params['bal']['synonym'].keys()), 
+        list(subj_params['bal']['synonym'].values())
+    )
+    plt.ylim(0.1, 0.9)
+    plt.show()
