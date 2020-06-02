@@ -1,16 +1,16 @@
 #!/bin/bash
 
 set -e
-gpu=1
+gpu=0
 
-# script="bert-experiments/test_bert_sst.py"
-script="bert-experiments/test_bert_subj.py"
+script="bert-experiments/test_bert_sst.py"
+# script="bert-experiments/test_bert_subj.py"
 # script="bert-experiments/test_bert_sfu.py"
 
 
 aug_mode="trans"
-a=0
-b=6
+a=6
+b=12
 for small_prop in $(seq 0.2 0.2 0.8)
 do
 	for small_label in 0 1
