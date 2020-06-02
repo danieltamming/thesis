@@ -10,9 +10,9 @@ script="bert-experiments/test_bert_sfu.py"
 
 for aug_mode in "synonym" "trans"
 do
-	for a in $(seq 0 6 24)
+	for a in $(seq 0 2 28)
 	do
-		(( b = a + 6 ))
+		(( b = a + 2 ))
 		for small_prop in $(seq 0.2 0.2 0.8)
 		do
 			for small_label in 0 1
