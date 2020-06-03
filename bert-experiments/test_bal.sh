@@ -1,7 +1,7 @@
 #!/bin/bash
 
 set -e
-gpu=1
+gpu=0
 
 # script="bert-experiments/test_bert_sst.py"
 # script="bert-experiments/test_bert_subj.py"
