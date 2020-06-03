@@ -230,9 +230,25 @@ if __name__=="__main__":
     # style.use('fivethirtyeight')
     from mpl_toolkits.mplot3d import Axes3D
 
-    sns.lineplot(
-        list(subj_params['bal']['synonym'].keys()), 
-        list(subj_params['bal']['synonym'].values())
-    )
-    plt.ylim(0.1, 0.9)
-    plt.show()
+    for setting in ['bal', 'pct']:
+        colors = ['tab:blue', 'tab:orange', 'tab:purple']
+        methods = ['synonym', 'trans', 'context']
+        method_names = ['Synonym Replacement', 'Backtranslation', 'BERT Augmentation']
+
+        for method, method_name, color in zip(methods, method_names, colors):
+            sns.lineplot(
+                list(subj_params[setting][method].keys()), 
+                list(subj_params[setting][method].values()),
+                label=method_name,
+                color=color
+            )
+
+        plt.yticks(np.arange(0.0, 1.1, 0.1))
+        if setting == 'bal':
+            plt.xlabel('Percentage of Minority Label Examples Left In Training Set')
+        else:
+            plt.xlabel('Percentage of Training Set')
+        plt.ylabel('Augmentation Parameter')
+        plt.legend(loc='upper left')
+        plt.savefig('figures/parameter-{}.png'.format(setting), dpi=200)
+        plt.show()

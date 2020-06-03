@@ -323,7 +323,7 @@ def plot_imbalance_tests():
 	return df
 
 def get_imbalance_tests_df(model, setting, data_name):
-	aug_modes_list = ['Synonym Replacment', 'Backtranslation', 'BERT Augmentation']
+	aug_modes_list = ['Synonym Replacement', 'Backtranslation', 'BERT Augmentation']
 	if setting == 'pct':
 		methods = aug_modes_list + ['No Augmentation']
 	else:
@@ -466,7 +466,7 @@ if __name__ == "__main__":
 	# plot_pct_tests()
 	# model = 'rnn'
 	model = 'bert'
-	for setting in ['pct']:
+	for setting in ['bal']:
 		for data_name in ['sst', 'subj', 'sfu']:
 			plot_all_aug_imbalance_tests(model, setting, data_name)
 	# detect_overfitting()
