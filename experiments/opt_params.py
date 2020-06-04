@@ -230,25 +230,29 @@ if __name__=="__main__":
     # style.use('fivethirtyeight')
     from mpl_toolkits.mplot3d import Axes3D
 
-    for setting in ['bal', 'pct']:
-        colors = ['tab:blue', 'tab:orange', 'tab:purple']
-        methods = ['synonym', 'trans', 'context']
-        method_names = ['Synonym Replacement', 'Backtranslation', 'BERT Augmentation']
+    param_list = [sst_params, subj_params, sfu_params]
+    data_name_list = ['sst', 'subj', 'sfu']
+    for params, data_name in zip(param_list, data_name_list):
+        for setting in ['bal', 'pct']:
+            colors = ['tab:blue', 'tab:orange', 'tab:purple']
+            methods = ['synonym', 'trans', 'context']
+            method_names = ['Synonym Replacement', 'Backtranslation', 'BERT Augmentation']
 
-        for method, method_name, color in zip(methods, method_names, colors):
-            sns.lineplot(
-                list(subj_params[setting][method].keys()), 
-                list(subj_params[setting][method].values()),
-                label=method_name,
-                color=color
-            )
+            for method, method_name, color in zip(methods, method_names, colors):
+                sns.lineplot(
+                    list(params[setting][method].keys()), 
+                    list(params[setting][method].values()),
+                    label=method_name,
+                    color=color
+                )
 
-        plt.yticks(np.arange(0.0, 1.1, 0.1))
-        if setting == 'bal':
-            plt.xlabel('Percentage of Minority Label Examples Left In Training Set')
-        else:
-            plt.xlabel('Percentage of Training Set')
-        plt.ylabel('Augmentation Parameter')
-        plt.legend(loc='upper left')
-        plt.savefig('figures/parameter-{}.png'.format(setting), dpi=200)
-        plt.show()
+            plt.yticks(np.arange(0.0, 1.1, 0.1))
+            if setting == 'bal':
+                plt.xlabel('Percentage of Minority Label Examples Left In Training Set')
+            else:
+                plt.xlabel('Percentage of Training Set')
+            plt.ylabel('Augmentation Parameter')
+            plt.legend(loc='upper left')
+            filename = 'figures/parameter-{}-{}.png'.format(data_name, setting)
+            plt.savefig(filename, dpi=200)
+            plt.show()
