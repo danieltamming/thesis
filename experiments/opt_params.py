@@ -230,20 +230,27 @@ if __name__=="__main__":
     # style.use('fivethirtyeight')
     from mpl_toolkits.mplot3d import Axes3D
 
+    plt.rc('font', size=45)
+
     param_list = [sst_params, subj_params, sfu_params]
     data_name_list = ['sst', 'subj', 'sfu']
     for params, data_name in zip(param_list, data_name_list):
         for setting in ['bal', 'pct']:
             colors = ['tab:blue', 'tab:orange', 'tab:purple']
             methods = ['synonym', 'trans', 'context']
-            method_names = ['Synonym Replacement', 'Backtranslation', 'BERT Augmentation']
+            method_names = ['Synonym Replacement', 'Backtranslation', 'Contextual Augmentation']
+            plt.figure(figsize=(21.6, 16.2))
 
             for method, method_name, color in zip(methods, method_names, colors):
                 sns.lineplot(
                     list(params[setting][method].keys()), 
                     list(params[setting][method].values()),
                     label=method_name,
-                    color=color
+                    color=color,
+                    marker='o', 
+                    markerfacecolor='none', 
+                    markeredgecolor=color, 
+                    markeredgewidth=1.5
                 )
 
             plt.yticks(np.arange(0.0, 1.1, 0.1))
@@ -252,7 +259,12 @@ if __name__=="__main__":
             else:
                 plt.xlabel('Percentage of Training Set')
             plt.ylabel('Augmentation Parameter')
-            plt.legend(loc='upper left')
+            if setting == 'bal':
+                plt.legend(loc='lower right')
+            else:
+                plt.legend(loc='upper left')
             filename = 'figures/parameter-{}-{}.png'.format(data_name, setting)
-            plt.savefig(filename, dpi=200)
-            plt.show()
+            # plt.savefig(filename, dpi=200)
+            plt.tight_layout()
+            plt.savefig(filename)
+            # plt.show()

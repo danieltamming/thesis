@@ -11,6 +11,8 @@ import matplotlib.style as style
 
 from mpl_toolkits.mplot3d import Axes3D
 
+plt.rc('font', size=45)
+
 def is_training(line):
 	return line.split(' ', 1)[0].endswith('Training')
 
@@ -102,10 +104,12 @@ def plot_mat(mat, err_bars, *args, **kwargs):
 	plt.plot(np.argmax(avg), avg.max(), kwargs['color'], marker='o')
 	# plt.hlines(np.max(avg), 0, 100, color=kwargs['color'])
 
-def plot_bal_experiments(averages, data_name, aug_mode, err_bars):
+def plot_bal_experiments(averages, data_name, aug_mode, err_bars, model):
 	for small_prop in sorted(list(set(key[3] for key in averages))):
 		small_prop_averages = {key: avg for key, avg in averages.items()
 							   if key[3] == small_prop}
+		if small_prop == 0.1:
+			continue
 		for small_label in sorted(list(set([key[2] for key in averages]))):
 			small_prop_label_averages = {key: avg for key, avg in small_prop_averages.items() 
 										 if key[2] == small_label}
@@ -117,6 +121,7 @@ def plot_bal_experiments(averages, data_name, aug_mode, err_bars):
 			colors = ['tab:blue', 'tab:orange', 'tab:cyan', 'tab:red', 
 					  'tab:purple', 'tab:brown', 'tab:pink', 'tab:gray', 
 					  'tab:olive', 'tab:green']
+			plt.figure(figsize=(21.6, 16.2))
 			for ((geo, _, _, _), vec), color in zip(sorted(small_prop_label_averages.items()), colors):
 				if small_prop == 1.0:
 					continue
@@ -124,15 +129,26 @@ def plot_bal_experiments(averages, data_name, aug_mode, err_bars):
 				# 		  ' is kept.'.format(
 				# 		  		data_name, aug_mode, 
 				# 		  		100*small_prop, small_label))
-				plt.ylabel('Validation Accuracy (%)')
+				plt.ylabel('Validation Accuracy')
 				plt.xlabel('Training Epoch')
 
-				plot_mat(100*vec, err_bars, label='geo {}'.format(geo), color=color, alpha=0.5)
+				if model == 'bert' or geo in [0.3, 0.6] or True:
+					label = 'p={}'.format(geo)
+				else:
+					label = None
+				plot_mat(vec, err_bars, label=label, color=color, alpha=0.5)
 			if small_prop != 1.0:
-				plot_mat(100*oversample_avg, err_bars, label='oversampling', color='g', alpha=0.5)
-				plot_mat(100*undersample_avg, err_bars, label='undersampling', color='r', alpha=0.5)
-				plt.legend()
-				plt.show()
+				plot_mat(oversample_avg, err_bars, label='Oversampling', color='g', alpha=0.5)
+				plot_mat(undersample_avg, err_bars, label='Undersampling', color='r', alpha=0.5)
+				if model == 'rnn':
+					plt.legend(loc='lower right', ncol=3)
+				else:
+					plt.legend(loc='upper right', bbox_to_anchor=(1, 0.6))
+				plt.tight_layout()
+				plt.savefig('figures/tuning-{}.png'.format(model))
+				# plt.show()
+				print(small_prop)
+			exit()
 
 def read_experiments(filepath, avg_across_labels, setting):
 	experiments = {}
@@ -179,12 +195,12 @@ def plot_imbalance_experiments():
 	else:
 		raise ValueError('Unrecognized model.')
 	# filepath = 'logs/{}_{}_{}_{}.log'.format(setting, model, aug_mode, data_name)
-	# filepath = 'logs/archived/other/pct_bert_trans_sst.log'
+	# filepath = 'logs/pct_rnn_syn_sfu/all.log'
 	err_bars = False
 	experiments = read_experiments(filepath, avg_across_labels, setting)
 
 	if setting == 'bal':
-		plot_bal_experiments(experiments, data_name, aug_mode, err_bars)
+		plot_bal_experiments(experiments, data_name, aug_mode, err_bars, model)
 	else:
 		averages = experiments
 		for pct_usage in sorted(list(set(key[1] for key in averages)), reverse=False):
@@ -198,16 +214,16 @@ def plot_imbalance_experiments():
 					  'tab:purple', 'tab:brown', 'tab:pink', 'tab:gray', 
 					  'tab:olive', 'tab:red']
 			for ((geo, _), vec), color in zip(sorted(pct_usage_averages.items()), colors):
-				# if small_prop == 1.0:
+				# if geo != -0.5:
 				# 	continue
 				plt.title('Augmenting {} with {} using {}% of training data.'.format(
 						  		data_name, aug_mode, 100*pct_usage))
 				plt.ylabel('Validation Accuracy (%)')
 				plt.xlabel('Training Epoch')
 
-				plot_mat(100*vec, err_bars, label='geo {}'.format(geo), color=color, alpha=0.5)
+				plot_mat(vec, err_bars, label='geo {}'.format(geo), color=color, alpha=0.5)
 			# if small_prop != 1.0:
-			plot_mat(100*no_aug_avg, err_bars, label='no aug', color='r', alpha=0.5)
+			plot_mat(no_aug_avg, err_bars, label='no aug', color='r', alpha=0.5)
 			plt.legend()
 			plt.show()
 	# for tup, mat in experiments.items():
@@ -323,7 +339,7 @@ def plot_imbalance_tests():
 	return df
 
 def get_imbalance_tests_df(model, setting, data_name):
-	aug_modes_list = ['Synonym Replacement', 'Backtranslation', 'BERT Augmentation']
+	aug_modes_list = ['Synonym Replacement', 'Backtranslation', 'Contextual Augmentation']
 	if setting == 'pct':
 		methods = aug_modes_list + ['No Augmentation']
 	else:
@@ -387,17 +403,19 @@ def get_imbalance_tests_df(model, setting, data_name):
 
 def plot_all_aug_imbalance_tests(model, setting, data_name):
 	df, methods = get_imbalance_tests_df(model, setting, data_name)
+	plt.figure(figsize=(21.6, 16.2))
 	if len(methods) == 5:
 		colors = ['tab:blue', 'tab:orange', 'tab:purple', 'tab:green', 'tab:red']
 	else:
 		colors = ['tab:blue', 'tab:orange', 'tab:purple', 'tab:red']
 	for m, c in zip(methods, colors):
-		sns.lineplot(x=df.index, y=m+'_mean', data=df, label=m, color=c)
+		sns.lineplot(x=df.index, y=m+'_mean', data=df, label=m, color=c, marker='o', markerfacecolor='none', markeredgecolor=c, markeredgewidth=1.5)
 		plt.fill_between(
 			df.index, 
 			df[m+'_mean'] - df[m+'_std'], 
 			df[m+'_mean'] + df[m+'_std'],
-			alpha=0.1
+			alpha=0.1,
+			color=c
 		)
 	plt.title(data_name)
 	if setting == 'bal':
@@ -414,12 +432,14 @@ def plot_all_aug_imbalance_tests(model, setting, data_name):
 		plt.title(data_name.upper())
 	plt.legend(loc='lower right')
 	filename = 'figures/{}-{}-{}'.format(model, setting, data_name)
-	plt.savefig(filename, dpi=200)
-	plt.show()
+	# plt.savefig(filename, dpi=200)
+	plt.tight_layout()
+	plt.savefig(filename)
+	# plt.show()
 	return df
 
 def detect_overfitting():
-	filepath = 'logs/archived/rnn/valids/pct_rnn_trans_sst.log'
+	filepath = 'logs/pct_rnn_syn_sfu/all.log'
 	experiments = {}
 	with open(filepath) as f:
 		line = f.readline()
@@ -465,55 +485,55 @@ if __name__ == "__main__":
 	# plot_imbalance_tests()
 	# plot_pct_tests()
 	# model = 'rnn'
-	model = 'bert'
-	for setting in ['bal']:
-		for data_name in ['sst', 'subj', 'sfu']:
-			plot_all_aug_imbalance_tests(model, setting, data_name)
+	for model in ['rnn', 'bert']:
+		for setting in ['pct', 'bal']:
+			for data_name in ['sst', 'subj', 'sfu']:
+				plot_all_aug_imbalance_tests(model, setting, data_name)
 	# detect_overfitting()
 
 	
-	# filepath = 'logs/archived/other/bal_bert_trans_subj/seed_0_num_0.log'
-	# experiments = []
-	# with open(filepath) as f:
-	# 	line = f.readline()
-	# 	while line:
-	# 		tup = read_imbalance_desc(line, False)
-	# 		accs = []
-	# 		line = f.readline()
-	# 		while is_training(line) or is_validating(line):
-	# 			if is_validating(line):
-	# 				accs.append(get_acc(line))
-	# 			line = f.readline()
-	# 		experiments.append(np.array(accs))
-	# for vec, label in zip(experiments, ['no aug 1', 'aug', 'no aug 2']):
-	# 	sns.lineplot(x=list(range(len(vec))), y=vec, label=label)
-	# plt.show()
-	# filepath = 'logs/test.log'
+	# filepath = 'logs/pct_rnn_syn_sfu/all.log'
 	# experiments = {}
-	# counts = Counter()
 	# with open(filepath) as f:
 	# 	line = f.readline()
 	# 	while line:
-	# 		tup = read_imbalance_desc(line, False)
-	# 		lr = get_lr(line)
-	# 		accs = []
+	# 		tup = read_pct_desc(line)
+	# 		metrics_dict = {key: [] for key in ['val_accs', 'val_loss', 
+	# 											'train_accs', 'train_loss']}
 	# 		line = f.readline()
 	# 		while is_training(line) or is_validating(line):
 	# 			if is_validating(line):
-	# 				accs.append(get_acc(line))
+	# 				metrics_dict['val_accs'].append(get_acc(line))
+	# 				metrics_dict['val_loss'].append(get_loss(line))
+	# 			elif is_training(line):
+	# 				metrics_dict['train_accs'].append(get_acc(line))
+	# 				metrics_dict['train_loss'].append(get_loss(line))
 	# 			line = f.readline()
-	# 		counts.update([lr])
-	# 		if len(accs) == 0:
-	# 			break
-	# 		if lr not in experiments:
-	# 			experiments[lr] = np.array(accs)
-	# 		else:
-	# 			experiments[lr] = np.vstack([experiments[lr], np.array(accs)])
-	# 			# print(experiments[lr].shape)
-	# for i in range(1):
-	# 	for lr, vec in experiments.items():
-	# 		if lr in [2e-6, 1e-6]:
+	# 		if tup[1] != 1.0 or tup[0] not in [0.3, -1]:
 	# 			continue
-	# 		sns.lineplot(x=list(range(vec.shape[1])), y=vec.mean(0), label=lr)
-	# 	plt.show()
-	# print(counts)
+	# 		metrics_dict = {key: np.array(L) for key, L in metrics_dict.items()}
+	# 		if tup not in experiments:
+	# 			experiments[tup] = metrics_dict
+	# 		else:
+	# 			for key, vec in metrics_dict.items():
+	# 				experiments[tup][key] = np.vstack([experiments[tup][key], vec])
+	# 			# experiments[tup] = np.vstack([experiments[tup], np.array(accs)])
+	# colors = ['tab:blue', 'tab:orange', 'tab:cyan', 'tab:green',
+	# 		  'tab:purple', 'tab:brown', 'tab:pink', 'tab:gray', 
+	# 		  'tab:olive', 'tab:red']
+	# for keys_list in [['val_accs', 'train_accs'], ['val_loss', 'train_loss']]:
+	# 	for key in keys_list:
+	# 		for ((geo, _), metrics_dict), color in zip(experiments.items(), colors):
+	# 			if geo != -1 or key != 'val_accs':
+	# 				continue
+	# 			plt.ylabel(key)
+	# 			plt.xlabel('Training Epoch')
+	# 			# for i in range(metrics_dict[key].shape[0]):
+	# 			# 	plt.plot(metrics_dict[key][i,:])
+	# 			# 	plt.show()
+
+	# 			plot_mat(100*metrics_dict[key], True, label='{}, geo {}'.format(key, geo), color=color, alpha=0.5)
+	# 			plt.show()
+	# 		# if small_prop != 1.0:
+	# 		# plot_mat(100*no_aug_avg, err_bars, label='no aug', color='r', alpha=0.5)
+	# 	# plt.legend()
