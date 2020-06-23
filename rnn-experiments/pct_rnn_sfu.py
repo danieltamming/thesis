@@ -16,6 +16,10 @@ from agents.rnn import RnnAgent
 from utils.logger import initialize_logger
 from utils.parsing import get_device
 
+# aug_mode = 'synonym'
+aug_mode = 'trans'
+# aug_mode = 'context'
+
 device = get_device()
 this_script_name = os.path.basename(__file__).split('.')[0]
 num_epochs = 100
@@ -35,22 +39,22 @@ def experiment(balance_seed, split_num):
 		for geo in np.arange(0.1, 1.0, 0.1):
 			geo = round(geo, 2)
 			agent = RnnAgent(device, logger, 'sfu', input_length, num_epochs, lr,
-							 'context', 'dev', 128, 
+							 aug_mode, 'dev', 128, 
 							 pct_usage=pct_usage, 
 							 balance_seed=balance_seed, 
 							 split_num=split_num,
 							 geo=geo)
 			agent.run()
 
-try:
-	split_num_list = list(range(10))
-	# seed_list = list(range(2))
-	seed_list = [0]
-	params = list(itertools.product(seed_list, split_num_list))
-	pool = mp.Pool(mp.cpu_count())
-	pool.starmap(experiment, params)
-finally:
-	pool.close()
-	pool.join()
+# try:
+# 	split_num_list = list(range(10))
+# 	# seed_list = list(range(2))
+# 	seed_list = [0]
+# 	params = list(itertools.product(seed_list, split_num_list))
+# 	pool = mp.Pool(mp.cpu_count())
+# 	pool.starmap(experiment, params)
+# finally:
+# 	pool.close()
+# 	pool.join()
 
-# experiment(0, 0)
+experiment(0, 0)
