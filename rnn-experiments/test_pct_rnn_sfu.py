@@ -15,6 +15,7 @@ import numpy as np
 from agents.rnn import RnnAgent
 from utils.logger import initialize_logger
 from utils.parsing import get_device
+from opt_params import sfu_params
 
 device = get_device()
 this_script_name = os.path.basename(__file__).split('.')[0]
@@ -22,13 +23,11 @@ num_epochs = 100
 lr  = 0.01
 input_length = 128
 
-param_map = {
-	0.2: {'aug': (0.6, 45), 'no': 91}, 
-	0.4: {'aug': (0.2, 43), 'no': 49}, 
-	0.6: {'aug': (0.3, 61), 'no': 80}, 
-	0.8: {'aug': (0.6, 61), 'no': 29}, 
-	1.0: {'aug': (0.1, 90), 'no': 79} 
-}
+# aug_mode = 'synonym'
+# aug_mode = 'trans'
+aug_mode = 'context'
+
+param_map = sfu_params['pct'][aug_mode]
 
 def experiment(balance_seed, split_num):
 	logger = initialize_logger(
@@ -46,22 +45,22 @@ def experiment(balance_seed, split_num):
 		agent.run()
 		geo, num_epochs = param_pct_map['aug']
 		agent = RnnAgent(device, logger, 'sfu', input_length, num_epochs, lr,
-						 'synonym', 'dev', 128, 
+						 aug_mode, 'dev', 128, 
 						 pct_usage=pct_usage, 
 						 balance_seed=balance_seed, 
 						 split_num=split_num,
 						 geo=geo)
 		agent.run()
 
-try:
-	split_num_list = list(range(10))
-	# seed_list = list(range(3))
-	seed_list = [2]
-	params = list(itertools.product(seed_list, split_num_list))
-	pool = mp.Pool(mp.cpu_count())
-	pool.starmap(experiment, params)
-finally:
-	pool.close()
-	pool.join()
+# try:
+# 	split_num_list = list(range(10))
+# 	# seed_list = list(range(3))
+# 	seed_list = [2]
+# 	params = list(itertools.product(seed_list, split_num_list))
+# 	pool = mp.Pool(mp.cpu_count())
+# 	pool.starmap(experiment, params)
+# finally:
+# 	pool.close()
+# 	pool.join()
 
-# experiment(0, 0)
+experiment(0, 0)

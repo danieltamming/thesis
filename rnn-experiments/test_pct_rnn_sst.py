@@ -15,24 +15,18 @@ from agents.rnn import RnnAgent
 from agents.bert import BertAgent
 from utils.logger import initialize_logger
 from utils.parsing import get_device
+from opt_params import sst_params
 
 device = get_device()
 this_script_name = os.path.basename(__file__).split('.')[0]
 num_epochs = 100
 lr  = 0.001
 
-param_map = {
-	0.1: {'aug': (0.5, 28), 'no': 26},
-	0.2: {'aug': (0.4, 54), 'no': 53}, 
-	0.3: {'aug': (0.6, 28), 'no': 47}, 
-	0.4: {'aug': (0.6, 72), 'no': 57}, 
-	0.5: {'aug': (0.5, 39), 'no': 63}, 
-	0.6: {'aug': (0.5, 26), 'no': 36}, 
-	0.7: {'aug': (0.5, 79), 'no': 98}, 
-	0.8: {'aug': (0.9, 94), 'no': 36}, 
-	0.9: {'aug': (0.7, 77), 'no': 86},
-	1.0: {'aug': (0.8, 68), 'no': 88} 
-}
+# aug_mode = 'synonym'
+# aug_mode = 'trans'
+aug_mode = 'context'
+
+param_map = sst_params['pct'][aug_mode]
 
 def experiment(balance_seed):
 	logger = initialize_logger(this_script_name, balance_seed)
@@ -55,12 +49,11 @@ def experiment(balance_seed):
 						 balance_seed=balance_seed)
 		agent.run()
 
-print('Number of cpus: {}'.format(mp.cpu_count()))
-try:
-	pool = mp.Pool(mp.cpu_count())
-	pool.map(experiment, [10, 28, 2, 7])
-finally:
-	pool.close()
-	pool.join()
+# try:
+# 	pool = mp.Pool(mp.cpu_count())
+# 	pool.map(experiment, [10, 28, 2, 7])
+# finally:
+# 	pool.close()
+# 	pool.join()
 
-# experiment(0)
+experiment(0)

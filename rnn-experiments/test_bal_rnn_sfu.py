@@ -15,6 +15,7 @@ import numpy as np
 from agents.rnn import RnnAgent
 from utils.logger import initialize_logger
 from utils.parsing import get_device
+from opt_params import sfu_params
 
 device = get_device()
 this_script_name = os.path.basename(__file__).split('.')[0]
@@ -22,24 +23,11 @@ num_epochs = 100
 lr  = 0.01
 input_length = 128
 
-# param_map = {
-# 	0.1: {'aug': (0.5, 21), 'under': 12, 'over': 11},
-# 	0.2: {'aug': (0.1, 39), 'under': 18, 'over': 25}, 
-# 	0.3: {'aug': (0.4, 39), 'under': 26, 'over': 43}, 
-# 	0.4: {'aug': (0.5, 55), 'under': 28, 'over': 62}, 
-# 	0.5: {'aug': (0.1, 43), 'under': 24, 'over': 39}, 
-# 	0.6: {'aug': (0.8, 71), 'under': 58, 'over': 77}, 
-# 	0.7: {'aug': (0.9, 50), 'under': 28, 'over': 44}, 
-# 	0.8: {'aug': (0.7, 31), 'under': 45, 'over': 25}, 
-# 	0.9: {'aug': (0.8, 37), 'under': 47, 'over': 29} 
-# }
+# aug_mode = 'synonym'
+# aug_mode = 'trans'
+aug_mode = 'context'
 
-param_map = {
-	0.2: {'aug': (0.1, 85), 'under': 10, 'over': 37}, 
-	0.4: {'aug': (0.5, 49), 'under': 54, 'over': 55}, 
-	0.6: {'aug': (0.4, 88), 'under': 68, 'over': 15}, 
-	0.8: {'aug': (0.8, 69), 'under': 73, 'over': 84}, 
-}
+param_map = sfu_params['bal'][aug_mode]
 
 def experiment(balance_seed, split_num):
 	logger = initialize_logger(
@@ -64,7 +52,7 @@ def experiment(balance_seed, split_num):
 			geo, num_epochs = param_prop_map['aug']
 			geo = round(geo, 2)
 			agent = RnnAgent(device, logger, 'sfu', input_length, num_epochs, lr,
-							 'context', 'dev', 128, 
+							 aug_mode, 'dev', 128, 
 							 small_label=small_label, 
 							 small_prop=small_prop, 
 							 balance_seed=balance_seed, 
@@ -72,15 +60,15 @@ def experiment(balance_seed, split_num):
 							 geo=geo)
 			agent.run()
 
-try:
-	split_num_list = list(range(10))
-	# seed_list = list(range(2))
-	seed_list = [0]
-	params = list(itertools.product(seed_list, split_num_list))
-	pool = mp.Pool(mp.cpu_count())
-	pool.starmap(experiment, params)
-finally:
-	pool.close()
-	pool.join()
+# try:
+# 	split_num_list = list(range(10))
+# 	# seed_list = list(range(3))
+# 	seed_list = [2]
+# 	params = list(itertools.product(seed_list, split_num_list))
+# 	pool = mp.Pool(mp.cpu_count())
+# 	pool.starmap(experiment, params)
+# finally:
+# 	pool.close()
+# 	pool.join()
 
-# experiment(0, 0)
+experiment(0, 0)
